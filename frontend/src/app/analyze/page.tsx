@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import IndiaMap from "../../components/IndiaMap";
-import Link from "next/link";
 
 interface ClimateDataRow {
   year: number;
@@ -20,7 +19,6 @@ export default function AnalyzePage() {
   // Common Climate Datasets
   const [indiaData, setIndiaData] = useState<ClimateDataRow[]>([]);
   const [stateData, setStateData] = useState<{ [key: string]: ClimateDataRow[] }>({});
-  const [availableStates, setAvailableStates] = useState<string[]>([]);
 
   // Panel A State
   const [stateA, setStateA] = useState<string | null>(null);
@@ -29,7 +27,6 @@ export default function AnalyzePage() {
   const [monthA, setMonthA] = useState("July");
   const [variableA, setVariableA] = useState("ACI");
   const [districtDataA, setDistrictDataA] = useState<{ [key: string]: ClimateDataRow[] }>({});
-  const [loadingA, setLoadingA] = useState(false);
 
   // Panel B State
   const [stateB, setStateB] = useState<string | null>(null);
@@ -38,7 +35,6 @@ export default function AnalyzePage() {
   const [monthB, setMonthB] = useState("July");
   const [variableB, setVariableB] = useState("ACI");
   const [districtDataB, setDistrictDataB] = useState<{ [key: string]: ClimateDataRow[] }>({});
-  const [loadingB, setLoadingB] = useState(false);
 
   // Sync mode options
   const [syncVariable, setSyncVariable] = useState(true);
@@ -82,8 +78,6 @@ export default function AnalyzePage() {
       .then((r) => r.json())
       .then((data) => {
         setStateData(data);
-        const names = Object.keys(data).sort();
-        setAvailableStates(names);
       })
       .catch((err) => console.error("Error loading State data:", err));
   }, []);
@@ -94,15 +88,13 @@ export default function AnalyzePage() {
       setDistrictDataA({});
       return;
     }
-    setLoadingA(true);
     const safeName = stateA.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
     fetch(`/data/districts/${safeName}.json`)
       .then((r) => (r.ok ? r.json() : {}))
       .then((data) => {
         setDistrictDataA(data);
-        setLoadingA(false);
       })
-      .catch(() => setLoadingA(false));
+      .catch(() => {});
   }, [stateA]);
 
   // Fetch District data for Panel B
@@ -111,15 +103,13 @@ export default function AnalyzePage() {
       setDistrictDataB({});
       return;
     }
-    setLoadingB(true);
     const safeName = stateB.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
     fetch(`/data/districts/${safeName}.json`)
       .then((r) => (r.ok ? r.json() : {}))
       .then((data) => {
         setDistrictDataB(data);
-        setLoadingB(false);
       })
-      .catch(() => setLoadingB(false));
+      .catch(() => {});
   }, [stateB]);
 
   // Handle variable sync
@@ -207,18 +197,18 @@ export default function AnalyzePage() {
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 py-6 flex flex-col gap-6">
+      <main className="flex-1 max-w-[1600px] mx-auto w-full px-3.5 sm:px-6 py-4 sm:py-6 flex flex-col gap-5 sm:gap-6">
         
         {/* Top Control Bar */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg">
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#f26a21] animate-pulse" />
-              <h1 className="text-xs font-bold uppercase tracking-widest text-[#f26a21]">
+              <h1 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#f26a21]">
                 Comparative Analytics
               </h1>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black uppercase text-foreground tracking-tight mt-0.5">
+            <h2 className="text-lg sm:text-2xl font-black uppercase text-foreground tracking-tight mt-0.5">
               Side-by-Side Climate Hazard Comparison
             </h2>
           </div>
@@ -242,18 +232,18 @@ export default function AnalyzePage() {
         </div>
 
         {/* Dual Side-by-Side Panels */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
           
           {/* ================= PANEL A ================= */}
-          <div className="flex flex-col gap-4 p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl">
+          <div className="flex flex-col gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl">
             {/* Header & Controls Panel A */}
-            <div className="flex flex-col gap-3 pb-3 border-b border-foreground/10">
+            <div className="flex flex-col gap-2.5 sm:gap-3 pb-3 border-b border-foreground/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-[#0b2b5f] text-white font-black text-xs">
+                  <span className="px-2 py-0.5 rounded-md bg-[#0b2b5f] text-white font-black text-[11px] sm:text-xs">
                     PANEL A
                   </span>
-                  <span className="text-xs font-bold uppercase text-foreground/80">
+                  <span className="text-xs font-bold uppercase text-foreground/80 truncate max-w-[200px]">
                     {districtA ? `${districtA}, ${stateA}` : stateA ? `${stateA}` : "India Overall"}
                   </span>
                 </div>
@@ -271,9 +261,9 @@ export default function AnalyzePage() {
               </div>
 
               {/* Filter Dropdowns for Panel A */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] font-bold uppercase text-foreground/50">Year</label>
+                  <label className="text-[8.5px] sm:text-[9px] font-bold uppercase text-foreground/50">Year</label>
                   <select
                     value={yearA}
                     onChange={(e) => setYearA(e.target.value)}
@@ -286,7 +276,7 @@ export default function AnalyzePage() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] font-bold uppercase text-foreground/50">Month</label>
+                  <label className="text-[8.5px] sm:text-[9px] font-bold uppercase text-foreground/50">Month</label>
                   <select
                     value={monthA}
                     onChange={(e) => setMonthA(e.target.value)}
@@ -299,7 +289,7 @@ export default function AnalyzePage() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] font-bold uppercase text-foreground/50">Variable</label>
+                  <label className="text-[8.5px] sm:text-[9px] font-bold uppercase text-foreground/50">Variable</label>
                   <select
                     value={variableA}
                     onChange={(e) => handleVariableChangeA(e.target.value)}
@@ -324,22 +314,22 @@ export default function AnalyzePage() {
                 setSelectedDistrict={setDistrictA}
                 mapValues={mapValuesA}
                 selectedVariable={variableA}
-                heightClassName="h-[460px]"
+                heightClassName="h-[40vh] min-h-[280px] max-h-[460px] sm:h-[460px]"
               />
             </div>
 
             {/* Quick Metrics Panel A */}
             <div className="p-3 rounded-xl bg-foreground/3 border border-foreground/10 flex justify-between items-center">
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase text-foreground/60">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase text-foreground/60 truncate max-w-[220px]">
                   {monthA} {yearA} — {variables.find((v) => v.id === variableA)?.name}
                 </span>
-                <span className="text-xs font-bold text-foreground">
+                <span className="text-xs font-bold text-foreground truncate max-w-[220px]">
                   {districtA || stateA || "India Average"}
                 </span>
               </div>
-              <div className="text-right">
-                <span className="text-xl font-black text-[#f26a21]">
+              <div className="text-right flex-shrink-0">
+                <span className="text-lg sm:text-xl font-black text-[#f26a21]">
                   {dataA ? (dataA as any)[variableA]?.toFixed(2) : "—"}
                 </span>
                 <span className="text-[10px] text-foreground/50 ml-1">z</span>
@@ -348,15 +338,15 @@ export default function AnalyzePage() {
           </div>
 
           {/* ================= PANEL B ================= */}
-          <div className="flex flex-col gap-4 p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl">
+          <div className="flex flex-col gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl">
             {/* Header & Controls Panel B */}
-            <div className="flex flex-col gap-3 pb-3 border-b border-foreground/10">
+            <div className="flex flex-col gap-2.5 sm:gap-3 pb-3 border-b border-foreground/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-[#f26a21] text-white font-black text-xs">
+                  <span className="px-2 py-0.5 rounded-md bg-[#f26a21] text-white font-black text-[11px] sm:text-xs">
                     PANEL B
                   </span>
-                  <span className="text-xs font-bold uppercase text-foreground/80">
+                  <span className="text-xs font-bold uppercase text-foreground/80 truncate max-w-[200px]">
                     {districtB ? `${districtB}, ${stateB}` : stateB ? `${stateB}` : "India Overall"}
                   </span>
                 </div>
@@ -374,9 +364,9 @@ export default function AnalyzePage() {
               </div>
 
               {/* Filter Dropdowns for Panel B */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] font-bold uppercase text-foreground/50">Year</label>
+                  <label className="text-[8.5px] sm:text-[9px] font-bold uppercase text-foreground/50">Year</label>
                   <select
                     value={yearB}
                     onChange={(e) => setYearB(e.target.value)}
@@ -389,7 +379,7 @@ export default function AnalyzePage() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] font-bold uppercase text-foreground/50">Month</label>
+                  <label className="text-[8.5px] sm:text-[9px] font-bold uppercase text-foreground/50">Month</label>
                   <select
                     value={monthB}
                     onChange={(e) => setMonthB(e.target.value)}
@@ -402,7 +392,7 @@ export default function AnalyzePage() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] font-bold uppercase text-foreground/50">Variable</label>
+                  <label className="text-[8.5px] sm:text-[9px] font-bold uppercase text-foreground/50">Variable</label>
                   <select
                     value={variableB}
                     onChange={(e) => handleVariableChangeB(e.target.value)}
@@ -427,22 +417,22 @@ export default function AnalyzePage() {
                 setSelectedDistrict={setDistrictB}
                 mapValues={mapValuesB}
                 selectedVariable={variableB}
-                heightClassName="h-[460px]"
+                heightClassName="h-[40vh] min-h-[280px] max-h-[460px] sm:h-[460px]"
               />
             </div>
 
             {/* Quick Metrics Panel B */}
             <div className="p-3 rounded-xl bg-foreground/3 border border-foreground/10 flex justify-between items-center">
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase text-foreground/60">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase text-foreground/60 truncate max-w-[220px]">
                   {monthB} {yearB} — {variables.find((v) => v.id === variableB)?.name}
                 </span>
-                <span className="text-xs font-bold text-foreground">
+                <span className="text-xs font-bold text-foreground truncate max-w-[220px]">
                   {districtB || stateB || "India Average"}
                 </span>
               </div>
-              <div className="text-right">
-                <span className="text-xl font-black text-[#f26a21]">
+              <div className="text-right flex-shrink-0">
+                <span className="text-lg sm:text-xl font-black text-[#f26a21]">
                   {dataB ? (dataB as any)[variableB]?.toFixed(2) : "—"}
                 </span>
                 <span className="text-[10px] text-foreground/50 ml-1">z</span>
@@ -453,18 +443,18 @@ export default function AnalyzePage() {
         </div>
 
         {/* Symmetrical Color Scale Legend */}
-        <div className="p-4 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-md flex flex-col items-center gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-foreground/60">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-md flex flex-col items-center gap-2">
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-foreground/60 text-center">
             Harmonized Zero-Centered Anomaly Scale (z-score)
           </span>
-          <div className="w-full max-w-md flex flex-col gap-1">
+          <div className="w-full max-w-md flex flex-col gap-1 px-1">
             <div
               className="w-full h-3 rounded-full shadow-inner"
               style={{
                 background: "linear-gradient(to right, rgba(15,118,110,0.95), rgba(20,184,166,0.7), rgba(94,234,212,0.45), rgba(254,240,138,0.5) 50%, rgba(251,146,60,0.45), rgba(225,29,72,0.7), rgba(136,19,55,0.95))"
               }}
             />
-            <div className="flex justify-between text-[9px] font-semibold text-foreground/70 px-0.5">
+            <div className="flex justify-between text-[8px] sm:text-[9px] font-semibold text-foreground/70 px-0.5">
               <span>-4 (Below Baseline)</span>
               <span className="font-bold text-foreground/90">0</span>
               <span>+4 (Above Baseline)</span>
@@ -473,31 +463,31 @@ export default function AnalyzePage() {
         </div>
 
         {/* Detailed Side-by-Side Component Delta Analysis Table */}
-        <div className="p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl flex flex-col gap-4">
+        <div className="p-4 sm:p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl flex flex-col gap-3.5 sm:gap-4">
           <div className="flex flex-col gap-1 border-b border-foreground/10 pb-3">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-[#f26a21]">
+            <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#f26a21]">
               Quantitative Anomaly Comparison
             </h3>
-            <h4 className="text-xl font-extrabold uppercase text-foreground">
+            <h4 className="text-base sm:text-xl font-extrabold uppercase text-foreground">
               Climate Hazard Components Breakdown &amp; Delta (&Delta;)
             </h4>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <table className="w-full text-left text-xs border-collapse min-w-[550px]">
               <thead>
-                <tr className="border-b border-foreground/10 text-foreground/60 uppercase text-[10px] tracking-wider">
-                  <th className="py-2.5 px-3">Climate Component</th>
-                  <th className="py-2.5 px-3 text-center">
-                    Panel A ({monthA} {yearA})
+                <tr className="border-b border-foreground/10 text-foreground/60 uppercase text-[9px] sm:text-[10px] tracking-wider">
+                  <th className="py-2 px-2.5 sm:px-3">Climate Component</th>
+                  <th className="py-2 px-2.5 sm:px-3 text-center">
+                    Panel A ({monthA.slice(0, 3)} {yearA})
                   </th>
-                  <th className="py-2.5 px-3 text-center">
-                    Panel B ({monthB} {yearB})
+                  <th className="py-2 px-2.5 sm:px-3 text-center">
+                    Panel B ({monthB.slice(0, 3)} {yearB})
                   </th>
-                  <th className="py-2.5 px-3 text-center">
-                    Difference (&Delta; = B - A)
+                  <th className="py-2 px-2.5 sm:px-3 text-center">
+                    Delta (&Delta;)
                   </th>
-                  <th className="py-2.5 px-3">Comparative Hazard Direction</th>
+                  <th className="py-2 px-2.5 sm:px-3">Hazard Direction</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-foreground/5">
@@ -505,19 +495,19 @@ export default function AnalyzePage() {
                   if ((comp as any).isUnderUpgrade) {
                     return (
                       <tr key={comp.key} className="bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
-                        <td className="py-3 px-3">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-foreground/70">{comp.name}</span>
-                            <span className="inline-flex items-center gap-1 text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-amber-500/15 text-amber-700 border border-amber-500/30">
+                        <td className="py-2.5 px-2.5 sm:px-3">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-foreground/70 text-xs">{comp.name}</span>
+                            <span className="inline-flex items-center gap-1 text-[7.5px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-amber-500/15 text-amber-700 border border-amber-500/30">
                               <span className="w-1 h-1 rounded-full bg-amber-500 animate-pulse"></span>
-                              Upgrade in Progress
+                              Upgrade
                             </span>
                           </div>
-                          <div className="text-[10px] text-foreground/50">{comp.desc}</div>
+                          <div className="text-[9.5px] text-foreground/50">{comp.desc}</div>
                         </td>
-                        <td colSpan={4} className="py-3 px-3 text-center">
-                          <span className="text-[11px] font-medium text-amber-800/80 italic inline-flex items-center justify-center gap-1.5">
-                            <span>🛠️</span> Drought &amp; Dry Spell anomaly data model is temporarily hidden for algorithm &amp; grid upgrade
+                        <td colSpan={4} className="py-2.5 px-2.5 sm:px-3 text-center">
+                          <span className="text-[10px] sm:text-[11px] font-medium text-amber-800/80 italic inline-flex items-center justify-center gap-1">
+                            <span>🛠️</span> Drought &amp; Dry Spell data model is undergoing upgrade
                           </span>
                         </td>
                       </tr>
@@ -531,12 +521,12 @@ export default function AnalyzePage() {
 
                   return (
                     <tr key={comp.key} className="hover:bg-foreground/2 transition-colors">
-                      <td className="py-3 px-3">
-                        <div className="font-bold text-foreground">{comp.name}</div>
-                        <div className="text-[10px] text-foreground/50">{comp.desc}</div>
+                      <td className="py-2.5 px-2.5 sm:px-3">
+                        <div className="font-bold text-foreground text-xs">{comp.name}</div>
+                        <div className="text-[9.5px] text-foreground/50">{comp.desc}</div>
                       </td>
 
-                      <td className="py-3 px-3 text-center font-mono font-bold text-foreground">
+                      <td className="py-2.5 px-2.5 sm:px-3 text-center font-mono font-bold text-xs text-foreground">
                         {valA !== null && valA !== undefined ? (
                           <span className={valA < 0 ? "text-teal-700" : "text-rose-700"}>
                             {valA >= 0 ? "+" : ""}{valA.toFixed(2)}
@@ -544,7 +534,7 @@ export default function AnalyzePage() {
                         ) : "—"}
                       </td>
 
-                      <td className="py-3 px-3 text-center font-mono font-bold text-foreground">
+                      <td className="py-2.5 px-2.5 sm:px-3 text-center font-mono font-bold text-xs text-foreground">
                         {valB !== null && valB !== undefined ? (
                           <span className={valB < 0 ? "text-teal-700" : "text-rose-700"}>
                             {valB >= 0 ? "+" : ""}{valB.toFixed(2)}
@@ -552,9 +542,9 @@ export default function AnalyzePage() {
                         ) : "—"}
                       </td>
 
-                      <td className="py-3 px-3 text-center">
+                      <td className="py-2.5 px-2.5 sm:px-3 text-center">
                         {delta !== null ? (
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-mono font-bold text-[11px] ${
+                          <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full font-mono font-bold text-[10px] sm:text-[11px] ${
                             delta > 0.1
                               ? "bg-rose-500/15 text-rose-700"
                               : delta < -0.1
@@ -566,19 +556,19 @@ export default function AnalyzePage() {
                         ) : "—"}
                       </td>
 
-                      <td className="py-3 px-3">
+                      <td className="py-2.5 px-2.5 sm:px-3">
                         {delta !== null ? (
                           delta > 0.1 ? (
-                            <span className="text-[11px] font-semibold text-rose-700">
+                            <span className="text-[10px] sm:text-[11px] font-semibold text-rose-700">
                               Higher hazard in Panel B (+{delta.toFixed(2)} &sigma;)
                             </span>
                           ) : delta < -0.1 ? (
-                            <span className="text-[11px] font-semibold text-teal-700">
+                            <span className="text-[10px] sm:text-[11px] font-semibold text-teal-700">
                               Lower hazard in Panel B ({delta.toFixed(2)} &sigma;)
                             </span>
                           ) : (
-                            <span className="text-[11px] font-medium text-foreground/60">
-                              Comparable baseline intensity (&plusmn;0.1 &sigma;)
+                            <span className="text-[10px] sm:text-[11px] font-medium text-foreground/60">
+                              Comparable baseline (&plusmn;0.1 &sigma;)
                             </span>
                           )
                         ) : (

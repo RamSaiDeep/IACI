@@ -64,29 +64,29 @@ export default function AboutPage() {
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 sm:px-8 py-10 flex flex-col gap-12">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col gap-8 sm:gap-12">
         {/* Hero Section */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b2b5f] via-[#103b7b] to-[#071d42] text-white p-8 sm:p-12 shadow-2xl border border-white/10">
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b2b5f] via-[#103b7b] to-[#071d42] text-white p-6 sm:p-10 md:p-12 shadow-2xl border border-white/10">
           <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-[#f26a21]/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 -mb-12 -ml-12 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 max-w-3xl flex flex-col gap-4">
+          <div className="relative z-10 max-w-3xl flex flex-col gap-3.5 sm:gap-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
               <span className="w-2 h-2 rounded-full bg-[#f26a21] animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-widest text-[#f26a21]">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#f26a21]">
                 Actuarial Climate Intelligence
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight uppercase leading-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase leading-tight">
               About the Indian Actuarial Climate Index (IACI)
             </h1>
 
-            <p className="text-sm sm:text-base text-white/80 leading-relaxed font-light">
+            <p className="text-xs sm:text-sm md:text-base text-white/80 leading-relaxed font-light">
               The <strong className="text-white font-semibold">Indian Actuarial Climate Index (IACI)</strong> is a standardized, reproducible framework designed to quantify climate extremes for actuarial applications, including <span className="text-white font-medium">risk management</span>, <span className="text-white font-medium">insurance pricing</span>, and <span className="text-white font-medium">infrastructure planning</span> across India.
             </p>
 
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-wrap gap-3 pt-1 sm:pt-2">
               <Link
                 href="/explore"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f26a21] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-lg hover:shadow-[#f26a21]/30 hover:-translate-y-0.5"
@@ -271,6 +271,23 @@ export default function AboutPage() {
               </span>
             </div>
           </div>
+        </section>
+
+        {/* FAQ Discovery Banner */}
+        <section className="p-8 rounded-3xl bg-gradient-to-r from-foreground/5 to-[#f26a21]/5 border border-foreground/10 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md">
+          <div className="flex flex-col gap-1.5 text-center sm:text-left">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#f26a21]">Got Questions?</span>
+            <h3 className="text-xl font-black uppercase text-foreground tracking-tight">Frequently Asked Questions</h3>
+            <p className="text-xs text-foreground/70 max-w-xl">
+              Find detailed explanations of the statistical framework, 90th/10th percentile calculations, ERA5/ORAS5 datasets, and actuarial applications.
+            </p>
+          </div>
+          <Link
+            href="/faq"
+            className="px-6 py-3 rounded-xl bg-[#f26a21] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-lg hover:shadow-[#f26a21]/20 whitespace-nowrap"
+          >
+            View Full FAQ →
+          </Link>
         </section>
       </main>
     </div>
