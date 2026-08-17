@@ -34,10 +34,11 @@ export default function AboutPage() {
       id: "D",
       title: "Drought & Dry Spell",
       symbol: "D / DS",
-      badge: "Dry Spell",
-      desc: "Maximum number of consecutive dry days within each observation window representing moisture deficit and drought stress.",
-      color: "from-amber-500/10 to-yellow-500/10 border-amber-500/30 text-amber-600",
-      accent: "#d97706"
+      badge: "Upgrade in Progress",
+      desc: "Maximum number of consecutive dry days within each observation window representing moisture deficit and drought stress. (Pipeline recalibration currently in progress).",
+      color: "from-amber-500/10 to-orange-500/10 border-amber-500/30 text-amber-700",
+      accent: "#d97706",
+      isUnderUpgrade: true
     },
     {
       id: "W",

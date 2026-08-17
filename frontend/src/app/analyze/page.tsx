@@ -59,7 +59,7 @@ export default function AnalyzePage() {
 
   const variables = [
     { id: "ACI", name: "IACI (Index)", desc: "Indian Actuarial Climate Index" },
-    { id: "DS", name: "DS (Dry Spell)", desc: "Consecutive Dry Days Anomaly" },
+    { id: "DS", name: "DS (Dry Spell) [Upgrade in Progress]", desc: "Consecutive Dry Days Anomaly", disabled: true },
     { id: "PS", name: "PS (Precipitation)", desc: "Extreme Precipitation Anomaly" },
     { id: "T10S", name: "T10S (Cold Extreme)", desc: "Extreme Cold Temperature Anomaly" },
     { id: "T90S", name: "T90S (Hot Extreme)", desc: "Extreme Hot Temperature Anomaly" },
@@ -199,7 +199,7 @@ export default function AnalyzePage() {
     { key: "T90S", name: "Warm Extreme (T90S)", desc: "Hot Days & Nights Anomaly" },
     { key: "T10S", name: "Cold Extreme (T10S)", desc: "Cold Days & Nights Anomaly" },
     { key: "PS", name: "Precipitation (PS)", desc: "Consecutive Heavy Rainfall Anomaly" },
-    { key: "DS", name: "Dry Spell (DS)", desc: "Consecutive Dry Days Anomaly" },
+    { key: "DS", name: "Dry Spell (DS)", desc: "Consecutive Dry Days Anomaly", isUnderUpgrade: true },
     { key: "W", name: "Wind Anomaly (W)", desc: "Extreme Wind Speed Anomaly" },
   ];
 
@@ -223,7 +223,7 @@ export default function AnalyzePage() {
             </h2>
           </div>
 
-          {/* Quick Comparison Presets & Options */}
+          {/* Quick Comparison Options */}
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setSyncVariable(!syncVariable)}
@@ -237,29 +237,6 @@ export default function AnalyzePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
               Sync Variable: {syncVariable ? "ON" : "OFF"}
-            </button>
-
-            <button
-              onClick={() => {
-                setYearA("2024");
-                setMonthA("July");
-                setYearB("2004");
-                setMonthB("July");
-              }}
-              className="px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-foreground/80 transition-colors"
-            >
-              2024 vs 2004 (20-Year Trend)
-            </button>
-
-            <button
-              onClick={() => {
-                setMonthA("January");
-                setMonthB("July");
-                setYearB(yearA);
-              }}
-              className="px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-foreground/80 transition-colors"
-            >
-              Winter vs Summer
             </button>
           </div>
         </div>
@@ -329,7 +306,9 @@ export default function AnalyzePage() {
                     className="w-full bg-white border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
                   >
                     {variables.map((v) => (
-                      <option key={v.id} value={v.id}>{v.name}</option>
+                      <option key={v.id} value={v.id} disabled={(v as any).disabled}>
+                        {v.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -430,7 +409,9 @@ export default function AnalyzePage() {
                     className="w-full bg-white border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
                   >
                     {variables.map((v) => (
-                      <option key={v.id} value={v.id}>{v.name}</option>
+                      <option key={v.id} value={v.id} disabled={(v as any).disabled}>
+                        {v.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -521,6 +502,28 @@ export default function AnalyzePage() {
               </thead>
               <tbody className="divide-y divide-foreground/5">
                 {comparisonRows.map((comp) => {
+                  if ((comp as any).isUnderUpgrade) {
+                    return (
+                      <tr key={comp.key} className="bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
+                        <td className="py-3 px-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-foreground/70">{comp.name}</span>
+                            <span className="inline-flex items-center gap-1 text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-amber-500/15 text-amber-700 border border-amber-500/30">
+                              <span className="w-1 h-1 rounded-full bg-amber-500 animate-pulse"></span>
+                              Upgrade in Progress
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-foreground/50">{comp.desc}</div>
+                        </td>
+                        <td colSpan={4} className="py-3 px-3 text-center">
+                          <span className="text-[11px] font-medium text-amber-800/80 italic inline-flex items-center justify-center gap-1.5">
+                            <span>🛠️</span> Drought &amp; Dry Spell anomaly data model is temporarily hidden for algorithm &amp; grid upgrade
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  }
+
                   const valA = dataA ? (dataA as any)[comp.key] : null;
                   const valB = dataB ? (dataB as any)[comp.key] : null;
                   const hasBoth = valA !== null && valB !== null && valA !== undefined && valB !== undefined;

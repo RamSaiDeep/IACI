@@ -45,7 +45,7 @@ export default function ExplorePage() {
 
   const variables = [
     { id: "ACI", name: "IACI (Index)", desc: "Indian Actuarial Climate Index" },
-    { id: "DS", name: "DS (Dry Spell)", desc: "Consecutive Dry Days Anomaly" },
+    { id: "DS", name: "DS (Dry Spell)", desc: "Consecutive Dry Days Anomaly", disabled: true },
     { id: "PS", name: "PS (Precipitation)", desc: "Extreme Precipitation Anomaly" },
     { id: "T10S", name: "T10S (Cold Extreme)", desc: "Extreme Cold Temperature Anomaly" },
     { id: "T90S", name: "T90S (Hot Extreme)", desc: "Extreme Hot Temperature Anomaly" },
@@ -274,24 +274,37 @@ export default function ExplorePage() {
                 Shade Map By
               </label>
               <div className="flex flex-col gap-1.5">
-                {variables.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => setSelectedVariable(v.id)}
-                    className={`w-full text-left px-3 py-2 rounded-md border text-xs font-semibold transition-all duration-200 ${
-                      selectedVariable === v.id
-                        ? "bg-[#f26a21] border-[#f26a21] text-[#fcfcfa]"
-                        : "bg-[#fcfcfa] border-foreground/10 hover:bg-foreground/5 text-foreground"
-                    }`}
-                  >
-                    <div>{v.name}</div>
-                    <div className={`text-[9px] font-normal mt-0.5 ${
-                      selectedVariable === v.id ? "text-white/80" : "text-foreground/60"
-                    }`}>
-                      {v.desc}
-                    </div>
-                  </button>
-                ))}
+                {variables.map((v) => {
+                  const isDisabled = (v as any).disabled;
+                  return (
+                    <button
+                      key={v.id}
+                      disabled={isDisabled}
+                      onClick={() => !isDisabled && setSelectedVariable(v.id)}
+                      className={`w-full text-left px-3 py-2 rounded-md border text-xs font-semibold transition-all duration-200 ${
+                        isDisabled
+                          ? "opacity-60 cursor-not-allowed bg-foreground/5 border-dashed border-amber-500/30 text-foreground/50"
+                          : selectedVariable === v.id
+                            ? "bg-[#f26a21] border-[#f26a21] text-[#fcfcfa]"
+                            : "bg-[#fcfcfa] border-foreground/10 hover:bg-foreground/5 text-foreground"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>{v.name}</div>
+                        {isDisabled && (
+                          <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-800 uppercase tracking-wider">
+                            Upgrade
+                          </span>
+                        )}
+                      </div>
+                      <div className={`text-[9px] font-normal mt-0.5 ${
+                        isDisabled ? "text-amber-800/70" : selectedVariable === v.id ? "text-white/80" : "text-foreground/60"
+                      }`}>
+                        {isDisabled ? "Temporarily hidden — upgrade in progress" : v.desc}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -406,12 +419,34 @@ export default function ExplorePage() {
                 {/* The 5 component rows */}
                 <div className="flex flex-col gap-4">
                   {[
-                    { id: "DS", name: "Dry Spell (DS)", val: activeData.DS, desc: "Consecutive Dry Days anomaly" },
+                    { id: "DS", name: "Dry Spell (DS)", val: activeData.DS, desc: "Consecutive Dry Days anomaly", isUnderUpgrade: true },
                     { id: "PS", name: "Precipitation (PS)", val: activeData.PS, desc: "Extreme Precipitation Spell anomaly" },
                     { id: "T10S", name: "Cold Extreme (T10S)", val: activeData.T10S, desc: "Extreme Cold Temperature anomaly" },
                     { id: "T90S", name: "Hot Extreme (T90S)", val: activeData.T90S, desc: "Extreme Hot Temperature anomaly" },
                     { id: "W", name: "Wind Anomaly (W)", val: activeData.W, desc: "Extreme Wind Speed anomaly" }
                   ].map((comp) => {
+                    if (comp.isUnderUpgrade) {
+                      return (
+                        <div key={comp.id} className="flex flex-col gap-1.5 border-b border-foreground/5 pb-3">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-bold text-foreground/70 tracking-wide uppercase">
+                              {comp.name}
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-amber-500/10 text-amber-700 border border-amber-500/30">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                              Upgrade in Progress
+                            </span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-foreground/3 border border-dashed border-amber-500/30 flex items-center gap-2">
+                            <span className="text-sm">⚙️</span>
+                            <div className="text-[10px] text-foreground/60 leading-tight">
+                              Drought &amp; Dry Spell (DS) anomaly metric is undergoing pipeline &amp; recalibration upgrade. Values are temporarily hidden.
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+
                     const status = getAnomalyStatus(comp.val);
                     const maxScale = 4.0; // scale from -4.0 to +4.0
                     const clampedVal = Math.max(-maxScale, Math.min(maxScale, comp.val));
