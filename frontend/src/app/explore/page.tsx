@@ -44,12 +44,12 @@ export default function ExplorePage() {
   };
 
   const variables = [
-    { id: "ACI", name: "IACI (Index)", desc: "Indian Actuarial Climate Index" },
-    { id: "DS", name: "DS (Dry Spell)", desc: "Consecutive Dry Days Anomaly", disabled: true },
-    { id: "PS", name: "PS (Precipitation)", desc: "Extreme Precipitation Anomaly" },
-    { id: "T10S", name: "T10S (Cold Extreme)", desc: "Extreme Cold Temperature Anomaly" },
-    { id: "T90S", name: "T90S (Hot Extreme)", desc: "Extreme Hot Temperature Anomaly" },
-    { id: "W", name: "W (Wind Anomaly)", desc: "Extreme Wind Speed Anomaly" },
+    { id: "ACI", name: "IACI (Index)", shortName: "IACI", desc: "Indian Actuarial Climate Index" },
+    { id: "DS", name: "DS (Dry Spell)", shortName: "DS", desc: "Consecutive Dry Days Anomaly", disabled: true },
+    { id: "PS", name: "PS (Precipitation)", shortName: "PS", desc: "Extreme Precipitation Anomaly" },
+    { id: "T10S", name: "T10S (Cold Extreme)", shortName: "T10S", desc: "Extreme Cold Temperature Anomaly" },
+    { id: "T90S", name: "T90S (Hot Extreme)", shortName: "T90S", desc: "Extreme Hot Temperature Anomaly" },
+    { id: "W", name: "W (Wind Anomaly)", shortName: "W", desc: "Extreme Wind Speed Anomaly" },
   ];
 
   // Helper to normalize names
@@ -166,114 +166,128 @@ export default function ExplorePage() {
       {/* Navigation Header */}
       <Header />
       
-      <div className="flex-1 max-w-7xl mx-auto w-full px-6 sm:px-8 py-8 flex flex-col lg:flex-row gap-8">
+      <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-8 flex flex-col lg:flex-row gap-6 lg:gap-8">
         
-        {/* PART 1: Left Sidebar - Controls, Filters, Map Shading */}
-        <aside className="w-full lg:w-64 flex flex-col gap-6 py-2 flex-shrink-0">
-          {/* Breadcrumbs */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="text-[10px] font-bold tracking-widest uppercase text-foreground/50 hover:text-foreground transition-colors"
-            >
-              Home
-            </Link>
-            <span className="text-[10px] text-foreground/20">/</span>
-            <button
-              onClick={resetMap}
-              className="text-[10px] font-bold tracking-widest uppercase text-[#f26a21] hover:text-[#d65715] transition-colors"
-            >
-              Explore
-            </button>
-          </div>
-
-          {/* Dynamic Map Heading context */}
-          <div className="flex flex-col items-start gap-2">
-            <div className="inline-flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-[#f26a21]">
-              <span className="w-2 h-2 bg-[#f26a21] rounded-full animate-pulse"></span>
-              {selectedDistrict 
-                ? "District Focus" 
-                : selectedState 
-                  ? "District Boundaries" 
-                  : "State Boundaries"
-              }
+        {/* PART 1: Left Sidebar / Mobile Filter & Context Bar */}
+        <aside className="w-full lg:w-64 xl:w-72 flex flex-col gap-4 sm:gap-5 flex-shrink-0">
+          
+          {/* Breadcrumbs & Dynamic Map Heading */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link
+                href="/"
+                className="text-[10px] font-bold tracking-widest uppercase text-foreground/50 hover:text-foreground transition-colors"
+              >
+                Home
+              </Link>
+              <span className="text-[10px] text-foreground/20">/</span>
+              <button
+                onClick={resetMap}
+                className="text-[10px] font-bold tracking-widest uppercase text-[#f26a21] hover:text-[#d65715] transition-colors"
+              >
+                Explore
+              </button>
+              {selectedState && (
+                <>
+                  <span className="text-[10px] text-foreground/20">/</span>
+                  <span className="text-[10px] font-semibold uppercase text-foreground/70 truncate max-w-[120px]">
+                    {selectedState}
+                  </span>
+                </>
+              )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase text-foreground leading-none">
-              {selectedDistrict 
-                ? `${selectedDistrict}` 
-                : selectedState 
-                  ? `${selectedState}` 
-                  : "India Map"
-              }
-            </h1>
-            <div className="w-12 h-[2.5px] bg-[#f26a21] mt-1" />
+
+            <div className="flex flex-col items-start gap-1 sm:gap-1.5">
+              <div className="inline-flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-[#f26a21]">
+                <span className="w-2 h-2 bg-[#f26a21] rounded-full animate-pulse"></span>
+                {selectedDistrict 
+                  ? "District Focus" 
+                  : selectedState 
+                    ? "District Boundaries" 
+                    : "State Boundaries"
+                }
+              </div>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight uppercase text-foreground leading-tight">
+                {selectedDistrict 
+                  ? `${selectedDistrict}` 
+                  : selectedState 
+                    ? `${selectedState}` 
+                    : "India Map"
+                }
+              </h1>
+              <div className="w-12 h-[2.5px] bg-[#f26a21] mt-0.5" />
+            </div>
           </div>
 
           {/* Dynamic Back button based on depth */}
           {selectedDistrict ? (
             <button
               onClick={() => setSelectedDistrict(null)}
-              className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-bold tracking-widest uppercase border border-[#f26a21] hover:bg-[#f26a21]/5 text-[#f26a21] rounded-md transition-all duration-300"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs font-bold tracking-widest uppercase border border-[#f26a21] hover:bg-[#f26a21]/5 text-[#f26a21] rounded-md transition-all duration-300 shadow-sm"
             >
               ← Back to {selectedState}
             </button>
           ) : selectedState ? (
             <button
               onClick={resetMap}
-              className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-bold tracking-widest uppercase border border-[#f26a21] hover:bg-[#f26a21]/5 text-[#f26a21] rounded-md transition-all duration-300"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs font-bold tracking-widest uppercase border border-[#f26a21] hover:bg-[#f26a21]/5 text-[#f26a21] rounded-md transition-all duration-300 shadow-sm"
             >
               ← Back to India Map
             </button>
           ) : null}
 
           {/* Filters Card */}
-          <div className="border border-foreground/10 rounded-xl bg-foreground/2 p-5 flex flex-col gap-5">
+          <div className="border border-foreground/10 rounded-xl bg-foreground/2 p-4 sm:p-5 flex flex-col gap-4 sm:gap-5 shadow-sm">
             <h3 className="text-xs font-bold tracking-wider uppercase text-foreground/60 border-b border-foreground/10 pb-2">
               Filter Parameters
             </h3>
             
-            {/* Year Dropdown */}
-            <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-bold tracking-wider uppercase text-foreground/70">
-                Select Year
-              </label>
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#fcfcfa] text-foreground border border-foreground/10 hover:border-foreground/30 focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] rounded-md outline-none transition-colors duration-200 text-xs font-semibold tracking-wider uppercase"
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Year & Month Dropdowns (Side by side on mobile/tablet, stacked on desktop sidebar) */}
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
+              {/* Year Dropdown */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold tracking-wider uppercase text-foreground/70">
+                  Select Year
+                </label>
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#fcfcfa] text-foreground border border-foreground/10 hover:border-foreground/30 focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] rounded-md outline-none transition-colors duration-200 text-xs font-semibold tracking-wider uppercase"
+                >
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Month Dropdown */}
-            <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-bold tracking-wider uppercase text-foreground/70">
-                Select Month
-              </label>
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#fcfcfa] text-foreground border border-foreground/10 hover:border-foreground/30 focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] rounded-md outline-none transition-colors duration-200 text-xs font-semibold tracking-wider uppercase"
-              >
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
+              {/* Month Dropdown */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold tracking-wider uppercase text-foreground/70">
+                  Select Month
+                </label>
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#fcfcfa] text-foreground border border-foreground/10 hover:border-foreground/30 focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] rounded-md outline-none transition-colors duration-200 text-xs font-semibold tracking-wider uppercase"
+                >
+                  {months.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Shade Map Selector */}
-            <div className="flex flex-col gap-2 border-t border-foreground/10 pt-4 mt-2">
+            <div className="flex flex-col gap-2 border-t border-foreground/10 pt-3">
               <label className="text-[10px] font-bold tracking-wider uppercase text-foreground/70">
                 Shade Map By
               </label>
-              <div className="flex flex-col gap-1.5">
+              {/* Responsive Grid for mobile / tablet, vertical list on desktop sidebar */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
                 {variables.map((v) => {
                   const isDisabled = (v as any).disabled;
                   return (
@@ -281,26 +295,26 @@ export default function ExplorePage() {
                       key={v.id}
                       disabled={isDisabled}
                       onClick={() => !isDisabled && setSelectedVariable(v.id)}
-                      className={`w-full text-left px-3 py-2 rounded-md border text-xs font-semibold transition-all duration-200 ${
+                      className={`text-left p-2.5 rounded-md border text-xs font-semibold transition-all duration-200 flex flex-col justify-between ${
                         isDisabled
                           ? "opacity-60 cursor-not-allowed bg-foreground/5 border-dashed border-amber-500/30 text-foreground/50"
                           : selectedVariable === v.id
-                            ? "bg-[#f26a21] border-[#f26a21] text-[#fcfcfa]"
+                            ? "bg-[#f26a21] border-[#f26a21] text-[#fcfcfa] shadow-sm"
                             : "bg-[#fcfcfa] border-foreground/10 hover:bg-foreground/5 text-foreground"
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div>{v.name}</div>
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="truncate">{v.name}</span>
                         {isDisabled && (
-                          <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-800 uppercase tracking-wider">
+                          <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-800 uppercase tracking-wider flex-shrink-0">
                             Upgrade
                           </span>
                         )}
                       </div>
-                      <div className={`text-[9px] font-normal mt-0.5 ${
+                      <div className={`text-[9px] font-normal mt-0.5 line-clamp-2 ${
                         isDisabled ? "text-amber-800/70" : selectedVariable === v.id ? "text-white/80" : "text-foreground/60"
                       }`}>
-                        {isDisabled ? "Temporarily hidden — upgrade in progress" : v.desc}
+                        {isDisabled ? "Pipeline upgrade in progress" : v.desc}
                       </div>
                     </button>
                   );
@@ -311,7 +325,7 @@ export default function ExplorePage() {
         </aside>
 
         {/* PART 2: Center Pane - Map component container and Legend */}
-        <main className="flex-grow bg-[#fcfcfa] rounded-2xl shadow-xl border border-foreground/5 p-6 flex flex-col relative overflow-hidden min-w-[300px]">
+        <main className="flex-1 min-w-0 bg-[#fcfcfa] rounded-2xl shadow-xl border border-foreground/5 p-3.5 sm:p-5 lg:p-6 flex flex-col relative overflow-hidden">
           <IndiaMap 
             selectedState={selectedState} 
             setSelectedState={setSelectedState} 
@@ -319,18 +333,19 @@ export default function ExplorePage() {
             setSelectedDistrict={setSelectedDistrict}
             mapValues={mapValues}
             selectedVariable={selectedVariable}
+            heightClassName="h-[45vh] min-h-[300px] max-h-[560px] sm:h-[480px] md:h-[540px] lg:h-[650px] xl:h-[680px] lg:max-h-none"
           />
 
           {/* Gradient Legend */}
-          <div className="mt-5 flex flex-col items-center gap-2 border-t border-foreground/10 pt-4">
-            <div className="text-[10px] font-bold tracking-wider uppercase text-foreground/60">
+          <div className="mt-4 sm:mt-5 flex flex-col items-center gap-2 border-t border-foreground/10 pt-3.5 sm:pt-4">
+            <div className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase text-foreground/60 text-center">
               {variables.find((v) => v.id === selectedVariable)?.name} — z-score scale
             </div>
 
             {/* Gradient bar */}
-            <div className="w-full max-w-lg flex flex-col gap-1">
+            <div className="w-full max-w-lg flex flex-col gap-1 px-1 sm:px-0">
               <div
-                className="w-full h-4 rounded-full shadow-inner"
+                className="w-full h-3.5 sm:h-4 rounded-full shadow-inner"
                 style={{
                   background: "linear-gradient(to right, rgba(15,118,110,0.95), rgba(20,184,166,0.7), rgba(94,234,212,0.45), rgba(254,240,138,0.5) 50%, rgba(251,146,60,0.45), rgba(225,29,72,0.7), rgba(136,19,55,0.95))"
                 }}
@@ -340,15 +355,15 @@ export default function ExplorePage() {
               <div className="relative w-full h-4 mt-0.5">
                 <div className="absolute left-0 flex flex-col items-start">
                   <div className="w-px h-1 bg-foreground/30 ml-0.5" />
-                  <span className="text-[10px] font-semibold text-foreground/70">-4</span>
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-foreground/70">-4</span>
                 </div>
                 <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
                   <div className="w-px h-1.5 bg-foreground/50" />
-                  <span className="text-[10px] font-bold text-foreground/90">0</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold text-foreground/90">0</span>
                 </div>
                 <div className="absolute right-0 flex flex-col items-end">
                   <div className="w-px h-1 bg-foreground/30 mr-0.5" />
-                  <span className="text-[10px] font-semibold text-foreground/70">+4</span>
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-foreground/70">+4</span>
                 </div>
               </div>
             </div>
@@ -356,13 +371,13 @@ export default function ExplorePage() {
         </main>
 
         {/* PART 3: Right Pane - Climate Insights / Component values */}
-        <section className="w-full lg:w-80 flex flex-col gap-6 py-2 flex-shrink-0">
-          <div className="border border-foreground/10 rounded-2xl bg-[#fcfcfa] shadow-xl p-6 flex flex-col h-full gap-5">
+        <section className="w-full lg:w-80 xl:w-84 flex flex-col gap-4 sm:gap-6 flex-shrink-0">
+          <div className="border border-foreground/10 rounded-2xl bg-[#fcfcfa] shadow-xl p-4 sm:p-6 flex flex-col h-full gap-4 sm:gap-5">
             <div>
-              <h2 className="text-xs font-bold tracking-widest uppercase text-[#f26a21]">
+              <h2 className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-[#f26a21]">
                 Climate Insights
               </h2>
-              <h3 className="text-lg font-extrabold tracking-tight uppercase text-foreground leading-tight mt-1">
+              <h3 className="text-base sm:text-lg font-extrabold tracking-tight uppercase text-foreground leading-tight mt-0.5 sm:mt-1 truncate">
                 {selectedDistrict 
                   ? `${selectedDistrict}` 
                   : selectedState 
@@ -376,18 +391,18 @@ export default function ExplorePage() {
             </div>
 
             {loadingData ? (
-              <div className="flex-1 flex flex-col items-center justify-center gap-3 py-12">
+              <div className="flex-1 flex flex-col items-center justify-center gap-3 py-8 sm:py-12">
                 <div className="w-8 h-8 border-4 border-foreground/10 border-t-[#f26a21] rounded-full animate-spin"></div>
                 <span className="text-xs font-semibold tracking-wider text-foreground/60 uppercase">Loading Data...</span>
               </div>
             ) : !activeData ? (
-              <div className="flex-1 flex items-center justify-center py-12 border border-dashed border-foreground/10 rounded-xl bg-foreground/2">
+              <div className="flex-1 flex items-center justify-center py-8 sm:py-12 border border-dashed border-foreground/10 rounded-xl bg-foreground/2">
                 <span className="text-xs font-semibold tracking-wider text-foreground/40 uppercase">No Data Available</span>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col gap-5">
+              <div className="flex-1 flex flex-col gap-4 sm:gap-5">
                 {/* Main ACI Index Value */}
-                <div className="border border-[#f26a21]/20 rounded-xl bg-[#f26a21]/5 p-4 flex flex-col gap-2.5">
+                <div className="border border-[#f26a21]/20 rounded-xl bg-[#f26a21]/5 p-3.5 sm:p-4 flex flex-col gap-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] font-bold tracking-wider uppercase text-foreground/70">
                       IACI Index (ACI)
@@ -397,7 +412,7 @@ export default function ExplorePage() {
                     </span>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#f26a21] tracking-tight">
+                    <span className="text-3xl sm:text-4xl font-black text-[#f26a21] tracking-tight">
                       {activeData.ACI.toFixed(3)}
                     </span>
                     <span className="text-xs text-foreground/60 font-semibold uppercase tracking-wider">
@@ -407,7 +422,7 @@ export default function ExplorePage() {
                 </div>
 
                 {/* 5 Components Header */}
-                <div className="flex justify-between items-center border-b border-foreground/10 pb-1 mt-1">
+                <div className="flex justify-between items-center border-b border-foreground/10 pb-1 mt-0.5">
                   <h4 className="text-[10px] font-bold tracking-wider uppercase text-foreground/70">
                     Climate Components Anomaly
                   </h4>
@@ -417,7 +432,7 @@ export default function ExplorePage() {
                 </div>
 
                 {/* The 5 component rows */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3.5 sm:gap-4">
                   {[
                     { id: "DS", name: "Dry Spell (DS)", val: activeData.DS, desc: "Consecutive Dry Days anomaly", isUnderUpgrade: true },
                     { id: "PS", name: "Precipitation (PS)", val: activeData.PS, desc: "Extreme Precipitation Spell anomaly" },
@@ -427,19 +442,19 @@ export default function ExplorePage() {
                   ].map((comp) => {
                     if (comp.isUnderUpgrade) {
                       return (
-                        <div key={comp.id} className="flex flex-col gap-1.5 border-b border-foreground/5 pb-3">
+                        <div key={comp.id} className="flex flex-col gap-1.5 border-b border-foreground/5 pb-2.5 sm:pb-3">
                           <div className="flex justify-between items-center">
                             <span className="text-xs font-bold text-foreground/70 tracking-wide uppercase">
                               {comp.name}
                             </span>
-                            <span className="inline-flex items-center gap-1.5 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-amber-500/10 text-amber-700 border border-amber-500/30">
+                            <span className="inline-flex items-center gap-1.5 text-[8.5px] sm:text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-amber-500/10 text-amber-700 border border-amber-500/30">
                               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                               Upgrade in Progress
                             </span>
                           </div>
-                          <div className="p-2.5 rounded-lg bg-foreground/3 border border-dashed border-amber-500/30 flex items-center gap-2">
+                          <div className="p-2 sm:p-2.5 rounded-lg bg-foreground/3 border border-dashed border-amber-500/30 flex items-center gap-2">
                             <span className="text-sm">⚙️</span>
-                            <div className="text-[10px] text-foreground/60 leading-tight">
+                            <div className="text-[9.5px] sm:text-[10px] text-foreground/60 leading-tight">
                               Drought &amp; Dry Spell (DS) anomaly metric is undergoing pipeline &amp; recalibration upgrade. Values are temporarily hidden.
                             </div>
                           </div>
@@ -454,7 +469,7 @@ export default function ExplorePage() {
                     const isNegative = comp.val < 0;
                     
                     return (
-                      <div key={comp.id} className="flex flex-col gap-1 border-b border-foreground/5 pb-2.5">
+                      <div key={comp.id} className="flex flex-col gap-1 border-b border-foreground/5 pb-2 sm:pb-2.5">
                         <div className="flex justify-between items-baseline">
                           <div>
                             <span className="text-xs font-bold text-foreground/80 tracking-wide uppercase">

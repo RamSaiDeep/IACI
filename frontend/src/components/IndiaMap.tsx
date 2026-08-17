@@ -205,9 +205,14 @@ export default function IndiaMap({
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!mapContainerRef.current) return;
     const rect = mapContainerRef.current.getBoundingClientRect();
+    const rawX = e.clientX - rect.left + 12;
+    const rawY = e.clientY - rect.top + 12;
+    // Keep tooltip inside container horizontally & vertically
+    const clampedX = Math.min(Math.max(8, rawX), Math.max(10, rect.width - 190));
+    const clampedY = Math.max(20, rawY);
     setTooltipPos({
-      x: e.clientX - rect.left + 15,
-      y: e.clientY - rect.top + 15
+      x: clampedX,
+      y: clampedY
     });
   };
 
@@ -217,12 +222,12 @@ export default function IndiaMap({
       {/* Map Rendering Container */}
       <div 
         ref={mapContainerRef} 
-        className={`w-full ${heightClassName || "h-[680px]"} border border-foreground/10 rounded-xl bg-foreground/2 shadow-inner overflow-hidden flex items-center justify-center relative`}
+        className={`w-full ${heightClassName || "h-[45vh] min-h-[320px] max-h-[580px] sm:h-[480px] lg:h-[680px] lg:max-h-none"} border border-foreground/10 rounded-xl bg-foreground/2 shadow-inner overflow-hidden flex items-center justify-center relative`}
       >
         {(!statesGeoJson || (selectedState && loadingDistricts)) && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-[#fcfcfa]/80 backdrop-blur-sm z-10">
             <span className="w-8 h-8 rounded-full border-4 border-[#f26a21] border-t-transparent animate-spin"></span>
-            <span className="text-sm font-medium text-foreground/75 tracking-wider uppercase">
+            <span className="text-xs font-medium text-foreground/75 tracking-wider uppercase">
               Loading boundary maps...
             </span>
           </div>
@@ -230,7 +235,8 @@ export default function IndiaMap({
 
         <svg 
           viewBox={`0 0 ${width} ${height}`}
-          className="w-full md:w-auto h-auto md:h-full max-w-full max-h-full select-none"
+          preserveAspectRatio="xMidYMid meet"
+          className="w-full h-full max-w-full max-h-full select-none p-1 sm:p-2"
         >
           <g>
             {paths.map(({ feature, d, key }) => {
