@@ -354,9 +354,49 @@ export default function AboutPage() {
                 <span className="text-sm font-bold leading-snug">{name}</span>
               </li>
             ))}
+            <li>
+              <a
+                href="https://www.aiactuaries.org/our-board"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card p-6 flex items-center gap-4 hover:border-accent/40 transition-colors group h-full bg-accent/[0.03]"
+              >
+                <span
+                  aria-hidden="true"
+                  className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 text-accent flex items-center justify-center font-black text-sm flex-shrink-0 group-hover:bg-accent group-hover:text-white transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                </span>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-bold leading-snug text-accent group-hover:text-accent-strong transition-colors flex items-center gap-1.5">
+                    Our extended team
+                    <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </span>
+                  <span className="text-xs text-foreground/60 leading-snug truncate">
+                    Sri Sathya Sai Institute of Actuaries
+                  </span>
+                </div>
+              </a>
+            </li>
           </ul>
         </section>
       </main>
     </div>
   );
 }
+
+

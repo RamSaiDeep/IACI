@@ -17,12 +17,19 @@ export default function Footer() {
             want more width than a 768px window minus its scrollbar actually
             has, and the badges were pushing past the right edge. */}
         <div className="flex flex-col md:flex-row md:flex-wrap md:items-start md:justify-between gap-8">
-          <div className="flex flex-col gap-2 max-w-sm">
-            <span className="text-sm font-black tracking-[0.2em] uppercase">SSSIA</span>
-            <span className="text-xs text-foreground/60 leading-relaxed">
+          <a
+            href="https://www.sssia.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col gap-2 max-w-sm group w-fit"
+          >
+            <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:text-accent transition-colors">
+              SSSIA
+            </span>
+            <span className="text-xs text-foreground/60 group-hover:text-foreground/90 leading-relaxed transition-colors">
               Sri Sathya Sai Institute of Actuaries
             </span>
-          </div>
+          </a>
 
           {/* National-initiative badges, set beside Support. Both PNGs carry
               their own alpha channel, so they float directly on the footer's
@@ -87,7 +94,16 @@ export default function Footer() {
 
         <div className="pt-6 border-t border-foreground/8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <span className="text-[11px] text-foreground/50">
-            © 2026 sssia.org. All rights reserved.
+            © 2026{" "}
+            <a
+              href="https://www.sssia.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent transition-colors"
+            >
+              sssia.org
+            </a>
+            . All rights reserved.
           </span>
           <span className="text-[11px] text-foreground/40">
             Built on ECMWF ERA5-Land and ORAS5 reanalysis.
