@@ -225,8 +225,8 @@ export default function IndiaMap({
         className={`w-full ${heightClassName || "h-[45vh] min-h-[320px] max-h-[580px] sm:h-[480px] lg:h-[680px] lg:max-h-none"} border border-foreground/10 rounded-xl bg-foreground/2 shadow-inner overflow-hidden flex items-center justify-center relative`}
       >
         {(!statesGeoJson || (selectedState && loadingDistricts)) && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-[#fcfcfa]/80 backdrop-blur-sm z-10">
-            <span className="w-8 h-8 rounded-full border-4 border-[#f26a21] border-t-transparent animate-spin"></span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/80 backdrop-blur-sm z-10">
+            <span className="w-8 h-8 rounded-full border-4 border-accent border-t-transparent animate-spin"></span>
             <span className="text-xs font-medium text-foreground/75 tracking-wider uppercase">
               Loading boundary maps...
             </span>
@@ -291,7 +291,7 @@ export default function IndiaMap({
 
           return (
             <div
-              className="absolute pointer-events-none px-4 py-2.5 bg-foreground text-[#fcfcfa] rounded-md shadow-xl text-xs font-semibold tracking-wider uppercase flex flex-col gap-0.5 z-20 border border-white/10"
+              className="absolute pointer-events-none px-4 py-2.5 bg-foreground text-background rounded-md shadow-xl text-xs font-semibold tracking-wider uppercase flex flex-col gap-0.5 z-20 border border-white/10"
               style={{
                 left: tooltipPos.x,
                 top: tooltipPos.y,

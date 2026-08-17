@@ -35,8 +35,8 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 bg-header-bg text-header-fg border-b border-white/10 shadow-lg">
-      <div className="mx-auto flex h-16 sm:h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-header-bg/95 text-header-fg shadow-lg backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-[4.5rem] sm:px-6 lg:px-8">
         
         {/* Logo and Brand Title */}
         <div className="flex items-center gap-3">
@@ -51,8 +51,9 @@ export default function Header() {
                 priority
               />
             </div>
-            <span className="font-bold tracking-widest text-lg sm:text-xl text-white group-hover:text-white/90 transition-colors uppercase">
-              SSSIA
+            <span className="flex flex-col font-bold uppercase tracking-[0.28em] text-white transition-colors group-hover:text-white/90">
+              <span className="text-base sm:text-lg">SSSIA</span>
+              <span className="hidden text-[9px] font-medium tracking-[0.18em] text-white/55 sm:block">Actuarial climate intelligence</span>
             </span>
           </Link>
         </div>
@@ -65,7 +66,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative text-xs lg:text-sm font-medium tracking-wider uppercase transition-colors duration-300 py-2 group ${
+                className={`relative py-2 text-xs font-medium uppercase tracking-[0.16em] transition-colors duration-300 group lg:text-sm ${
                   isActive ? "text-white font-semibold" : "text-white/75 hover:text-white"
                 }`}
               >

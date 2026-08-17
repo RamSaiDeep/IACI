@@ -200,10 +200,10 @@ export default function AnalyzePage() {
       <main className="flex-1 max-w-[1600px] mx-auto w-full px-3.5 sm:px-6 py-4 sm:py-6 flex flex-col gap-5 sm:gap-6">
         
         {/* Top Control Bar */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-surface border border-foreground/10 shadow-lg">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#f26a21] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
               <h1 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#f26a21]">
                 Comparative Analytics
               </h1>
@@ -219,7 +219,7 @@ export default function AnalyzePage() {
               onClick={() => setSyncVariable(!syncVariable)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase border transition-all flex items-center gap-1.5 ${
                 syncVariable
-                  ? "bg-[#f26a21]/15 text-[#f26a21] border-[#f26a21]/40"
+                  ? "bg-accent/15 text-[#f26a21] border-[#f26a21]/40"
                   : "bg-foreground/5 text-foreground/60 border-foreground/10 hover:bg-foreground/10"
               }`}
             >
@@ -235,7 +235,7 @@ export default function AnalyzePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
           
           {/* ================= PANEL A ================= */}
-          <div className="flex flex-col gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl">
+          <div className="flex flex-col gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-surface border border-foreground/10 shadow-xl">
             {/* Header & Controls Panel A */}
             <div className="flex flex-col gap-2.5 sm:gap-3 pb-3 border-b border-foreground/10">
               <div className="flex items-center justify-between">
@@ -267,7 +267,7 @@ export default function AnalyzePage() {
                   <select
                     value={yearA}
                     onChange={(e) => setYearA(e.target.value)}
-                    className="w-full bg-white border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
+                    className="w-full bg-surface border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
                   >
                     {years.map((y) => (
                       <option key={y} value={y}>{y}</option>
@@ -280,7 +280,7 @@ export default function AnalyzePage() {
                   <select
                     value={monthA}
                     onChange={(e) => setMonthA(e.target.value)}
-                    className="w-full bg-white border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
+                    className="w-full bg-surface border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
                   >
                     {months.map((m) => (
                       <option key={m} value={m}>{m}</option>
@@ -293,7 +293,7 @@ export default function AnalyzePage() {
                   <select
                     value={variableA}
                     onChange={(e) => handleVariableChangeA(e.target.value)}
-                    className="w-full bg-white border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
+                    className="w-full bg-surface border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
                   >
                     {variables.map((v) => (
                       <option key={v.id} value={v.id} disabled={(v as any).disabled}>
@@ -338,12 +338,12 @@ export default function AnalyzePage() {
           </div>
 
           {/* ================= PANEL B ================= */}
-          <div className="flex flex-col gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl">
+          <div className="flex flex-col gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-surface border border-foreground/10 shadow-xl">
             {/* Header & Controls Panel B */}
             <div className="flex flex-col gap-2.5 sm:gap-3 pb-3 border-b border-foreground/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-md bg-[#f26a21] text-white font-black text-[11px] sm:text-xs">
+                  <span className="px-2 py-0.5 rounded-md bg-accent text-white font-black text-[11px] sm:text-xs">
                     PANEL B
                   </span>
                   <span className="text-xs font-bold uppercase text-foreground/80 truncate max-w-[200px]">
@@ -370,7 +370,7 @@ export default function AnalyzePage() {
                   <select
                     value={yearB}
                     onChange={(e) => setYearB(e.target.value)}
-                    className="w-full bg-white border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
+                    className="w-full bg-surface border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
                   >
                     {years.map((y) => (
                       <option key={y} value={y}>{y}</option>
@@ -383,7 +383,7 @@ export default function AnalyzePage() {
                   <select
                     value={monthB}
                     onChange={(e) => setMonthB(e.target.value)}
-                    className="w-full bg-white border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
+                    className="w-full bg-surface border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
                   >
                     {months.map((m) => (
                       <option key={m} value={m}>{m}</option>
@@ -396,7 +396,7 @@ export default function AnalyzePage() {
                   <select
                     value={variableB}
                     onChange={(e) => handleVariableChangeB(e.target.value)}
-                    className="w-full bg-white border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
+                    className="w-full bg-surface border border-foreground/15 rounded-lg px-2 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-[#f26a21]"
                   >
                     {variables.map((v) => (
                       <option key={v.id} value={v.id} disabled={(v as any).disabled}>
@@ -443,7 +443,7 @@ export default function AnalyzePage() {
         </div>
 
         {/* Symmetrical Color Scale Legend */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-md flex flex-col items-center gap-2">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-surface border border-foreground/10 shadow-md flex flex-col items-center gap-2">
           <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-foreground/60 text-center">
             Harmonized Zero-Centered Anomaly Scale (z-score)
           </span>
@@ -463,7 +463,7 @@ export default function AnalyzePage() {
         </div>
 
         {/* Detailed Side-by-Side Component Delta Analysis Table */}
-        <div className="p-4 sm:p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-xl flex flex-col gap-3.5 sm:gap-4">
+        <div className="p-4 sm:p-6 rounded-2xl bg-surface border border-foreground/10 shadow-xl flex flex-col gap-3.5 sm:gap-4">
           <div className="flex flex-col gap-1 border-b border-foreground/10 pb-3">
             <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#f26a21]">
               Quantitative Anomaly Comparison

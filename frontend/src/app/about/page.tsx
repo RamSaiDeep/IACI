@@ -67,12 +67,12 @@ export default function AboutPage() {
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col gap-8 sm:gap-12">
         {/* Hero Section */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b2b5f] via-[#103b7b] to-[#071d42] text-white p-6 sm:p-10 md:p-12 shadow-2xl border border-white/10">
-          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-[#f26a21]/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 -mb-12 -ml-12 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 max-w-3xl flex flex-col gap-3.5 sm:gap-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
-              <span className="w-2 h-2 rounded-full bg-[#f26a21] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#f26a21]">
                 Actuarial Climate Intelligence
               </span>
@@ -89,7 +89,7 @@ export default function AboutPage() {
             <div className="flex flex-wrap gap-3 pt-1 sm:pt-2">
               <Link
                 href="/explore"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f26a21] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-lg hover:shadow-[#f26a21]/30 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-lg hover:shadow-[#f26a21]/30 hover:-translate-y-0.5"
               >
                 Explore Interactive Map
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,8 +113,8 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Pillar 1 */}
-            <div className="p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
-              <div className="w-10 h-10 rounded-xl bg-[#f26a21]/10 text-[#f26a21] flex items-center justify-center font-black text-sm">
+            <div className="p-6 rounded-2xl bg-surface border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
+              <div className="w-10 h-10 rounded-xl bg-accent/10 text-[#f26a21] flex items-center justify-center font-black text-sm">
                 01
               </div>
               <h4 className="text-base font-bold uppercase text-foreground tracking-tight">
@@ -126,7 +126,7 @@ export default function AboutPage() {
             </div>
 
             {/* Pillar 2 */}
-            <div className="p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
+            <div className="p-6 rounded-2xl bg-surface border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
               <div className="w-10 h-10 rounded-xl bg-teal-600/10 text-teal-600 flex items-center justify-center font-black text-sm">
                 02
               </div>
@@ -139,7 +139,7 @@ export default function AboutPage() {
             </div>
 
             {/* Pillar 3 */}
-            <div className="p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
+            <div className="p-6 rounded-2xl bg-surface border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
               <div className="w-10 h-10 rounded-xl bg-blue-600/10 text-blue-600 flex items-center justify-center font-black text-sm">
                 03
               </div>
@@ -171,7 +171,7 @@ export default function AboutPage() {
             {components.map((c) => (
               <div
                 key={c.id}
-                className="p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-md flex flex-col gap-3 hover:shadow-xl transition-all"
+                className="p-5 rounded-2xl bg-surface border border-foreground/10 shadow-md flex flex-col gap-3 hover:shadow-xl transition-all"
               >
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-black tracking-wider uppercase px-2.5 py-1 rounded-md bg-foreground/5 text-foreground">
@@ -198,7 +198,7 @@ export default function AboutPage() {
         {/* Composite Calculation & Interpretation */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Composite Index Calculation Card */}
-          <div className="p-8 rounded-3xl bg-[#fcfcfa] border border-foreground/10 shadow-xl flex flex-col gap-5">
+          <div className="p-8 rounded-3xl bg-surface border border-foreground/10 shadow-xl flex flex-col gap-5">
             <div className="flex flex-col gap-1">
               <h2 className="text-xs font-bold tracking-widest uppercase text-[#f26a21]">
                 Mathematical Aggregation
@@ -238,7 +238,7 @@ export default function AboutPage() {
           </div>
 
           {/* Interpretation & Limitations Card */}
-          <div className="p-8 rounded-3xl bg-[#fcfcfa] border border-foreground/10 shadow-xl flex flex-col gap-5 justify-between">
+          <div className="p-8 rounded-3xl bg-surface border border-foreground/10 shadow-xl flex flex-col gap-5 justify-between">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
                 <h2 className="text-xs font-bold tracking-widest uppercase text-[#f26a21]">
@@ -284,7 +284,7 @@ export default function AboutPage() {
           </div>
           <Link
             href="/faq"
-            className="px-6 py-3 rounded-xl bg-[#f26a21] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-lg hover:shadow-[#f26a21]/20 whitespace-nowrap"
+            className="px-6 py-3 rounded-xl bg-accent text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-lg hover:shadow-[#f26a21]/20 whitespace-nowrap"
           >
             View Full FAQ →
           </Link>

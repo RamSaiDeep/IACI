@@ -2,11 +2,13 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center py-12 sm:py-20 md:py-32">
-      <div className="flex flex-col items-start gap-5 sm:gap-8 max-w-4xl">
+    <main className="surface-grid relative flex-1 mx-auto flex w-full max-w-7xl flex-col justify-center overflow-hidden px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
+      <div className="pointer-events-none absolute right-[-8rem] top-1/2 hidden h-96 w-96 -translate-y-1/2 rounded-full border border-teal/20 lg:block" />
+      <div className="pointer-events-none absolute right-8 top-1/2 hidden h-72 w-72 -translate-y-1/2 rounded-full border border-accent/25 lg:block" />
+      <div className="relative flex max-w-4xl flex-col items-start gap-5 sm:gap-8">
         {/* Accent Badge */}
         <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-[#f26a21]">
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#f26a21] rounded-full animate-pulse"></span>
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-accent rounded-full animate-pulse"></span>
           Sri Sathya Sai Institute of Actuaries
         </div>
         
@@ -17,13 +19,16 @@ export default function Hero() {
         </h1>
         
         {/* Secondary Line */}
-        <div className="w-16 sm:w-20 h-[3px] bg-[#f26a21] mt-2 sm:mt-4" />
+        <div className="mt-2 h-[3px] w-16 bg-accent sm:mt-4 sm:w-20" />
+        <p className="max-w-2xl text-sm leading-6 text-muted sm:text-base sm:leading-7">
+          A climate-risk intelligence workspace for exploring regional signals, comparing variables, and grounding actuarial decisions in India&apos;s changing climate.
+        </p>
 
         {/* Action Button */}
         <div className="mt-4 sm:mt-8 flex flex-wrap gap-3">
           <Link
             href="/explore"
-            className="inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-bold tracking-widest uppercase text-white bg-[#f26a21] hover:bg-[#d65715] rounded-md transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 shadow-md"
+            className="inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-bold tracking-widest uppercase text-white bg-accent hover:bg-accent/85 rounded-md transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 shadow-md"
           >
             Explore the index
           </Link>

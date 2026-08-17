@@ -1,10 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fcfcfa;
-  --foreground: #0b2b5f;
-  --header-bg: #0b2b5f;
-  --header-fg: #fcfcfa;
+  --background: #f4f7fb;
+  --foreground: #10233f;
+  --header-bg: #0b2348;
+  --header-fg: #f7f9fc;
+  --surface: #ffffff;
+  --surface-muted: #e9eff6;
+  --border: #d5dfeb;
+  --accent: #f26a21;
+  --teal: #168b91;
+  --muted: #5d6d82;
 }
 
 @theme inline {
@@ -12,12 +18,41 @@
   --color-foreground: var(--foreground);
   --color-header-bg: var(--header-bg);
   --color-header-fg: var(--header-fg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-teal: var(--teal);
+  --color-muted: var(--muted);
   --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
 }
 
+* {
+  border-color: var(--border);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--teal) 8%, transparent), transparent 28rem),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+}
+
+button, a, select, input {
+  outline-color: var(--accent);
+}
+
+.surface-grid {
+  background-image: linear-gradient(to right, color-mix(in srgb, var(--border) 45%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in srgb, var(--border) 45%, transparent) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+}
+
+.surface-shadow {
+  box-shadow: 0 18px 45px color-mix(in srgb, var(--header-bg) 9%, transparent);
 }

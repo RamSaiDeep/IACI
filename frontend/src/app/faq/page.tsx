@@ -127,19 +127,19 @@ export default function FAQPage() {
           <p>Every component follows the same general statistical framework:</p>
           <div className="flex flex-col gap-2.5">
             <div className="flex items-start gap-3 p-3 rounded-xl bg-foreground/3 border border-foreground/10">
-              <span className="w-6 h-6 rounded-md bg-[#f26a21]/10 text-[#f26a21] flex items-center justify-center font-bold text-xs flex-shrink-0">a</span>
+              <span className="w-6 h-6 rounded-md bg-accent/10 text-[#f26a21] flex items-center justify-center font-bold text-xs flex-shrink-0">a</span>
               <p className="text-xs text-foreground/75">
                 For each grid cell and calendar month, a <strong>climatological mean</strong> and <strong>standard deviation</strong> are calculated over the 1991–2020 reference period, and the raw monthly statistic is standardized by subtracting the mean and dividing by the standard deviation.
               </p>
             </div>
             <div className="flex items-start gap-3 p-3 rounded-xl bg-foreground/3 border border-foreground/10">
-              <span className="w-6 h-6 rounded-md bg-[#f26a21]/10 text-[#f26a21] flex items-center justify-center font-bold text-xs flex-shrink-0">b</span>
+              <span className="w-6 h-6 rounded-md bg-accent/10 text-[#f26a21] flex items-center justify-center font-bold text-xs flex-shrink-0">b</span>
               <p className="text-xs text-foreground/75">
                 <strong>Daily thresholds</strong> (like the 90th or 10th percentile) are computed using a centred five-day moving window around each calendar day, using data pooled across all 30 reference years.
               </p>
             </div>
             <div className="flex items-start gap-3 p-3 rounded-xl bg-foreground/3 border border-foreground/10">
-              <span className="w-6 h-6 rounded-md bg-[#f26a21]/10 text-[#f26a21] flex items-center justify-center font-bold text-xs flex-shrink-0">c</span>
+              <span className="w-6 h-6 rounded-md bg-accent/10 text-[#f26a21] flex items-center justify-center font-bold text-xs flex-shrink-0">c</span>
               <p className="text-xs text-foreground/75">
                 This standardization approach is applied consistently across all six components before they&apos;re combined into the composite index.
               </p>
@@ -274,11 +274,11 @@ export default function FAQPage() {
         
         {/* Header Hero Section */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b2b5f] via-[#103b7b] to-[#071d42] text-white p-6 sm:p-10 shadow-2xl border border-white/10">
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 bg-[#f26a21]/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
           
           <div className="relative z-10 flex flex-col gap-3 sm:gap-4 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
-              <span className="w-2 h-2 rounded-full bg-[#f26a21] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#f26a21]">
                 Knowledge Base &amp; Documentation
               </span>
@@ -304,7 +304,7 @@ export default function FAQPage() {
                 placeholder="Search questions..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-[#fcfcfa] text-foreground border border-foreground/10 rounded-xl focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] outline-none text-xs sm:text-sm placeholder:text-foreground/40 shadow-sm"
+                className="w-full pl-9 pr-4 py-2.5 bg-surface text-foreground border border-foreground/10 rounded-xl focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] outline-none text-xs sm:text-sm placeholder:text-foreground/40 shadow-sm"
               />
               <svg
                 className="w-4 h-4 text-foreground/40 absolute left-3 top-1/2 -translate-y-1/2"
@@ -320,13 +320,13 @@ export default function FAQPage() {
             <div className="flex items-center gap-2 self-end sm:self-center">
               <button
                 onClick={expandAll}
-                className="px-3 py-1.5 rounded-lg border border-foreground/10 hover:border-foreground/30 bg-[#fcfcfa] text-foreground/70 hover:text-foreground text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
+                className="px-3 py-1.5 rounded-lg border border-foreground/10 hover:border-foreground/30 bg-surface text-foreground/70 hover:text-foreground text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
               >
                 Expand All
               </button>
               <button
                 onClick={collapseAll}
-                className="px-3 py-1.5 rounded-lg border border-foreground/10 hover:border-foreground/30 bg-[#fcfcfa] text-foreground/70 hover:text-foreground text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
+                className="px-3 py-1.5 rounded-lg border border-foreground/10 hover:border-foreground/30 bg-surface text-foreground/70 hover:text-foreground text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
               >
                 Collapse All
               </button>
@@ -343,8 +343,8 @@ export default function FAQPage() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold tracking-wider uppercase whitespace-nowrap transition-all ${
                     isActive
-                      ? "bg-[#f26a21] text-white shadow-md shadow-[#f26a21]/20"
-                      : "bg-[#fcfcfa] border border-foreground/10 text-foreground/70 hover:border-foreground/30 hover:text-foreground"
+                      ? "bg-accent text-white shadow-md shadow-[#f26a21]/20"
+                      : "bg-surface border border-foreground/10 text-foreground/70 hover:border-foreground/30 hover:text-foreground"
                   }`}
                 >
                   {cat}
@@ -377,7 +377,7 @@ export default function FAQPage() {
               return (
                 <div
                   key={faq.id}
-                  className={`rounded-2xl border transition-all duration-200 overflow-hidden bg-[#fcfcfa] shadow-sm ${
+                  className={`rounded-2xl border transition-all duration-200 overflow-hidden bg-surface shadow-sm ${
                     isOpen ? "border-[#f26a21]/40 shadow-md ring-1 ring-[#f26a21]/20" : "border-foreground/10 hover:border-foreground/25"
                   }`}
                 >
@@ -400,7 +400,7 @@ export default function FAQPage() {
                     </div>
 
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center border flex-shrink-0 transition-transform duration-200 ${
-                      isOpen ? "rotate-180 bg-[#f26a21] border-[#f26a21] text-white" : "border-foreground/10 text-foreground/60 bg-foreground/3"
+                      isOpen ? "rotate-180 bg-accent border-[#f26a21] text-white" : "border-foreground/10 text-foreground/60 bg-foreground/3"
                     }`}>
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
@@ -434,7 +434,7 @@ export default function FAQPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/explore"
-              className="px-4 py-2 rounded-xl bg-[#f26a21] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-md"
+              className="px-4 py-2 rounded-xl bg-accent text-white text-xs font-bold uppercase tracking-wider hover:bg-accent/85 transition-all shadow-md"
             >
               Explore Map
             </Link>

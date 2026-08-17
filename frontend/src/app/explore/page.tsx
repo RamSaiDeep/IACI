@@ -199,7 +199,7 @@ export default function ExplorePage() {
 
             <div className="flex flex-col items-start gap-1 sm:gap-1.5">
               <div className="inline-flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-[#f26a21]">
-                <span className="w-2 h-2 bg-[#f26a21] rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
                 {selectedDistrict 
                   ? "District Focus" 
                   : selectedState 
@@ -215,7 +215,7 @@ export default function ExplorePage() {
                     : "India Map"
                 }
               </h1>
-              <div className="w-12 h-[2.5px] bg-[#f26a21] mt-0.5" />
+              <div className="w-12 h-[2.5px] bg-accent mt-0.5" />
             </div>
           </div>
 
@@ -223,14 +223,14 @@ export default function ExplorePage() {
           {selectedDistrict ? (
             <button
               onClick={() => setSelectedDistrict(null)}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs font-bold tracking-widest uppercase border border-[#f26a21] hover:bg-[#f26a21]/5 text-[#f26a21] rounded-md transition-all duration-300 shadow-sm"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs font-bold tracking-widest uppercase border border-[#f26a21] hover:bg-accent/5 text-[#f26a21] rounded-md transition-all duration-300 shadow-sm"
             >
               ← Back to {selectedState}
             </button>
           ) : selectedState ? (
             <button
               onClick={resetMap}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs font-bold tracking-widest uppercase border border-[#f26a21] hover:bg-[#f26a21]/5 text-[#f26a21] rounded-md transition-all duration-300 shadow-sm"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs font-bold tracking-widest uppercase border border-[#f26a21] hover:bg-accent/5 text-[#f26a21] rounded-md transition-all duration-300 shadow-sm"
             >
               ← Back to India Map
             </button>
@@ -252,7 +252,7 @@ export default function ExplorePage() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#fcfcfa] text-foreground border border-foreground/10 hover:border-foreground/30 focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] rounded-md outline-none transition-colors duration-200 text-xs font-semibold tracking-wider uppercase"
+                  className="w-full px-3 py-2 bg-surface text-foreground border border-foreground/10 hover:border-foreground/30 focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] rounded-md outline-none transition-colors duration-200 text-xs font-semibold tracking-wider uppercase"
                 >
                   {years.map((year) => (
                     <option key={year} value={year}>
@@ -270,7 +270,7 @@ export default function ExplorePage() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#fcfcfa] text-foreground border border-foreground/10 hover:border-foreground/30 focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] rounded-md outline-none transition-colors duration-200 text-xs font-semibold tracking-wider uppercase"
+                  className="w-full px-3 py-2 bg-surface text-foreground border border-foreground/10 hover:border-foreground/30 focus:border-[#f26a21] focus:ring-1 focus:ring-[#f26a21] rounded-md outline-none transition-colors duration-200 text-xs font-semibold tracking-wider uppercase"
                 >
                   {months.map((month) => (
                     <option key={month} value={month}>
@@ -299,8 +299,8 @@ export default function ExplorePage() {
                         isDisabled
                           ? "opacity-60 cursor-not-allowed bg-foreground/5 border-dashed border-amber-500/30 text-foreground/50"
                           : selectedVariable === v.id
-                            ? "bg-[#f26a21] border-[#f26a21] text-[#fcfcfa] shadow-sm"
-                            : "bg-[#fcfcfa] border-foreground/10 hover:bg-foreground/5 text-foreground"
+                            ? "bg-accent border-[#f26a21] text-[#fcfcfa] shadow-sm"
+                            : "bg-surface border-foreground/10 hover:bg-foreground/5 text-foreground"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1">
@@ -325,7 +325,7 @@ export default function ExplorePage() {
         </aside>
 
         {/* PART 2: Center Pane - Map component container and Legend */}
-        <main className="flex-1 min-w-0 bg-[#fcfcfa] rounded-2xl shadow-xl border border-foreground/5 p-3.5 sm:p-5 lg:p-6 flex flex-col relative overflow-hidden">
+        <main className="flex-1 min-w-0 bg-surface rounded-2xl shadow-xl border border-foreground/5 p-3.5 sm:p-5 lg:p-6 flex flex-col relative overflow-hidden">
           <IndiaMap 
             selectedState={selectedState} 
             setSelectedState={setSelectedState} 
@@ -372,7 +372,7 @@ export default function ExplorePage() {
 
         {/* PART 3: Right Pane - Climate Insights / Component values */}
         <section className="w-full lg:w-80 xl:w-84 flex flex-col gap-4 sm:gap-6 flex-shrink-0">
-          <div className="border border-foreground/10 rounded-2xl bg-[#fcfcfa] shadow-xl p-4 sm:p-6 flex flex-col h-full gap-4 sm:gap-5">
+          <div className="border border-foreground/10 rounded-2xl bg-surface shadow-xl p-4 sm:p-6 flex flex-col h-full gap-4 sm:gap-5">
             <div>
               <h2 className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-[#f26a21]">
                 Climate Insights
@@ -402,7 +402,7 @@ export default function ExplorePage() {
             ) : (
               <div className="flex-1 flex flex-col gap-4 sm:gap-5">
                 {/* Main ACI Index Value */}
-                <div className="border border-[#f26a21]/20 rounded-xl bg-[#f26a21]/5 p-3.5 sm:p-4 flex flex-col gap-2">
+                <div className="border border-[#f26a21]/20 rounded-xl bg-accent/5 p-3.5 sm:p-4 flex flex-col gap-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] font-bold tracking-wider uppercase text-foreground/70">
                       IACI Index (ACI)
