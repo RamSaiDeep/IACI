@@ -48,7 +48,7 @@ export default function Hero() {
               href="/about"
               className="inline-flex items-center justify-center px-7 py-3.5 text-xs sm:text-sm font-bold tracking-widest uppercase text-foreground/70 hover:text-foreground transition-colors"
             >
-              Methodology →
+              About the Index →
             </Link>
           </div>
 
