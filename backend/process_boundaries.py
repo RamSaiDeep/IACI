@@ -5,78 +5,17 @@ import shapefile
 from pyproj import Transformer
 import math
 
+# Rounding, dropping degenerate rings and winding for d3-geo all live in one
+# place, because they only work in that order and only as the last step: both
+# the simplification and the rounding below can flip or flatten a sliver ring.
+from optimize_geojson import clean_geometry
+
 # Paths
 boundaries_dir = r"C:\IACI\backend\data\boundaries"
 frontend_public_dir = r"C:\IACI\frontend\public\geojson"
 districts_out_dir = os.path.join(frontend_public_dir, "districts")
 
 os.makedirs(districts_out_dir, exist_ok=True)
-
-# ----------------- Winding Order Correction (Rewind) -----------------
-def signed_area(ring):
-    area = 0.0
-    n = len(ring)
-    for i in range(n):
-        x1, y1 = ring[i]
-        x2, y2 = ring[(i + 1) % n]
-        area += x1 * y2 - x2 * y1
-    return area / 2.0
-
-def rewind_ring(ring, should_be_positive):
-    area = signed_area(ring)
-    if (area > 0) != should_be_positive:
-        return ring[::-1]
-    return ring
-
-def rewind_polygon(poly_coords):
-    if not poly_coords:
-        return poly_coords
-    new_poly = []
-    # Outer ring: must be clockwise (negative area) for D3-geo
-    new_poly.append(rewind_ring(poly_coords[0], should_be_positive=False))
-    # Inner rings (holes): must be counter-clockwise (positive area)
-    for hole in poly_coords[1:]:
-        new_poly.append(rewind_ring(hole, should_be_positive=True))
-    return new_poly
-
-# ----------------- Coordinate Precision -----------------
-# The geometry below is simplified to ~110 m, and one pixel of the national map
-# is several kilometres, so full float64 coordinates cost payload and parse time
-# for detail that can never be drawn. 4 decimals is ~11 m. Keep this in step
-# with PRECISION in backend/optimize_geojson.py.
-COORD_PRECISION = 4
-
-def round_coords(node):
-    if isinstance(node, list):
-        if node and isinstance(node[0], (int, float)):
-            return [round(value, COORD_PRECISION) for value in node]
-        return [round_coords(child) for child in node]
-    return node
-
-def round_geometry(geom):
-    if "coordinates" not in geom:
-        return geom
-    return {**geom, "coordinates": round_coords(geom["coordinates"])}
-# ---------------------------------------------------------------------
-
-def rewind_geometry(geom):
-    geom_type = geom["type"]
-    coords = geom["coordinates"]
-    if geom_type == "Polygon":
-        return {
-            "type": "Polygon",
-            "coordinates": rewind_polygon(coords)
-        }
-    elif geom_type == "MultiPolygon":
-        new_polys = []
-        for poly in coords:
-            new_polys.append(rewind_polygon(poly))
-        return {
-            "type": "MultiPolygon",
-            "coordinates": new_polys
-        }
-    return geom
-# ---------------------------------------------------------------------
 
 # 1. Process and format state_boundary.json
 state_boundary_src = os.path.join(boundaries_dir, "state_boundary.json")
@@ -94,7 +33,7 @@ if os.path.exists(state_boundary_src):
         state_name = props["STATE"].strip() if "STATE" in props else props.get("state_name")
         feature["properties"] = {"STATE": state_name, "state_name": state_name}
         if "geometry" in feature:
-            feature["geometry"] = round_geometry(rewind_geometry(feature["geometry"]))
+            feature["geometry"] = clean_geometry(feature["geometry"])
 
     # Minified, not indented: this file is fetched before the first map paints,
     # and the indentation alone was most of its 2.5 MB.
@@ -229,13 +168,17 @@ for idx, (rec, shape) in enumerate(zip(records, shapes)):
     
     # Project to WGS84
     projected_geom = project_geometry(geom)
-    
-    # Rewind projection coordinates so winding order is valid
-    rewound_geom = rewind_geometry(projected_geom)
-    
+
     # Simplify using RDP (epsilon=0.001 is about 110m resolution, perfect for browser maps)
-    simplified_geom = simplify_geometry(rewound_geom, epsilon=0.001)
-    
+    simplified_geom = simplify_geometry(projected_geom, epsilon=0.001)
+
+    # Round, discard rings that simplification flattened, and wind for d3-geo —
+    # in that order, since each step can undo the winding of the one before.
+    cleaned_geom = clean_geometry(simplified_geom)
+    if cleaned_geom is None:
+        print(f"  ! skipping {district} ({state_ut}): no geometry left after simplification")
+        continue
+
     # Only the two name fields are read by the frontend; the shapefile's ids,
     # areas and lengths were pure payload. See backend/optimize_geojson.py.
     feature = {
@@ -244,9 +187,9 @@ for idx, (rec, shape) in enumerate(zip(records, shapes)):
             "state_name": state_ut,
             "district_name": district
         },
-        "geometry": round_geometry(simplified_geom)
+        "geometry": cleaned_geom
     }
-    
+
     if state_ut not in state_groups:
         state_groups[state_ut] = []
     state_groups[state_ut].append(feature)

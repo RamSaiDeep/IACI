@@ -30,10 +30,8 @@ interface IndiaMapProps {
   mapValues: Record<string, number>;
   selectedVariable: Field;
   heightClassName?: string;
+  className?: string;
 }
-
-const WIDTH = 800;
-const HEIGHT = 750;
 
 // Boundary files are static and shared between Explore and Analyze, so they are
 // fetched once per tab rather than once per mounted map.
@@ -69,6 +67,7 @@ export default function IndiaMap({
   mapValues,
   selectedVariable,
   heightClassName,
+  className,
 }: IndiaMapProps) {
   const [statesGeoJson, setStatesGeoJson] = useState<GeoJsonCollection | null>(null);
   // Tagged with the state it belongs to, so switching states derives an empty
@@ -126,7 +125,7 @@ export default function IndiaMap({
     }
   };
 
-  const paths = useMemo(() => {
+  const { paths, viewBox } = useMemo(() => {
     let currentData: GeoJsonCollection | null;
 
     if (selectedState) {
@@ -144,32 +143,41 @@ export default function IndiaMap({
       currentData = statesGeoJson;
     }
 
-    if (!currentData?.features?.length) return [];
+    if (!currentData?.features?.length) {
+      return { paths: [], viewBox: "0 0 800 750" };
+    }
 
-    // Fit the visible features to the viewBox, leaving room so a zoomed-in
-    // district doesn't touch the frame.
-    const padding = selectedDistrict ? 60 : selectedState ? 40 : 25;
-    const projection = geoMercator().fitSize(
-      [WIDTH, HEIGHT - padding],
-      currentData as never
-    );
+    // Fit into a normalized coordinate box, then compute tight geometric bounds
+    const projection = geoMercator().fitSize([1000, 1000], currentData as never);
     const pathGenerator = geoPath().projection(projection);
     const level = selectedDistrict ? "only-district" : selectedState ? "district" : "state";
 
-    return currentData.features.map((feature, idx) => ({
+    const pathList = currentData.features.map((feature, idx) => ({
       feature,
       d: pathGenerator(feature as never) || "",
       key: `${level}-${idx}`,
     }));
+
+    const bounds = pathGenerator.bounds(currentData as never);
+    const x0 = bounds[0][0];
+    const y0 = bounds[0][1];
+    const x1 = bounds[1][0];
+    const y1 = bounds[1][1];
+    const bw = Math.max(1, x1 - x0);
+    const bh = Math.max(1, y1 - y0);
+
+    // 3.5% padding so strokes and edge details do not touch the border
+    const pad = Math.max(bw, bh) * 0.035;
+    const computedViewBox = `${(x0 - pad).toFixed(1)} ${(y0 - pad).toFixed(1)} ${(bw + pad * 2).toFixed(1)} ${(bh + pad * 2).toFixed(1)}`;
+
+    return {
+      paths: pathList,
+      viewBox: computedViewBox,
+    };
   }, [statesGeoJson, districtGeoJson, selectedState, selectedDistrict]);
 
   /**
    * Position the tooltip by writing to the node directly.
-   *
-   * This ran through React state before, so every pointer move re-rendered the
-   * whole map — up to ~700 district paths at pointer-move rate, which is what
-   * made panning across a state feel heavy on a phone. The position is pure
-   * presentation and nothing else reads it, so it does not need to be state.
    */
   const handlePointerMove = (e: React.PointerEvent) => {
     const container = mapContainerRef.current;
@@ -194,24 +202,24 @@ export default function IndiaMap({
   const hoveredValue = hoveredName ? mapValues[normalizeName(hoveredName)] : undefined;
 
   return (
-    <div className="w-full h-full flex flex-col items-center" onPointerMove={handlePointerMove}>
+    <div className={`w-full h-full flex flex-col items-center min-h-0 ${className || ""}`} onPointerMove={handlePointerMove}>
       <div
         ref={mapContainerRef}
-        className={`w-full ${
-          heightClassName || "h-map min-h-[320px] max-h-[580px] sm:h-[480px] lg:h-[680px] lg:max-h-none"
-        } rounded-2xl bg-gradient-to-b from-surface-muted/60 to-surface border border-foreground/8 overflow-hidden flex items-center justify-center relative`}
+        className={`w-full h-full min-h-0 ${
+          heightClassName || ""
+        } rounded-2xl bg-gradient-to-b from-surface-muted/60 to-surface border border-foreground/8 overflow-hidden flex items-center justify-center relative flex-1`}
       >
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-surface/80 backdrop-blur-sm z-10">
             <span className="w-8 h-8 rounded-full border-[3px] border-accent border-t-transparent animate-spin" />
-            <span className="text-[11px] font-semibold text-foreground/65 tracking-widest uppercase">
+            <span className="text-xs font-semibold text-foreground/65 tracking-widest uppercase">
               Loading boundaries
             </span>
           </div>
         )}
 
         <svg
-          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+          viewBox={viewBox}
           preserveAspectRatio="xMidYMid meet"
           className="w-full h-full max-w-full max-h-full select-none p-1 sm:p-2"
           role="img"
@@ -257,19 +265,19 @@ export default function IndiaMap({
         <div
           ref={tooltipRef}
           aria-hidden={!hoveredName}
-          className={`absolute left-0 top-0 pointer-events-none max-w-[min(15rem,calc(100%-1rem))] px-3.5 py-2.5 bg-foreground text-white rounded-xl shadow-card-xl text-xs flex flex-col gap-0.5 z-20 border border-white/10 ${
+          className={`absolute left-0 top-0 pointer-events-none max-w-[min(16rem,calc(100%-1rem))] px-3.5 py-2.5 bg-foreground text-white rounded-xl shadow-card-xl text-xs flex flex-col gap-0.5 z-20 border border-white/10 ${
             hoveredFeature && hoveredName ? "" : "invisible"
           }`}
         >
-          <span className="text-accent font-bold text-[9px] tracking-widest uppercase">
+          <span className="text-accent font-bold text-[10px] tracking-widest uppercase">
             {selectedState ? "District" : "State / UT"}
           </span>
-          <span className="text-[13px] font-semibold break-words">{hoveredName}</span>
-          <span className="text-[11px] mt-1 font-medium text-white/90">
+          <span className="text-sm font-bold break-words">{hoveredName}</span>
+          <span className="text-xs mt-1 font-medium text-white/90">
             {indicator(selectedVariable).short}:{" "}
             <span className="font-bold text-accent">{formatValue(hoveredValue)}</span>
           </span>
-          <span className="text-white/55 font-normal text-[9px] mt-0.5">
+          <span className="text-white/60 font-normal text-[10px] mt-0.5">
             {selectedState
               ? hoveredFeature && getStateName(hoveredFeature)
               : "Tap or click to inspect districts"}

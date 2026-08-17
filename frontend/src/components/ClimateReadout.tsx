@@ -39,22 +39,22 @@ export function CompositeValue({ value }: { value: number | null }) {
   const severity = severityOf(value);
 
   return (
-    <div className="rounded-xl border border-accent/20 bg-gradient-to-br from-accent/8 to-accent/3 p-4 flex flex-col gap-2">
+    <div className="rounded-xl border border-accent/25 bg-gradient-to-br from-accent/10 to-accent/3 p-3.5 flex flex-col gap-1.5 shadow-sm">
       <div className="flex justify-between items-center gap-2">
-        <span className="text-[10px] font-bold tracking-widest uppercase text-foreground/65">
+        <span className="text-xs font-bold tracking-widest uppercase text-foreground/75">
           IACI Composite
         </span>
         <span
-          className={`text-[9px] font-bold px-2 py-0.5 border rounded-full uppercase tracking-wider whitespace-nowrap ${severity.badge}`}
+          className={`text-[10px] font-bold px-2 py-0.5 border rounded-full uppercase tracking-wider whitespace-nowrap ${severity.badge}`}
         >
           {severity.label}
         </span>
       </div>
       <div className="flex items-baseline gap-2">
-        <span className="text-4xl font-black text-accent tracking-tight">
+        <span className="text-3xl lg:text-4xl font-black text-accent tracking-tight">
           {value == null ? "—" : value.toFixed(3)}
         </span>
-        <span className="text-[10px] text-foreground/55 font-semibold uppercase tracking-widest">
+        <span className="text-xs text-foreground/60 font-bold uppercase tracking-widest">
           z-score
         </span>
       </div>
@@ -68,7 +68,7 @@ export function CompositeValue({ value }: { value: number | null }) {
  */
 export function ComponentBars({ values }: { values: Values | null }) {
   return (
-    <div className="flex flex-col gap-3.5">
+    <div className="flex flex-col gap-2">
       {COMPONENTS.map((component) => {
         const value = values?.[component.id] ?? null;
         const severity = severityOf(value);
@@ -76,12 +76,12 @@ export function ComponentBars({ values }: { values: Values | null }) {
         return (
           <div
             key={component.id}
-            className="flex flex-col gap-1.5 border-b border-foreground/6 pb-3 last:border-0 last:pb-0"
+            className="flex flex-col gap-0.5 border-b border-foreground/6 pb-1.5 last:border-0 last:pb-0"
           >
             <div className="flex justify-between items-baseline gap-2">
-              <span className="text-[11px] font-bold text-foreground/80 tracking-wide uppercase">
+              <span className="text-xs font-bold text-foreground/85 tracking-wide uppercase">
                 {component.name}
-                <span className="text-foreground/40 ml-1.5 font-semibold">
+                <span className="text-foreground/45 ml-1.5 font-semibold text-[10.5px]">
                   {component.short}
                 </span>
               </span>
@@ -89,7 +89,7 @@ export function ComponentBars({ values }: { values: Values | null }) {
                 {formatValue(value)}
               </span>
             </div>
-            <div className="text-[9.5px] text-foreground/50">{component.desc}</div>
+            <div className="text-[10px] text-foreground/55 leading-tight">{component.desc}</div>
             <ValueBar value={value} />
           </div>
         );
