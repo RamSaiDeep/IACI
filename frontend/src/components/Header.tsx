@@ -86,7 +86,7 @@ export default function Header() {
               <span className="sm:hidden">IACI</span>
               <span className="hidden sm:inline">Indian Actuarial Climate Index</span>
             </span>
-            <span className="font-bold tracking-[0.2em] text-[9px] sm:text-[10px] text-white/55 uppercase">
+            <span className="font-bold tracking-[0.2em] text-[9px] sm:text-[12px] text-white/55 uppercase">
               SSSIA
             </span>
           </span>
@@ -101,15 +101,13 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`relative text-xs lg:text-sm font-medium tracking-wider uppercase transition-colors duration-300 py-2 group ${
-                  isActive ? "text-white font-semibold" : "text-white/75 hover:text-white"
-                }`}
+                className={`relative text-xs lg:text-sm font-medium tracking-wider uppercase transition-colors duration-300 py-2 group ${isActive ? "text-white font-semibold" : "text-white/75 hover:text-white"
+                  }`}
               >
                 {link.label}
                 <span
-                  className={`absolute bottom-0 left-0 w-full h-[2px] bg-accent origin-left transition-transform duration-300 ${
-                    isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                  }`}
+                  className={`absolute bottom-0 left-0 w-full h-[2px] bg-accent origin-left transition-transform duration-300 ${isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    }`}
                 />
               </Link>
             );
@@ -166,11 +164,10 @@ export default function Header() {
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-colors ${
-                    isActive
-                      ? "bg-accent text-white shadow-lg shadow-accent/20"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
-                  }`}
+                  className={`flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-colors ${isActive
+                    ? "bg-accent text-white shadow-lg shadow-accent/20"
+                    : "text-white/80 hover:text-white hover:bg-white/10"
+                    }`}
                 >
                   <span>{link.label}</span>
                   {isActive ? (
