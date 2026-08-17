@@ -36,13 +36,13 @@ const FAQS: FaqItem[] = [
   {
     id: 1,
     category: "Overview",
-    question: "What is the Indian Actuarial Climate Index (IACI)?",
+    question: "What is the Indian Actuaries Climate Index (IACI)?",
     keywords:
       "composite index climate extremes actuarial insurance pricing catastrophe modelling financial risk management economic losses",
     answer: (
       <>
         <p>
-          The <strong className="text-foreground">Indian Actuarial Climate Index (IACI)</strong> is a
+          The <strong className="text-foreground">Indian Actuaries Climate Index (IACI)</strong> is a
           standardized composite index that quantifies changes in climate extremes over time, built
           specifically for actuarial applications such as insurance pricing, catastrophe modelling
           and financial risk management.
@@ -394,11 +394,10 @@ export default function FaqSection() {
               key={cat}
               onClick={() => setCategory(cat)}
               aria-pressed={category === cat}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-widest uppercase whitespace-nowrap transition-colors ${
-                category === cat
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-widest uppercase whitespace-nowrap transition-colors ${category === cat
                   ? "bg-accent text-white shadow-card"
                   : "bg-surface border border-foreground/10 text-foreground/65 hover:border-foreground/30 hover:text-foreground"
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -428,9 +427,8 @@ export default function FaqSection() {
             return (
               <article
                 key={faq.id}
-                className={`card overflow-hidden transition-shadow ${
-                  isOpen ? "ring-1 ring-accent/25 shadow-card-lg" : ""
-                }`}
+                className={`card overflow-hidden transition-shadow ${isOpen ? "ring-1 ring-accent/25 shadow-card-lg" : ""
+                  }`}
               >
                 <h4>
                   <button
@@ -452,11 +450,10 @@ export default function FaqSection() {
                     </span>
 
                     <span
-                      className={`w-7 h-7 rounded-full flex items-center justify-center border flex-shrink-0 transition-transform duration-200 ${
-                        isOpen
+                      className={`w-7 h-7 rounded-full flex items-center justify-center border flex-shrink-0 transition-transform duration-200 ${isOpen
                           ? "rotate-180 bg-accent border-accent text-white"
                           : "border-foreground/10 text-foreground/55"
-                      }`}
+                        }`}
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path

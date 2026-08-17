@@ -28,7 +28,7 @@ export const INDICATORS: Indicator[] = [
     id: "IACI",
     name: "IACI Composite",
     short: "IACI",
-    desc: "Indian Actuarial Climate Index",
+    desc: "Indian Actuaries Climate Index",
     accent: "#f26a21",
   },
   {

@@ -80,11 +80,11 @@ export default function Header() {
           {/* The site's own name leads; SSSIA (the publishing institute) sits
               underneath as a small subtitle rather than as the brand itself.
               "IACI" stands in for the full name below sm, where there isn't
-              room for "Indian Actuarial Climate Index" at a legible size. */}
+              room for "Indian Actuaries Climate Index" at a legible size. */}
           <span className="flex flex-col leading-none gap-1 min-w-0">
             <span className="font-semibold tracking-tight text-white group-hover:text-white/90 transition-colors uppercase text-base sm:text-lg lg:text-xl truncate">
               <span className="sm:hidden">IACI</span>
-              <span className="hidden sm:inline">Indian  Actuarial  Climate  Index</span>
+              <span className="hidden sm:inline">Indian  Actuaries  Climate  Index</span>
             </span>
             <span className="font-bold italic tracking-[0.05em] text-[9px] sm:text-[12px] text-white/55 uppercase">
               SSSIA
@@ -199,7 +199,7 @@ export default function Header() {
               Sri Sathya Sai Institute of Actuaries
             </span>
             <span className="text-white/50 text-[11px]">
-              Indian Actuarial Climate Index (IACI)
+              Indian Actuaries Climate Index (IACI)
             </span>
           </div>
         </div>

@@ -16,41 +16,60 @@ export default function Footer() {
         {/* Wraps rather than overflows: at the md breakpoint the four columns
             want more width than a 768px window minus its scrollbar actually
             has, and the badges were pushing past the right edge. */}
-        <div className="flex flex-col md:flex-row md:flex-wrap md:items-start md:justify-between gap-8">
-          <a
-            href="https://www.sssia.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col gap-2 max-w-sm group w-fit"
-          >
-            <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:text-accent transition-colors">
-              SSSIA
+        {/* Main Footer Row: Left (Notice & SSSIA), Center (Proud Initiatives), Right (Explore) */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] items-start gap-8 lg:gap-12">
+          {/* Left Column: Educational Notice & SSSIA */}
+          <div className="flex flex-col gap-2.5 max-w-lg">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
+              Educational, Research & Organizational Use
             </span>
-            <span className="text-xs text-foreground/60 group-hover:text-foreground/90 leading-relaxed transition-colors">
-              Sri Sathya Sai Institute of Actuaries
-            </span>
-          </a>
+            <div className="flex flex-col gap-2 text-xs text-foreground/65 leading-relaxed">
+              <p className="font-medium text-foreground/80">
+                This index is provided for educational and research purposes.
+              </p>
+              <p>
+                If you would like to explore the Indian Actuaries Climate Index (IACI) as part of your organization’s risk assessment, we can provide a more detailed version of the index, fine-tuned to your specific requirements and intended application.
+              </p>
+              <p>
+                For further information, please contact{" "}
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}`}
+                  className="text-accent hover:text-accent-strong font-medium underline underline-offset-2 transition-colors"
+                >
+                  {SUPPORT_EMAIL}
+                </a>
+                .
+              </p>
+            </div>
 
-          {/* National-initiative badges, set beside Support. Both PNGs carry
-              their own alpha channel, so they float directly on the footer's
-              ground rather than sitting in cards. Atmanirbhar Bharat is the
-              larger, rotated seal; Made in India runs alongside it at a
-              smaller but still generous size. */}
-          <div className="flex flex-col gap-2.5">
-            <span className="text-[14px] font-bold uppercase tracking-widest text-foreground/45 justify-center">
+            <a
+              href="https://www.sssia.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col gap-0.5 group w-fit pt-1"
+            >
+              <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:text-accent transition-colors">
+                SSSIA
+              </span>
+              <span className="text-xs text-foreground/60 group-hover:text-foreground/90 leading-relaxed transition-colors">
+                Sri Sathya Sai Institute of Actuaries
+              </span>
+            </a>
+          </div>
+
+          {/* Center Column: Proud Initiatives */}
+          <div className="flex flex-col items-center justify-start gap-2.5 text-center justify-self-center">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
               Proud initiatives
             </span>
-            {/* The full-size pair only appears at lg, where there is room for
-                it beside the other three columns. flex-shrink-0 is deliberately
-                absent so a narrow window scales them down instead of clipping. */}
-            <div className="flex items-end gap-4 max-w-full">
+            <div className="flex items-center justify-center gap-4 sm:gap-5 max-w-full">
               <Image
                 src="/badges/atmanirbhar-bharat-seal.png"
                 alt="Atmanirbhar Bharat"
                 width={142}
                 height={142}
                 sizes="(min-width: 1024px) 132px, 96px"
-                className="w-24 h-24 lg:w-[132px] lg:h-[132px] object-contain drop-shadow-md"
+                className="w-20 h-20 sm:w-24 sm:h-24 lg:w-[124px] lg:h-[124px] object-contain drop-shadow-md"
                 style={{ transform: "rotate(0deg)" }}
               />
               <Image
@@ -59,12 +78,13 @@ export default function Footer() {
                 width={224}
                 height={112}
                 sizes="(min-width: 1024px) 224px, 128px"
-                className="w-auto h-16 lg:h-[112px] max-w-full object-contain drop-shadow-md"
+                className="w-auto h-14 sm:h-16 lg:h-[96px] max-w-full object-contain drop-shadow-md"
               />
             </div>
           </div>
 
-          <nav className="flex flex-col gap-2.5">
+          {/* Right Column: Explore Links */}
+          <nav className="flex flex-col gap-2.5 lg:items-end lg:justify-self-end">
             <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
               Explore
             </span>
@@ -78,18 +98,6 @@ export default function Footer() {
               </Link>
             ))}
           </nav>
-
-          <div className="flex flex-col gap-2.5">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
-              Support
-            </span>
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="text-xs font-semibold text-accent hover:text-accent-strong transition-colors w-fit"
-            >
-              {SUPPORT_EMAIL}
-            </a>
-          </div>
         </div>
 
         <div className="pt-6 border-t border-foreground/8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">

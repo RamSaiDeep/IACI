@@ -18,7 +18,7 @@ export default function Hero() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[80px] font-semibold tracking-tight uppercase leading-[1.02] sm:leading-[0.95]">
-            Indian&nbsp;&nbsp;Actuarial
+            Indian&nbsp;&nbsp;Actuaries
             <br />
             Climate &nbsp;Index
           </h1>

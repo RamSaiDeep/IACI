@@ -4,9 +4,9 @@ import Header from "../../components/Header";
 import FaqSection from "./FaqSection";
 
 export const metadata: Metadata = {
-  title: "About & FAQ — Indian Actuarial Climate Index",
+  title: "About & FAQ — Indian Actuaries Climate Index",
   description:
-    "Methodology, climate components, datasets and frequently asked questions for the Indian Actuarial Climate Index (IACI).",
+    "Methodology, climate components, datasets and frequently asked questions for the Indian Actuaries Climate Index (IACI).",
 };
 
 const atAGlance = [
@@ -149,7 +149,7 @@ export default function AboutPage() {
               <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-                  Actuarial climate intelligence
+                  Actuaries climate intelligence
                 </span>
               </div>
 
@@ -272,12 +272,12 @@ export default function AboutPage() {
                   {
                     label: "Coastal regions",
                     count: "6 components",
-                    formula: "(T90S + T10S + PS + W + DS + SS) / 6",
+                    formula: "(T90S - T10S + PS + W + DS + SS) / 6",
                   },
                   {
                     label: "Inland regions",
                     count: "5 components",
-                    formula: "(T90S + T10S + PS + W + DS) / 5",
+                    formula: "(T90S - T10S + PS + W + DS) / 5",
                   },
                 ].map((row) => (
                   <div key={row.label} className="flex flex-col gap-2.5">
