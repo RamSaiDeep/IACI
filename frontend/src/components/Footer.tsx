@@ -51,7 +51,7 @@ export default function Footer() {
                 height={142}
                 sizes="(min-width: 1024px) 132px, 96px"
                 className="w-24 h-24 lg:w-[132px] lg:h-[132px] object-contain drop-shadow-md"
-                style={{ transform: "rotate(-4deg)" }}
+                style={{ transform: "rotate(0deg)" }}
               />
               <Image
                 src="/badges/made-in-india-badge.png"
