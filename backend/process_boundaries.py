@@ -39,6 +39,26 @@ def rewind_polygon(poly_coords):
         new_poly.append(rewind_ring(hole, should_be_positive=True))
     return new_poly
 
+# ----------------- Coordinate Precision -----------------
+# The geometry below is simplified to ~110 m, and one pixel of the national map
+# is several kilometres, so full float64 coordinates cost payload and parse time
+# for detail that can never be drawn. 4 decimals is ~11 m. Keep this in step
+# with PRECISION in backend/optimize_geojson.py.
+COORD_PRECISION = 4
+
+def round_coords(node):
+    if isinstance(node, list):
+        if node and isinstance(node[0], (int, float)):
+            return [round(value, COORD_PRECISION) for value in node]
+        return [round_coords(child) for child in node]
+    return node
+
+def round_geometry(geom):
+    if "coordinates" not in geom:
+        return geom
+    return {**geom, "coordinates": round_coords(geom["coordinates"])}
+# ---------------------------------------------------------------------
+
 def rewind_geometry(geom):
     geom_type = geom["type"]
     coords = geom["coordinates"]
@@ -67,16 +87,19 @@ if os.path.exists(state_boundary_src):
     with open(state_boundary_src, "r") as f:
         states_data = json.load(f)
     
-    # Normalize state names and rewind geometries
+    # Normalize state names, rewind geometries, and drop the shapefile's
+    # object ids, areas and lengths — the map only ever reads the name.
     for feature in states_data.get("features", []):
         props = feature.get("properties", {})
-        if "STATE" in props:
-            props["state_name"] = props["STATE"].strip()
+        state_name = props["STATE"].strip() if "STATE" in props else props.get("state_name")
+        feature["properties"] = {"STATE": state_name, "state_name": state_name}
         if "geometry" in feature:
-            feature["geometry"] = rewind_geometry(feature["geometry"])
-            
+            feature["geometry"] = round_geometry(rewind_geometry(feature["geometry"]))
+
+    # Minified, not indented: this file is fetched before the first map paints,
+    # and the indentation alone was most of its 2.5 MB.
     with open(state_boundary_dst, "w") as f:
-        json.dump(states_data, f, indent=2)
+        json.dump(states_data, f, separators=(",", ":"))
     print("State boundaries processed, rewound, and saved.")
 else:
     print("WARNING: state_boundary.json not found in boundaries directory!")
@@ -213,16 +236,15 @@ for idx, (rec, shape) in enumerate(zip(records, shapes)):
     # Simplify using RDP (epsilon=0.001 is about 110m resolution, perfect for browser maps)
     simplified_geom = simplify_geometry(rewound_geom, epsilon=0.001)
     
+    # Only the two name fields are read by the frontend; the shapefile's ids,
+    # areas and lengths were pure payload. See backend/optimize_geojson.py.
     feature = {
         "type": "Feature",
         "properties": {
-            "objectid": rec["OBJECTID"],
             "state_name": state_ut,
-            "district_name": district,
-            "shape_area": rec["Shape_Area"],
-            "shape_length": rec["Shape_Leng"]
+            "district_name": district
         },
-        "geometry": simplified_geom
+        "geometry": round_geometry(simplified_geom)
     }
     
     if state_ut not in state_groups:
@@ -244,7 +266,7 @@ for state, features in state_groups.items():
     }
     
     with open(file_path, "w") as f:
-        json.dump(geojson, f)
+        json.dump(geojson, f, separators=(",", ":"))
         
     print(f"Saved {state} districts ({len(features)} districts) to {filename} (Size: {os.path.getsize(file_path)/1024:.1f} KB)")
 

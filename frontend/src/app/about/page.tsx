@@ -1,293 +1,360 @@
-import Header from "../../components/Header";
 import Link from "next/link";
+import type { Metadata } from "next";
+import Header from "../../components/Header";
+import FaqSection from "./FaqSection";
+
+export const metadata: Metadata = {
+  title: "About & FAQ — Indian Actuarial Climate Index",
+  description:
+    "Methodology, climate components, datasets and frequently asked questions for the Indian Actuarial Climate Index (IACI).",
+};
+
+const atAGlance = [
+  { value: "6", label: "Climate components" },
+  { value: "1991–2020", label: "Baseline period" },
+  { value: "36", label: "States & UTs" },
+  { value: "782", label: "Districts" },
+];
+
+const pillars = [
+  {
+    n: "01",
+    title: "Spatial framework",
+    accent: "bg-accent/10 text-accent",
+    body: (
+      <>
+        A <strong className="font-semibold">grid-cell-first</strong> architecture. Every component
+        is computed independently for each ERA5 grid cell, then aggregated to district and state
+        boundaries.
+      </>
+    ),
+  },
+  {
+    n: "02",
+    title: "Reference period",
+    accent: "bg-teal-600/10 text-teal-600",
+    body: (
+      <>
+        Standardized against the <strong className="font-semibold">1991–2020 baseline</strong>, the
+        WMO 30-year climate norm. Every output is a z-score.
+      </>
+    ),
+  },
+  {
+    n: "03",
+    title: "Reanalysis datasets",
+    accent: "bg-blue-600/10 text-blue-600",
+    body: (
+      <>
+        <strong className="font-semibold">ERA5-Land</strong> for temperature, precipitation, drought
+        and wind, paired with <strong className="font-semibold">ORAS5</strong> for sea level.
+      </>
+    ),
+  },
+];
+
+const components = [
+  {
+    symbol: "T90S",
+    title: "Warm temperature",
+    badge: "Heat",
+    badgeClass: "bg-orange-500/10 text-orange-600 border-orange-500/25",
+    desc: "Unusually warm days and nights, above the 90th percentile of the baseline.",
+  },
+  {
+    symbol: "T10S",
+    title: "Cold temperature",
+    badge: "Cold",
+    badgeClass: "bg-teal-500/10 text-teal-700 border-teal-500/25",
+    desc: "Unusually cold days and nights, below the 10th percentile of the baseline.",
+  },
+  {
+    symbol: "PS",
+    title: "Extreme precipitation",
+    badge: "Rainfall",
+    badgeClass: "bg-blue-500/10 text-blue-600 border-blue-500/25",
+    desc: "Maximum consecutive five-day precipitation anomaly — flood and deluge potential.",
+  },
+  {
+    symbol: "W",
+    title: "Extreme wind",
+    badge: "Wind",
+    badgeClass: "bg-sky-500/10 text-sky-600 border-sky-500/25",
+    desc: "Unusually high wind-speed days, above the 90th percentile of the record.",
+  },
+  {
+    symbol: "DS",
+    title: "Drought & dry spell",
+    badge: "Drought",
+    badgeClass: "bg-amber-500/10 text-amber-700 border-amber-500/25",
+    desc: "Longest run of consecutive dry days — moisture deficit and drought stress.",
+  },
+  {
+    symbol: "SS",
+    title: "Sea level anomaly",
+    badge: "Coastal",
+    badgeClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/25",
+    desc: "Monthly mean sea-level anomaly, applied to coastal states and districts only.",
+  },
+];
+
+const team = [
+  "Satya Sai Mudigonda",
+  "Eswar Prem",
+  "Ram Sai Deep V",
+  "Dr. Rohan Yashraj Gupta",
+  "Arunachala Sivateja Mudigonda",
+];
+
+/** Up to two initials, skipping honorifics so "Dr. Rohan …" reads as RG. */
+function initialsOf(name: string): string {
+  const parts = name.split(/\s+/).filter((p) => !/^(dr|prof|mr|ms|mrs)\.?$/i.test(p));
+  const letters = parts.map((p) => p[0]).filter(Boolean);
+  return (letters[0] ?? "") + (letters.length > 1 ? letters[letters.length - 1] : "");
+}
+
+/** Section heading with consistent spacing above and below. */
+function SectionHeader({
+  eyebrow,
+  title,
+  lede,
+}: {
+  eyebrow: string;
+  title: string;
+  lede?: string;
+}) {
+  return (
+    <header className="flex flex-col gap-2.5 max-w-2xl">
+      <span className="eyebrow">{eyebrow}</span>
+      <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase leading-tight">
+        {title}
+      </h2>
+      {lede && <p className="text-sm text-foreground/60 leading-relaxed">{lede}</p>}
+    </header>
+  );
+}
 
 export default function AboutPage() {
-  const components = [
-    {
-      id: "T90S",
-      title: "Warm Temperature",
-      symbol: "T90S",
-      badge: "Heat Extreme",
-      desc: "Frequency of unusually warm days and nights exceeding the 90th percentile of baseline historical temperatures.",
-      color: "from-orange-500/10 to-rose-500/10 border-orange-500/30 text-orange-600",
-      accent: "#f97316"
-    },
-    {
-      id: "T10S",
-      title: "Cold Temperature",
-      symbol: "T10S",
-      badge: "Cold Extreme",
-      desc: "Frequency of unusually cold days and nights falling below the 10th percentile of baseline historical temperatures.",
-      color: "from-teal-500/10 to-cyan-500/10 border-teal-500/30 text-teal-600",
-      accent: "#0d9488"
-    },
-    {
-      id: "P",
-      title: "Extreme Precipitation",
-      symbol: "P / PS",
-      badge: "Heavy Rainfall",
-      desc: "Monthly maximum consecutive five-day precipitation volume anomaly reflecting intense flood and deluge potential.",
-      color: "from-blue-500/10 to-indigo-500/10 border-blue-500/30 text-blue-600",
-      accent: "#2563eb"
-    },
-    {
-      id: "D",
-      title: "Drought & Dry Spell",
-      symbol: "D / DS",
-      badge: "Upgrade in Progress",
-      desc: "Maximum number of consecutive dry days within each observation window representing moisture deficit and drought stress. (Pipeline recalibration currently in progress).",
-      color: "from-amber-500/10 to-orange-500/10 border-amber-500/30 text-amber-700",
-      accent: "#d97706",
-      isUnderUpgrade: true
-    },
-    {
-      id: "W",
-      title: "Extreme Wind",
-      symbol: "W",
-      badge: "Wind Speed",
-      desc: "Frequency of unusually high wind-speed days exceeding the 90th percentile of climatological records.",
-      color: "from-sky-500/10 to-blue-500/10 border-sky-500/30 text-sky-600",
-      accent: "#0284c7"
-    },
-    {
-      id: "SS",
-      title: "Sea Level Anomaly",
-      symbol: "SS",
-      badge: "Coastal Only",
-      desc: "Monthly mean sea-level anomaly derived from oceanic reanalysis (applied exclusively to coastal states and districts).",
-      color: "from-emerald-500/10 to-teal-500/10 border-emerald-500/30 text-emerald-600",
-      accent: "#059669"
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col">
+    <div className="flex-1 flex flex-col font-sans">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col gap-8 sm:gap-12">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b2b5f] via-[#103b7b] to-[#071d42] text-white p-6 sm:p-10 md:p-12 shadow-2xl border border-white/10">
-          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-[#f26a21]/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 -mb-12 -ml-12 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col gap-20 sm:gap-28">
+        {/* Hero */}
+        <section className="hero-panel rounded-[1.75rem] px-6 py-10 sm:px-12 sm:py-14">
+          <div className="hero-grid" />
 
-          <div className="relative z-10 max-w-3xl flex flex-col gap-3.5 sm:gap-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
-              <span className="w-2 h-2 rounded-full bg-[#f26a21] animate-pulse" />
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#f26a21]">
-                Actuarial Climate Intelligence
-              </span>
+          <div className="relative z-10 flex flex-col gap-10">
+            <div className="max-w-2xl flex flex-col gap-5">
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
+                  Actuarial climate intelligence
+                </span>
+              </div>
+
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight uppercase leading-[1.06]">
+                About the index
+              </h1>
+
+              <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light">
+                A standardized, reproducible measure of climate extremes across India — built for
+                risk management, insurance pricing and infrastructure planning.
+              </p>
+
+              <div className="flex flex-wrap gap-3 pt-1">
+                <Link
+                  href="/explore"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-accent text-white text-xs font-bold uppercase tracking-widest hover:bg-accent-strong transition-colors"
+                >
+                  Explore the map
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </Link>
+                <a
+                  href="#faq"
+                  className="inline-flex items-center px-5 py-3 rounded-xl border border-white/25 text-white text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
+                >
+                  Read the FAQ
+                </a>
+              </div>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase leading-tight">
-              About the Indian Actuarial Climate Index (IACI)
-            </h1>
-
-            <p className="text-xs sm:text-sm md:text-base text-white/80 leading-relaxed font-light">
-              The <strong className="text-white font-semibold">Indian Actuarial Climate Index (IACI)</strong> is a standardized, reproducible framework designed to quantify climate extremes for actuarial applications, including <span className="text-white font-medium">risk management</span>, <span className="text-white font-medium">insurance pricing</span>, and <span className="text-white font-medium">infrastructure planning</span> across India.
-            </p>
-
-            <div className="flex flex-wrap gap-3 pt-1 sm:pt-2">
-              <Link
-                href="/explore"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f26a21] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-lg hover:shadow-[#f26a21]/30 hover:-translate-y-0.5"
-              >
-                Explore Interactive Map
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </Link>
-            </div>
+            {/* The four numbers a first-time reader most needs, so the page can
+                be understood before any prose is read. */}
+            <dl className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-7 pt-8 border-t border-white/15">
+              {atAGlance.map((item) => (
+                <div key={item.label} className="flex flex-col gap-1.5">
+                  <dd className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                    {item.value}
+                  </dd>
+                  <dt className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50">
+                    {item.label}
+                  </dt>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
 
-        {/* Core Methodology Pillars */}
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1 border-b border-foreground/10 pb-3">
-            <h2 className="text-xs font-bold tracking-widest uppercase text-[#f26a21]">
-              Scientific Foundations
-            </h2>
-            <h3 className="text-2xl font-extrabold tracking-tight uppercase text-foreground">
-              Core Methodology
-            </h3>
-          </div>
+        {/* Methodology */}
+        <section className="flex flex-col gap-9">
+          <SectionHeader
+            eyebrow="Scientific foundations"
+            title="Core methodology"
+            lede="Three choices define how every number on this site is produced."
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Pillar 1 */}
-            <div className="p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
-              <div className="w-10 h-10 rounded-xl bg-[#f26a21]/10 text-[#f26a21] flex items-center justify-center font-black text-sm">
-                01
-              </div>
-              <h4 className="text-base font-bold uppercase text-foreground tracking-tight">
-                Spatial Framework
-              </h4>
-              <p className="text-xs text-foreground/70 leading-relaxed">
-                Utilizes a rigorous <strong>&ldquo;grid-cell-first&rdquo;</strong> architecture. Climate extreme components are computed independently for every ERA5 high-resolution grid cell before being aggregated to administrative district and state boundaries.
-              </p>
-            </div>
-
-            {/* Pillar 2 */}
-            <div className="p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
-              <div className="w-10 h-10 rounded-xl bg-teal-600/10 text-teal-600 flex items-center justify-center font-black text-sm">
-                02
-              </div>
-              <h4 className="text-base font-bold uppercase text-foreground tracking-tight">
-                Reference Period
-              </h4>
-              <p className="text-xs text-foreground/70 leading-relaxed">
-                Standardized against the <strong>1991–2020 climatological baseline reference period</strong> (WMO standard 30-year climate norm). Every index output reflects normalized statistical anomalies (<span className="italic">z-scores</span>).
-              </p>
-            </div>
-
-            {/* Pillar 3 */}
-            <div className="p-6 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-lg flex flex-col gap-3 relative overflow-hidden group hover:border-[#f26a21]/40 transition-all">
-              <div className="w-10 h-10 rounded-xl bg-blue-600/10 text-blue-600 flex items-center justify-center font-black text-sm">
-                03
-              </div>
-              <h4 className="text-base font-bold uppercase text-foreground tracking-tight">
-                Reanalysis Datasets
-              </h4>
-              <p className="text-xs text-foreground/70 leading-relaxed">
-                Leverages <strong>ECMWF ERA5-Land</strong> reanalysis data for high-resolution temperature, precipitation, drought, and wind dynamics, paired with <strong>ORAS5</strong> global ocean reanalysis for sea-level anomalies.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* The 6 Standardized Climate Components */}
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1 border-b border-foreground/10 pb-3">
-            <h2 className="text-xs font-bold tracking-widest uppercase text-[#f26a21]">
-              Sub-Index Indicators
-            </h2>
-            <h3 className="text-2xl font-extrabold tracking-tight uppercase text-foreground">
-              The 6 Climate Components
-            </h3>
-            <p className="text-xs text-foreground/60">
-              The IACI harmonizes six independently calculated standardized components measuring distinct physical climate hazards.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {components.map((c) => (
-              <div
-                key={c.id}
-                className="p-5 rounded-2xl bg-[#fcfcfa] border border-foreground/10 shadow-md flex flex-col gap-3 hover:shadow-xl transition-all"
-              >
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-black tracking-wider uppercase px-2.5 py-1 rounded-md bg-foreground/5 text-foreground">
-                    {c.symbol}
-                  </span>
-                  <span className={`text-[9px] font-bold px-2 py-0.5 border rounded-full uppercase tracking-wider ${c.color}`}>
-                    {c.badge}
-                  </span>
+            {pillars.map((pillar) => (
+              <article key={pillar.n} className="card p-7 flex flex-col gap-4">
+                <div
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center font-black text-sm ${pillar.accent}`}
+                >
+                  {pillar.n}
                 </div>
-
-                <div>
-                  <h4 className="text-sm font-bold uppercase text-foreground tracking-tight">
-                    {c.title}
-                  </h4>
-                  <p className="text-xs text-foreground/70 leading-relaxed mt-1">
-                    {c.desc}
-                  </p>
-                </div>
-              </div>
+                <h3 className="text-base font-bold uppercase tracking-tight">{pillar.title}</h3>
+                <p className="text-sm text-foreground/65 leading-relaxed">{pillar.body}</p>
+              </article>
             ))}
           </div>
         </section>
 
-        {/* Composite Calculation & Interpretation */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Composite Index Calculation Card */}
-          <div className="p-8 rounded-3xl bg-[#fcfcfa] border border-foreground/10 shadow-xl flex flex-col gap-5">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-xs font-bold tracking-widest uppercase text-[#f26a21]">
-                Mathematical Aggregation
-              </h2>
-              <h3 className="text-xl font-extrabold tracking-tight uppercase text-foreground">
-                Composite Index Formulation
-              </h3>
-            </div>
+        {/* Components */}
+        <section className="flex flex-col gap-9">
+          <SectionHeader
+            eyebrow="Sub-index indicators"
+            title="The six components"
+            lede="Each measures a distinct physical hazard and is standardized the same way before the composite averages them."
+          />
 
-            <div className="flex flex-col gap-4 text-xs text-foreground/80 leading-relaxed">
-              <div className="p-4 rounded-xl bg-foreground/5 border border-foreground/10 flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-foreground uppercase tracking-wide">Coastal Regions</span>
-                  <span className="text-[10px] font-semibold text-foreground/50">6 Components</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {components.map((c) => (
+              <article key={c.symbol} className="card p-7 flex flex-col gap-4">
+                <div className="flex justify-between items-start gap-3">
+                  <span className="text-lg font-black tracking-tight font-mono">{c.symbol}</span>
+                  <span
+                    className={`text-[9px] font-bold px-2.5 py-1 border rounded-full uppercase tracking-widest ${c.badgeClass}`}
+                  >
+                    {c.badge}
+                  </span>
                 </div>
-                <code className="text-xs text-[#f26a21] font-mono font-bold bg-white/70 px-2 py-1 rounded border border-foreground/5">
-                  IACI = (T90S + T10S + P + D + W + SS) / 6
-                </code>
-                <p className="text-[11px] text-foreground/60">
-                  Calculated as the arithmetic mean of all six standardized components, including oceanic sea-level anomaly.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-foreground/5 border border-foreground/10 flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-foreground uppercase tracking-wide">Inland Regions</span>
-                  <span className="text-[10px] font-semibold text-foreground/50">5 Components</span>
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-sm font-bold uppercase tracking-tight">{c.title}</h3>
+                  <p className="text-sm text-foreground/60 leading-relaxed">{c.desc}</p>
                 </div>
-                <code className="text-xs text-[#f26a21] font-mono font-bold bg-white/70 px-2 py-1 rounded border border-foreground/5">
-                  IACI = (T90S + T10S + P + D + W) / 5
-                </code>
-                <p className="text-[11px] text-foreground/60">
-                  Computed as the mean of the five land-based components, ensuring inland areas are not unfairly penalized for lacking a coastline.
-                </p>
-              </div>
-            </div>
+              </article>
+            ))}
           </div>
+        </section>
 
-          {/* Interpretation & Limitations Card */}
-          <div className="p-8 rounded-3xl bg-[#fcfcfa] border border-foreground/10 shadow-xl flex flex-col gap-5 justify-between">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1">
-                <h2 className="text-xs font-bold tracking-widest uppercase text-[#f26a21]">
-                  Analytical Scope
-                </h2>
-                <h3 className="text-xl font-extrabold tracking-tight uppercase text-foreground">
-                  Interpretation &amp; Scope
-                </h3>
+        {/* Formula & scope */}
+        <section className="flex flex-col gap-9">
+          <SectionHeader
+            eyebrow="Putting it together"
+            title="Composite & interpretation"
+          />
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="card p-7 sm:p-8 flex flex-col gap-6">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/55">
+                How the composite is formed
+              </h3>
+
+              <div className="flex flex-col gap-5">
+                {[
+                  {
+                    label: "Coastal regions",
+                    count: "6 components",
+                    formula: "(T90S + T10S + PS + W + DS + SS) / 6",
+                  },
+                  {
+                    label: "Inland regions",
+                    count: "5 components",
+                    formula: "(T90S + T10S + PS + W + DS) / 5",
+                  },
+                ].map((row) => (
+                  <div key={row.label} className="flex flex-col gap-2.5">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-sm font-bold">{row.label}</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-widest text-foreground/45">
+                        {row.count}
+                      </span>
+                    </div>
+                    <code className="text-xs text-accent font-mono font-bold bg-surface-muted px-3 py-2.5 rounded-lg border border-foreground/8 overflow-x-auto block">
+                      {row.formula}
+                    </code>
+                  </div>
+                ))}
               </div>
 
-              <div className="flex flex-col gap-3 text-xs text-foreground/75 leading-relaxed">
-                <p>
-                  <strong className="text-foreground">Standardized Departures:</strong> The IACI measures standardized departures from historical norms. Larger positive values indicate that multiple climate hazards are simultaneously exceeding historical baseline behavior.
-                </p>
-                <p>
-                  <strong className="text-foreground">Physical Hazard vs. Economic Impact:</strong> The IACI quantifies <em>physical climate hazard intensity</em>, not direct economic loss, insurance claim payouts, or societal vulnerability.
-                </p>
-                <p>
-                  <strong className="text-foreground">Complementary Component Reporting:</strong> The composite index is intended for use in conjunction with individual component reporting to pinpoint the specific meteorological drivers of change across any region.
-                </p>
-              </div>
+              <p className="text-sm text-foreground/60 leading-relaxed">
+                Inland regions exclude sea level so they are not penalized for lacking a coastline.
+              </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3">
-              <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="text-[11px] text-amber-900 leading-snug font-medium">
-                IACI relies on continuous state-of-the-art reanalysis models (ERA5 &amp; ORAS5) to provide objective, reproducible, and verifiable climate metrics.
-              </span>
+            <div className="card p-7 sm:p-8 flex flex-col gap-6">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/55">
+                What the values mean
+              </h3>
+
+              <dl className="flex flex-col gap-5 text-sm leading-relaxed">
+                <div className="flex flex-col gap-1">
+                  <dt className="font-bold">Standardized departures</dt>
+                  <dd className="text-foreground/60">
+                    Larger positive values mean several hazards are exceeding their historical
+                    baseline at once.
+                  </dd>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <dt className="font-bold">Hazard, not loss</dt>
+                  <dd className="text-foreground/60">
+                    The index measures physical hazard intensity — not economic loss, claims, or
+                    vulnerability.
+                  </dd>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <dt className="font-bold">Read with the components</dt>
+                  <dd className="text-foreground/60">
+                    The composite tells you something changed; the components tell you which driver
+                    changed.
+                  </dd>
+                </div>
+              </dl>
             </div>
           </div>
         </section>
 
-        {/* FAQ Discovery Banner */}
-        <section className="p-8 rounded-3xl bg-gradient-to-r from-foreground/5 to-[#f26a21]/5 border border-foreground/10 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md">
-          <div className="flex flex-col gap-1.5 text-center sm:text-left">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#f26a21]">Got Questions?</span>
-            <h3 className="text-xl font-black uppercase text-foreground tracking-tight">Frequently Asked Questions</h3>
-            <p className="text-xs text-foreground/70 max-w-xl">
-              Find detailed explanations of the statistical framework, 90th/10th percentile calculations, ERA5/ORAS5 datasets, and actuarial applications.
-            </p>
-          </div>
-          <Link
-            href="/faq"
-            className="px-6 py-3 rounded-xl bg-[#f26a21] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#d65715] transition-all shadow-lg hover:shadow-[#f26a21]/20 whitespace-nowrap"
-          >
-            View Full FAQ →
-          </Link>
+        <FaqSection />
+
+        {/* Team — kept last: the reader's-question sections (methodology,
+            components, formula, FAQ) come first, and who built this comes as
+            the closing note. */}
+        <section className="flex flex-col gap-9">
+          <SectionHeader
+            eyebrow="Team involved"
+            title="The people behind the index"
+          />
+
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {team.map((name) => (
+              <li key={name} className="card p-6 flex items-center gap-4">
+                <span
+                  aria-hidden="true"
+                  className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/15 to-accent/5 border border-accent/20 text-accent flex items-center justify-center font-black text-sm flex-shrink-0"
+                >
+                  {initialsOf(name)}
+                </span>
+                <span className="text-sm font-bold leading-snug">{name}</span>
+              </li>
+            ))}
+          </ul>
         </section>
       </main>
     </div>

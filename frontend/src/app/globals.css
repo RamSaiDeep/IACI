@@ -3,8 +3,43 @@
 :root {
   --background: #fcfcfa;
   --foreground: #0b2b5f;
-  --header-bg: #0b2b5f;
+  --header-bg: #112a57;
   --header-fg: #fcfcfa;
+
+  /* Single source of truth for the sticky bar's height. The header sizes itself
+     from it and the mobile drawer offsets itself by it, so the two cannot drift
+     apart at a breakpoint. */
+  --header-h: 4rem;
+
+  /* Brand */
+  --accent: #f26a21;
+  --accent-strong: #d65715;
+  --navy-deep: #071d42;
+  --navy-mid: #103b7b;
+
+  /* Surfaces — cards sit slightly above the page ground. */
+  --surface: #ffffff;
+  --surface-muted: #f5f5f1;
+
+  /* One shadow ramp, so elevation reads consistently across pages. */
+  --shadow-sm: 0 1px 2px rgba(11, 43, 95, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(11, 43, 95, 0.08), 0 2px 4px -2px rgba(11, 43, 95, 0.05);
+  --shadow-lg: 0 12px 28px -6px rgba(11, 43, 95, 0.12), 0 4px 10px -4px rgba(11, 43, 95, 0.06);
+  --shadow-xl: 0 24px 48px -12px rgba(11, 43, 95, 0.16), 0 8px 16px -8px rgba(11, 43, 95, 0.08);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --header-h: 5rem;
+  }
+}
+
+/* A phone held sideways is wide enough for the 5rem bar but far too short for
+   it — that is a fifth of the screen spent on the header. Height wins. */
+@media (max-height: 480px) {
+  :root {
+    --header-h: 3.5rem;
+  }
 }
 
 @theme inline {
@@ -12,12 +47,208 @@
   --color-foreground: var(--foreground);
   --color-header-bg: var(--header-bg);
   --color-header-fg: var(--header-fg);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
+
+  --shadow-card: var(--shadow-md);
+  --shadow-card-lg: var(--shadow-lg);
+  --shadow-card-xl: var(--shadow-xl);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  /* Keeps the tabular figures in the data panels from shifting as values change. */
+  font-variant-numeric: tabular-nums;
+  /* A long word or an over-wide child should never widen the page itself; the
+     few genuinely wide things (the compare table, the chip rails) opt into
+     their own horizontal scroller instead. */
+  overflow-x: hidden;
+}
+
+@layer components {
+
+  /* The standard raised panel used for every data card and content block. */
+  .card {
+    background: var(--surface);
+    border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-lg {
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Small all-caps label used above headings and beside values. */
+  .eyebrow {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* Deep navy hero panel with the two brand light-blooms already placed. */
+  .hero-panel {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--header-bg), var(--navy-mid) 55%, var(--navy-deep));
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .hero-panel::before,
+  .hero-panel::after {
+    content: "";
+    position: absolute;
+    width: 24rem;
+    height: 24rem;
+    border-radius: 9999px;
+    filter: blur(64px);
+    pointer-events: none;
+  }
+
+  .hero-panel::before {
+    top: -6rem;
+    right: -6rem;
+    background: rgba(242, 106, 33, 0.22);
+  }
+
+  .hero-panel::after {
+    bottom: -6rem;
+    left: -6rem;
+    background: rgba(20, 184, 166, 0.12);
+  }
+
+  /* Faint dot lattice over the hero, fading out toward the copy so it adds
+     texture without competing with the text. */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle at 1px 1px,
+        rgba(255, 255, 255, 0.11) 1px,
+        transparent 0);
+    background-size: 26px 26px;
+    mask-image: linear-gradient(115deg, transparent 30%, black 100%);
+    -webkit-mask-image: linear-gradient(115deg, transparent 30%, black 100%);
+  }
+
+  /* Form controls share one look across Explore and Analyze. */
+  .field {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--surface);
+    color: var(--foreground);
+    border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+    border-radius: 0.5rem;
+    outline: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .field:hover {
+    border-color: color-mix(in srgb, var(--foreground) 28%, transparent);
+  }
+
+  .field:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+
+  .field:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Mobile map height, as a share of the viewport.
+   `dvh` tracks the phone's collapsing address bar, so the map frame stays
+   inside the visible area instead of being sized against the tallest possible
+   viewport; `vh` is the fallback for Safari before 15.4 and Firefox before 97.
+   Set the share per usage with `[--map-vh:40]`. */
+.h-map {
+  height: calc(var(--map-vh, 45) * 1vh);
+}
+
+@supports (height: 1dvh) {
+  .h-map {
+    height: calc(var(--map-vh, 45) * 1dvh);
+  }
+}
+
+/* Horizontal chip rails scroll without showing a bar. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+:where(a, button, select, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.35s ease-out both;
+}
+
+/* The drawer previously carried `animate-in fade-in slide-in-from-top-4`, which
+   belong to the tailwindcss-animate plugin and are not installed — they emitted
+   no CSS at all. This is the real equivalent. */
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Deliberately no `both` fill mode: the drawer's resting style is already fully
+   visible, so if the animation never advances — a throttled tab, a compositor
+   that isn't running, a browser that skips it — the menu still shows. Nothing
+   about being able to read the navigation depends on an animation completing. */
+.animate-drawer {
+  animation: drawer-in 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

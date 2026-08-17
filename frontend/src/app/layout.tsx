@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Footer from "../components/Footer";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -24,7 +25,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       lang="en"
       className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      {/* Pages fill the column with flex-1 so the footer sits below the content
+          on short pages instead of floating mid-screen. */}
+      <body className="min-h-full flex flex-col bg-background">
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
