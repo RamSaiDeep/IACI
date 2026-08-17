@@ -1,0 +1,23 @@
+# Raw backend data and spatial files (>100MB blocked by GitHub)
+backend/data/
+*.shp
+*.shx
+*.dbf
+*.cpg
+*.prj
+*.zarr
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Next.js build outputs
+.next/
+frontend/.next/
+out/
+frontend/out/
+
+# Environment and OS
+.env*
+.DS_Store
+*.tsbuildinfo
