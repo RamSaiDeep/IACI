@@ -83,8 +83,8 @@ export default function Header() {
               room for "Indian Actuaries Climate Index" at a legible size. */}
           <span className="flex flex-col leading-none gap-1 min-w-0">
             <span className="font-semibold tracking-tight text-white group-hover:text-white/90 transition-colors uppercase text-base sm:text-lg lg:text-xl truncate">
-              <span className="sm:hidden">IACI</span>
-              <span className="hidden sm:inline">Indian  Actuaries  Climate  Index</span>
+              <span className="sm:hidden">IACI v1</span>
+              <span className="hidden sm:inline">Indian  Actuaries  Climate  Index v1</span>
             </span>
             <span className="font-bold italic tracking-[0.05em] text-[9px] sm:text-[12px] text-white/55 uppercase">
               SSSIA
