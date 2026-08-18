@@ -149,7 +149,7 @@ export default function AboutPage() {
               <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-                  Actuaries climate intelligence
+                  Actuaries Climate Index
                 </span>
               </div>
 
