@@ -14,6 +14,21 @@ Output format (v2) is deliberately compact — these files ship to the browser:
 Values are ordered per `fields` and rounded to PRECISION decimals; a missing
 observation is null, never 0. Rows whose values are entirely null are dropped.
 
+SEA LEVEL. The values come from the `iaci_with_sealevel_*` stores, not the
+plain `iaci_*` ones: those carry the SS component and the composite Section
+10.3 defines on top of it — six terms for a region that has a sea-level
+component, five for a region that does not. The five land components are
+identical between the two families; only IACI moves, and only where SS exists.
+
+SS is NaN — serialized as null, never 0 — everywhere sea level does not reach,
+which is most of the country: 12 of 36 states and 86 of 782 districts carry it.
+The frontend renders that null as "No Data", not as a reading of zero.
+
+The `iaci_with_sealevel_*` stores carry region_id but no region_name, so the
+names (and the district crosswalk join below) come from the matching plain
+`iaci_*` store. The two are written region-for-region from the same crosswalk,
+which `open_level` re-checks rather than assumes.
+
 District files are named after the *state zarr's* region_name, because that is
 what `state_boundary.json` carries and therefore what the frontend slugifies
 when it requests a state's districts. The district crosswalk's own STATE_UT
@@ -29,18 +44,48 @@ import zarr
 import pandas as pd
 import numpy as np
 
-backend_dir = r"c:\IACI\backend"
-spatial_dir = os.path.join(backend_dir, "data", "spatial")
+# Paths resolve from this file so the script runs from any checkout. The zarr
+# stores are gitignored (far past GitHub's file limit), so they are either
+# copied into backend/data/spatial or read straight out of a sibling
+# IACI-data_transformation checkout. IACI_SPATIAL_DIR overrides both.
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+repo_dir = os.path.dirname(backend_dir)
+
+
+def resolve_spatial_dir():
+    candidates = [
+        os.environ.get("IACI_SPATIAL_DIR"),
+        os.path.join(backend_dir, "data", "spatial"),
+        os.path.join(os.path.dirname(repo_dir), "IACI-data_transformation",
+                     "derived", "spatial"),
+    ]
+    for path in candidates:
+        if path and os.path.isdir(path):
+            return path
+    raise SystemExit(
+        "No spatial zarr directory found. Copy the IACI-data_transformation "
+        "derived/spatial output into backend/data/spatial, or point "
+        "IACI_SPATIAL_DIR at it."
+    )
+
+
+spatial_dir = resolve_spatial_dir()
 crosswalks_dir = os.path.join(spatial_dir, "crosswalks")
-frontend_public_dir = r"c:\IACI\frontend\public"
+frontend_public_dir = os.path.join(repo_dir, "frontend", "public")
 output_data_dir = os.path.join(frontend_public_dir, "data")
 output_districts_dir = os.path.join(output_data_dir, "districts")
 
 os.makedirs(output_data_dir, exist_ok=True)
 os.makedirs(output_districts_dir, exist_ok=True)
 
-# Zarr array names, in the order they appear in every emitted row.
-FIELDS = ["IACI", "DS", "PS", "T10S", "T90S", "W"]
+print(f"Reading spatial stores from {spatial_dir}")
+
+# Zarr array names, in the order they appear in every emitted row. The frontend
+# reads the order off the `fields` key rather than assuming it, but keeping it
+# aligned with lib/climate.ts FIELDS keeps the two readable side by side.
+FIELDS = ["IACI", "DS", "PS", "SS", "T10S", "T90S", "W"]
+
+SEA_LEVEL_FIELD = "SS"
 
 # z-scores are read to 2 decimals in the UI; 3 keeps headroom and cuts the
 # payload by roughly 4x versus full float repr.
@@ -64,6 +109,29 @@ def slugify(name):
     return "_".join(filter(None, slug.split("_")))
 
 
+def region_ids_of(group):
+    return [str(r) for r in group["region_id"][:]]
+
+
+def open_level(level):
+    """The sea-level composite store for one level, plus its region names.
+
+    Names live in the plain `iaci_<level>` store, so the two are checked to
+    describe the same regions in the same order before anything reads across
+    them — a silent misalignment would relabel every region's data.
+    """
+    composite = zarr.open(os.path.join(spatial_dir, f"iaci_with_sealevel_{level}.zarr"))
+    named = zarr.open(os.path.join(spatial_dir, f"iaci_{level}.zarr"))
+
+    if region_ids_of(composite) != region_ids_of(named):
+        raise SystemExit(
+            f"iaci_with_sealevel_{level}.zarr and iaci_{level}.zarr disagree on "
+            "region_id order — regenerate them from the same crosswalk."
+        )
+
+    return composite, [normalize_name(n) for n in named["region_name"][:]]
+
+
 def build_rows(arrays, years, months, region_idx):
     """Rows of [YYYYMM, *values] for one region, skipping all-null periods."""
     rows = []
@@ -76,8 +144,15 @@ def build_rows(arrays, years, months, region_idx):
 
 
 def load(group):
-    """Materialize the six component arrays for a zarr group, in FIELDS order."""
+    """Materialize the component arrays for a zarr group, in FIELDS order."""
     return [group[f][:] for f in FIELDS]
+
+
+def sea_level_coverage(group):
+    """How many of a level's regions carry a sea-level component at all."""
+    ss = group[SEA_LEVEL_FIELD][:]
+    with_ss = sum(1 for i in range(ss.shape[2]) if np.isfinite(ss[:, :, i]).any())
+    return with_ss, ss.shape[2]
 
 
 def write_json(path, payload):
@@ -93,7 +168,7 @@ def mb(n_bytes):
 
 # ─── 1. India Level ───────────────────────────────────────────────────────────
 print("Processing India level data...")
-g = zarr.open(os.path.join(spatial_dir, "iaci_india.zarr"))
+g, _ = open_level("india")
 
 years = list(g["year"][:])
 months = list(g["month"][:])
@@ -109,9 +184,8 @@ print(f"  India: {len(india_rows)} periods "
 
 # ─── 2. State Level ───────────────────────────────────────────────────────────
 print("Processing State level data...")
-sg = zarr.open(os.path.join(spatial_dir, "iaci_state.zarr"))
+sg, state_names = open_level("state")
 
-state_names = [normalize_name(n) for n in sg["region_name"][:]]
 state_arrays = load(sg)
 
 state_regions = {
@@ -122,15 +196,16 @@ size = write_json(
     os.path.join(output_data_dir, "state_data.json"),
     {"fields": FIELDS, "regions": state_regions},
 )
-print(f"  States: {len(state_regions)} regions -> {mb(size)}")
+coastal, total = sea_level_coverage(sg)
+print(f"  States: {len(state_regions)} regions, {coastal}/{total} with sea "
+      f"level -> {mb(size)}")
 
 
 # ─── 3. District Level ────────────────────────────────────────────────────────
 print("Processing District level data...")
-dg = zarr.open(os.path.join(spatial_dir, "iaci_district.zarr"))
+dg, district_names = open_level("district")
 
-district_ids = [str(r) for r in dg["region_id"][:]]
-district_names = [normalize_name(n) for n in dg["region_name"][:]]
+district_ids = region_ids_of(dg)
 district_arrays = load(dg)
 
 df_cw = pd.read_parquet(os.path.join(crosswalks_dir, "district_crosswalk.parquet"))
@@ -194,7 +269,8 @@ for stale in sorted(set(os.listdir(output_districts_dir)) - written):
         os.remove(os.path.join(output_districts_dir, stale))
         print(f"  - removed stale {stale}")
 
-print(f"\nDistricts total: {mb(total_size)}")
+coastal, total = sea_level_coverage(dg)
+print(f"\nDistricts total: {mb(total_size)} — {coastal}/{total} with sea level")
 
 
 # ─── 4. Validate against the boundary files the frontend actually fetches ─────

@@ -1,9 +1,10 @@
 /**
  * Shared presentation metadata for the index and its components.
  *
- * Explore, Analyze and About all describe the same six indicators and colour
- * the same z-score scale, so the labels, accents and severity bands live here
- * rather than being restated (and drifting) in each page.
+ * Explore, Analyze and About all describe the same seven indicators — the
+ * composite and its six components — and colour the same z-score scale, so the
+ * labels, accents and severity bands live here rather than being restated (and
+ * drifting) in each page.
  */
 
 import type { Field } from "./climate";
@@ -18,11 +19,13 @@ export interface Indicator {
   accent: string;
 }
 
-// Reporting order: composite first, then the five components as
-// Tmax (T90S) / Tmin (T10S) / precipitation / wind / dry days. This is the
-// single source of truth for that order — every dropdown, legend, table and
-// chart toggle in the app maps over this array directly, so reordering here
-// reorders everywhere at once.
+// Reporting order: composite first, then the six components as
+// Tmax (T90S) / Tmin (T10S) / precipitation / wind / dry days / sea level.
+// This is the single source of truth for that order — every dropdown, legend,
+// table and chart toggle in the app maps over this array directly, so
+// reordering here reorders everywhere at once. Sea level comes last because it
+// is the only component confined to part of the country; the five that cover
+// every region stay together above it.
 export const INDICATORS: Indicator[] = [
   {
     id: "IACI",
@@ -66,9 +69,20 @@ export const INDICATORS: Indicator[] = [
     desc: "Consecutive dry days anomaly",
     accent: "#d97706",
   },
+  {
+    id: "SS",
+    name: "Sea Level",
+    short: "SS",
+    desc: "Sea level anomaly — coastal regions only",
+    accent: "#059669",
+  },
 ];
 
-/** The five components the composite averages, in reporting order. */
+/**
+ * The components the composite averages, in reporting order. Six for a coastal
+ * region; inland the sea-level entry has no value and renders as "No Data",
+ * which is exactly what the five-component composite means there.
+ */
 export const COMPONENTS = INDICATORS.filter((i) => i.id !== "IACI");
 
 export function indicator(id: Field): Indicator {

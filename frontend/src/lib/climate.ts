@@ -8,7 +8,9 @@
  * revisiting a state, never refetches or reparses.
  */
 
-export const FIELDS = ["IACI", "DS", "PS", "T10S", "T90S", "W"] as const;
+// Sea level (SS) exists only for coastal regions; inland rows carry null for
+// it, the same as any other unmeasured field.
+export const FIELDS = ["IACI", "DS", "PS", "SS", "T10S", "T90S", "W"] as const;
 
 export type Field = (typeof FIELDS)[number];
 

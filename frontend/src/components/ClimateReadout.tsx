@@ -63,12 +63,17 @@ export function CompositeValue({ value }: { value: number | null }) {
 }
 
 /**
- * The five components as labelled diverging bars. `values` may be null when the
- * selected period has no row at all, which renders every component as absent.
+ * The components as labelled diverging bars. `values` may be null when the
+ * selected period has no row at all, which renders every component as absent —
+ * as does sea level on its own for any inland region, where the composite is
+ * the five-component one.
+ *
+ * Scrolls rather than clipping: Explore gives this a fixed-height card, and six
+ * bars do not always fit the shorter viewports that five did.
  */
 export function ComponentBars({ values }: { values: Values | null }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 min-h-0 overflow-y-auto">
       {COMPONENTS.map((component) => {
         const value = values?.[component.id] ?? null;
         const severity = severityOf(value);
