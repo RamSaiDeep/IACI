@@ -98,6 +98,7 @@ const components = [
   },
 ];
 
+/*
 const team = [
   "Satya Sai Mudigonda",
   "Eswar Prem",
@@ -105,13 +106,16 @@ const team = [
   "Dr. Rohan Yashraj Gupta",
   "Arunachala Sivateja Mudigonda",
 ];
+*/
 
 /** Up to two initials, skipping honorifics so "Dr. Rohan …" reads as RG. */
+/*
 function initialsOf(name: string): string {
   const parts = name.split(/\s+/).filter((p) => !/^(dr|prof|mr|ms|mrs)\.?$/i.test(p));
   const letters = parts.map((p) => p[0]).filter(Boolean);
   return (letters[0] ?? "") + (letters.length > 1 ? letters[letters.length - 1] : "");
 }
+*/
 
 /** Section heading with consistent spacing above and below. */
 function SectionHeader({
@@ -336,7 +340,7 @@ export default function AboutPage() {
         {/* Team — kept last: the reader's-question sections (methodology,
             components, formula, FAQ) come first, and who built this comes as
             the closing note. */}
-        <section className="flex flex-col gap-9">
+        {/* <section className="flex flex-col gap-9">
           <SectionHeader
             eyebrow="Team involved"
             title="The people behind the index"
@@ -393,10 +397,8 @@ export default function AboutPage() {
               </a>
             </li>
           </ul>
-        </section>
+        </section>*/}
       </main>
     </div>
   );
 }
-
-
