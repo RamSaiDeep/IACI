@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "../../components/Header";
 import IndiaMap from "../../components/IndiaMap";
 import ScaleLegend from "../../components/ScaleLegend";
+import CustomSelect from "../../components/CustomSelect";
 import { CompositeValue, ComponentBars } from "../../components/ClimateReadout";
 import TrendChart from "../../components/TrendChart";
 import { INDICATORS } from "../../lib/indicators";
@@ -194,53 +195,46 @@ export default function ExplorePage() {
               </button>
             )}
 
-            <div className="card p-3 sm:p-3.5 flex flex-col gap-2 flex-1 justify-between overflow-y-auto min-h-0">
+            <div className="card p-3 sm:p-3.5 flex flex-col gap-2 flex-1 justify-between min-h-0 overflow-visible">
               <div>
                 <h2 className="text-xs font-bold tracking-widest uppercase text-foreground/60 border-b border-foreground/8 pb-1.5">
                   Filter parameters
                 </h2>
 
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  <label className="flex flex-col gap-0.5">
+                  <div className="flex flex-col gap-0.5">
                     <span className="text-xs font-bold tracking-wider uppercase text-foreground/70">
                       Year
                     </span>
-                    <select
-                      value={year ?? ""}
+                    <CustomSelect
+                      value={year ?? undefined}
                       disabled={years.length === 0}
-                      onChange={(e) => setYearChoice(Number(e.target.value))}
-                      className="field uppercase !py-1.5 !text-xs font-bold"
-                    >
-                      {years.map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                      onChange={(y) => setYearChoice(Number(y))}
+                      options={years.map((y) => ({ value: y, label: String(y) }))}
+                      buttonClassName="uppercase !py-1.5 !text-xs font-bold"
+                    />
+                  </div>
 
-                  <label className="flex flex-col gap-0.5">
+                  <div className="flex flex-col gap-0.5">
                     <span className="text-xs font-bold tracking-wider uppercase text-foreground/70">
                       Month
                     </span>
-                    <select
+                    <CustomSelect
                       value={month}
                       disabled={availableMonths.size === 0}
-                      onChange={(e) => setMonthChoice(Number(e.target.value))}
-                      className="field uppercase !py-1.5 !text-xs font-bold"
-                    >
-                      {MONTHS.map((name, idx) => {
+                      onChange={(m) => setMonthChoice(Number(m))}
+                      options={MONTHS.map((name, idx) => {
                         const value = idx + 1;
                         const has = availableMonths.has(value);
-                        return (
-                          <option key={name} value={value} disabled={!has}>
-                            {name}
-                            {has ? "" : " — no data"}
-                          </option>
-                        );
+                        return {
+                          value,
+                          label: has ? name : `${name} — no data`,
+                          disabled: !has,
+                        };
                       })}
-                    </select>
-                  </label>
+                      buttonClassName="uppercase !py-1.5 !text-xs font-bold"
+                    />
+                  </div>
                 </div>
               </div>
 

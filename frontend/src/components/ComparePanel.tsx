@@ -1,6 +1,7 @@
 "use client";
 
 import IndiaMap from "./IndiaMap";
+import CustomSelect from "./CustomSelect";
 import { INDICATORS, formatValue, indicator, severityOf } from "../lib/indicators";
 import { MONTHS } from "../lib/climate";
 import type { Field, Values } from "../lib/climate";
@@ -70,63 +71,56 @@ export default function ComparePanel({
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <label className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <span className="text-[9px] font-bold uppercase tracking-wider text-foreground/50">
               Year
             </span>
-            <select
-              value={panel.year ?? ""}
+            <CustomSelect
+              value={panel.year ?? undefined}
               disabled={years.length === 0}
-              onChange={(e) => onChange({ year: Number(e.target.value) })}
-              className="field !py-1.5 !text-[11px]"
-            >
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={(y) => onChange({ year: Number(y) })}
+              options={years.map((y) => ({ value: y, label: String(y) }))}
+              buttonClassName="!py-1.5 !text-[11px]"
+            />
+          </div>
 
-          <label className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <span className="text-[9px] font-bold uppercase tracking-wider text-foreground/50">
               Month
             </span>
-            <select
+            <CustomSelect
               value={panel.month}
               disabled={availableMonths.size === 0}
-              onChange={(e) => onChange({ month: Number(e.target.value) })}
-              className="field !py-1.5 !text-[11px]"
-            >
-              {MONTHS.map((name, idx) => (
-                <option key={name} value={idx + 1} disabled={!availableMonths.has(idx + 1)}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={(m) => onChange({ month: Number(m) })}
+              options={MONTHS.map((name, idx) => ({
+                value: idx + 1,
+                label: name,
+                disabled: !availableMonths.has(idx + 1),
+              }))}
+              buttonClassName="!py-1.5 !text-[11px]"
+            />
+          </div>
 
-          <label className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <span className="text-[9px] font-bold uppercase tracking-wider text-foreground/50">
               Variable
             </span>
-            <select
+            <CustomSelect
               value={panel.variable}
-              onChange={(e) => onChange({ variable: e.target.value as Field })}
-              className="field !py-1.5 !text-[11px]"
-            >
-              {INDICATORS.map((option) => {
+              onChange={(v) => onChange({ variable: v as Field })}
+              options={INDICATORS.map((option) => {
                 const isSS = option.id === "SS";
                 const isUnavailable = isSS && values !== null && values.SS === null;
-                return (
-                  <option key={option.id} value={option.id} disabled={isUnavailable}>
-                    {option.name}
-                    {isUnavailable ? " (Coastal only)" : ""}
-                  </option>
-                );
+                return {
+                  value: option.id,
+                  label: isUnavailable ? `${option.name} (Coastal only)` : option.name,
+                  disabled: isUnavailable,
+                };
               })}
-            </select>
-          </label>
+              buttonClassName="!py-1.5 !text-[11px]"
+              dropdownClassName="min-w-[200px]"
+            />
+          </div>
         </div>
       </div>
 
