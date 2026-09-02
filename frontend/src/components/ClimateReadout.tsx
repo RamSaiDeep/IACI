@@ -77,11 +77,14 @@ export function ComponentBars({ values }: { values: Values | null }) {
       {COMPONENTS.map((component) => {
         const value = values?.[component.id] ?? null;
         const severity = severityOf(value);
+        const isUnavailable = component.id === "SS" && value == null;
 
         return (
           <div
             key={component.id}
-            className="flex flex-col gap-0.5 border-b border-foreground/6 pb-1.5 last:border-0 last:pb-0"
+            className={`flex flex-col gap-0.5 border-b border-foreground/6 pb-1.5 last:border-0 last:pb-0 transition-opacity ${
+              isUnavailable ? "opacity-45" : ""
+            }`}
           >
             <div className="flex justify-between items-baseline gap-2">
               <span className="text-xs font-bold text-foreground/85 tracking-wide uppercase">
@@ -94,7 +97,9 @@ export function ComponentBars({ values }: { values: Values | null }) {
                 {formatValue(value)}
               </span>
             </div>
-            <div className="text-[10px] text-foreground/55 leading-tight">{component.desc}</div>
+            <div className="text-[10px] text-foreground/55 leading-tight">
+              {isUnavailable ? "Not applicable for inland region" : component.desc}
+            </div>
             <ValueBar value={value} />
           </div>
         );

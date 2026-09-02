@@ -123,6 +123,22 @@ export default function ExplorePage() {
     [focusedSeries, variable]
   );
 
+  // Check whether the focused region has sea level data (coastal) or is inland (all SS null)
+  const hasSeaLevel = useMemo(() => {
+    if (!focusedSeries) return true;
+    for (const values of focusedSeries.values()) {
+      if (values.SS != null) return true;
+    }
+    return false;
+  }, [focusedSeries]);
+
+  // If Sea Level was selected but the new region has no sea level data, reset to composite
+  useEffect(() => {
+    if (!hasSeaLevel && variable === "SS") {
+      setVariable("IACI");
+    }
+  }, [hasSeaLevel, variable]);
+
   const resetMap = () => {
     setSelectedState(null);
     setSelectedDistrict(null);
@@ -139,7 +155,7 @@ export default function ExplorePage() {
         {/* Top 3 Components Row */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] xl:grid-cols-[300px_1fr_345px] gap-4 xl:gap-5 items-stretch">
           {/* Filters Sidebar */}
-          <aside className="w-full flex flex-col gap-2.5 lg:h-[530px] xl:h-[550px]">
+          <aside className="w-full flex flex-col gap-2.5 lg:min-h-[580px] xl:min-h-[600px] lg:h-[590px] xl:h-[610px]">
             <div className="flex flex-col gap-1.5 flex-shrink-0">
               <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
                 <Link href="/" className="text-foreground/45 hover:text-foreground transition-colors">
@@ -178,7 +194,7 @@ export default function ExplorePage() {
               </button>
             )}
 
-            <div className="card p-3.5 flex flex-col gap-2.5 flex-1 justify-between overflow-hidden">
+            <div className="card p-3 sm:p-3.5 flex flex-col gap-2 flex-1 justify-between overflow-y-auto min-h-0">
               <div>
                 <h2 className="text-xs font-bold tracking-widest uppercase text-foreground/60 border-b border-foreground/8 pb-1.5">
                   Filter parameters
@@ -228,38 +244,67 @@ export default function ExplorePage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5 border-t border-foreground/8 pt-2">
+              <div className="flex flex-col gap-1.5 border-t border-foreground/8 pt-2 min-h-0">
                 <span className="text-xs font-bold tracking-wider uppercase text-foreground/70">
                   Shade map by
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-1">
                   {INDICATORS.map((option) => {
+                    const isSeaLevel = option.id === "SS";
+                    const isDisabled = isSeaLevel && !hasSeaLevel;
                     const isActive = variable === option.id;
+
                     return (
                       <button
                         key={option.id}
-                        onClick={() => setVariable(option.id)}
+                        disabled={isDisabled}
+                        onClick={() => {
+                          if (!isDisabled) setVariable(option.id);
+                        }}
                         aria-pressed={isActive}
+                        title={
+                          isDisabled
+                            ? "Sea level index is not available for inland regions (coastal regions only)"
+                            : undefined
+                        }
                         className={`text-left px-2.5 py-1.5 rounded-lg border transition-all ${
-                          isActive
-                            ? "bg-accent border-accent text-white shadow-card"
-                            : "bg-surface border-foreground/10 hover:border-foreground/25 hover:bg-foreground/3"
+                          isDisabled
+                            ? "opacity-35 cursor-not-allowed bg-foreground/2 border-foreground/8 pointer-events-none select-none"
+                            : isActive
+                              ? "bg-accent border-accent text-white shadow-card cursor-pointer"
+                              : "bg-surface border-foreground/10 hover:border-foreground/25 hover:bg-foreground/3 cursor-pointer"
                         }`}
                       >
                         <div className="flex items-center justify-between gap-1.5">
-                          <span className="truncate text-xs sm:text-[12.5px] font-bold leading-tight">
+                          <span
+                            className={`truncate text-xs sm:text-[12px] font-bold leading-tight ${
+                              isDisabled ? "text-foreground/50" : ""
+                            }`}
+                          >
                             {option.name}
                           </span>
-                          <span className={`text-[10.5px] font-bold flex-shrink-0 ${isActive ? "text-white/80" : "text-foreground/45"}`}>
+                          <span
+                            className={`text-[10.5px] font-bold flex-shrink-0 ${
+                              isDisabled
+                                ? "text-foreground/35"
+                                : isActive
+                                  ? "text-white/80"
+                                  : "text-foreground/45"
+                            }`}
+                          >
                             {option.short}
                           </span>
                         </div>
                         <span
-                          className={`block text-[10px] font-normal mt-0.2 leading-tight ${
-                            isActive ? "text-white/85" : "text-foreground/55"
+                          className={`block text-[9.5px] font-normal mt-0.5 leading-tight truncate ${
+                            isDisabled
+                              ? "text-foreground/40 italic"
+                              : isActive
+                                ? "text-white/85"
+                                : "text-foreground/55"
                           }`}
                         >
-                          {option.desc}
+                          {isDisabled ? "Not applicable (inland region)" : option.desc}
                         </span>
                       </button>
                     );
@@ -270,7 +315,7 @@ export default function ExplorePage() {
           </aside>
 
           {/* Map Center Card */}
-          <main className="min-w-0 card card-lg p-3.5 sm:p-4 flex flex-col justify-between h-full min-h-[440px] lg:h-[530px] xl:h-[550px]">
+          <main className="min-w-0 card card-lg p-3.5 sm:p-4 flex flex-col justify-between h-full min-h-[440px] lg:min-h-[580px] xl:min-h-[600px] lg:h-[590px] xl:h-[610px]">
             <IndiaMap
               selectedState={selectedState}
               setSelectedState={setSelectedState}
@@ -286,7 +331,7 @@ export default function ExplorePage() {
           </main>
 
           {/* Readout Right Card */}
-          <section className="w-full flex flex-col lg:h-[530px] xl:h-[550px]">
+          <section className="w-full flex flex-col lg:min-h-[580px] xl:min-h-[600px] lg:h-[590px] xl:h-[610px]">
             <div className="card card-lg p-4 sm:p-4 flex flex-col h-full gap-3 justify-between overflow-hidden">
               <div className="flex-shrink-0 border-b border-foreground/8 pb-1.5">
                 <h2 className="eyebrow text-xs">Climate insights</h2>

@@ -115,11 +115,16 @@ export default function ComparePanel({
               onChange={(e) => onChange({ variable: e.target.value as Field })}
               className="field !py-1.5 !text-[11px]"
             >
-              {INDICATORS.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
+              {INDICATORS.map((option) => {
+                const isSS = option.id === "SS";
+                const isUnavailable = isSS && values !== null && values.SS === null;
+                return (
+                  <option key={option.id} value={option.id} disabled={isUnavailable}>
+                    {option.name}
+                    {isUnavailable ? " (Coastal only)" : ""}
+                  </option>
+                );
+              })}
             </select>
           </label>
         </div>
