@@ -17,6 +17,10 @@ frontend/.next/
 out/
 frontend/out/
 
+# IDE settings -- local to one machine, not part of the project
+.idea/
+.vscode/
+
 # Environment and OS
 .env*
 .DS_Store

@@ -1,8 +1,18 @@
 """Build the static climate JSON the frontend serves out of /public/data.
 
-Reads the zarr stores in backend/data/spatial (copied over from the
-IACI-data_transformation `derived/spatial` output) and writes one file per
-level: India, all states, and one file per state holding its districts.
+Reads the zarr stores the IACI-data_transformation pipeline writes under
+`projects/india/derived/` and writes one file per level: India, all states,
+and one file per state holding its districts.
+
+Two directories are read, and they are separate on purpose:
+
+    composite/regional/     iaci_{country,state,district}.zarr   the values
+    spatial/crosswalks/     {country,state,district}_*.parquet   the names
+
+`composite/regional` is one component's output; `spatial/crosswalks` is the
+cell-to-region assignment every component shares. The composite store carries
+`region_id` and no names, so identity comes from the crosswalk that produced
+those regions in the first place.
 
 Output format (v2) is deliberately compact — these files ship to the browser:
 
@@ -14,20 +24,25 @@ Output format (v2) is deliberately compact — these files ship to the browser:
 Values are ordered per `fields` and rounded to PRECISION decimals; a missing
 observation is null, never 0. Rows whose values are entirely null are dropped.
 
-SEA LEVEL. The values come from the `iaci_with_sealevel_*` stores, not the
-plain `iaci_*` ones: those carry the SS component and the composite Section
-10.3 defines on top of it — six terms for a region that has a sea-level
-component, five for a region that does not. The five land components are
-identical between the two families; only IACI moves, and only where SS exists.
+SEA LEVEL. There is ONE composite store per level, and it already applies
+methodology Section 10.3 per region — six terms where a region has a
+sea-level component, five where it does not. The pipeline used to write two
+parallel families, `iaci_*` and `iaci_with_sealevel_*`, and left the caller
+to pick; that fork is gone, because which equation applies is a property of
+the region rather than a choice the reader should be making by filename.
+`IACI_n_components` records which one was used.
 
 SS is NaN — serialized as null, never 0 — everywhere sea level does not reach,
-which is most of the country: 12 of 36 states and 86 of 782 districts carry it.
-The frontend renders that null as "No Data", not as a reading of zero.
+which is most of the country. The frontend renders that null as "No Data",
+not as a reading of zero.
 
-The `iaci_with_sealevel_*` stores carry region_id but no region_name, so the
-names (and the district crosswalk join below) come from the matching plain
-`iaci_*` store. The two are written region-for-region from the same crosswalk,
-which `open_level` re-checks rather than assumes.
+A REGION CAN HAVE COMPONENTS AND NO INDEX. Lakshadweep's islands are smaller
+than one cell of the 0.1 degree land grid, so the land reanalysis resolves no
+land there and T90S, T10S, PS and W are all genuinely absent. It carries a
+sea-level series and `IACI` is null for every period, deliberately: a
+one-component z-score is not comparable to a five- or six-component mean.
+Rows are still emitted, because SS is real. Anything that reads IACI must
+tolerate null there — as it already had to, for a different reason.
 
 District files are named after the *state zarr's* region_name, because that is
 what `state_boundary.json` carries and therefore what the frontend slugifies
@@ -46,31 +61,47 @@ import numpy as np
 
 # Paths resolve from this file so the script runs from any checkout. The zarr
 # stores are gitignored (far past GitHub's file limit), so they are either
-# copied into backend/data/spatial or read straight out of a sibling
-# IACI-data_transformation checkout. IACI_SPATIAL_DIR overrides both.
+# copied into backend/data/derived or read straight out of a sibling
+# IACI-data_transformation checkout. IACI_DERIVED_DIR overrides both.
 backend_dir = os.path.dirname(os.path.abspath(__file__))
 repo_dir = os.path.dirname(backend_dir)
 
 
-def resolve_spatial_dir():
+def resolve_derived_dir():
+    """The pipeline's `derived` root for one project.
+
+    Everything specific to a country lives under `projects/<country>/` since
+    the pipeline was made country-independent, so this points at the project's
+    derived tree rather than at a bare `derived/spatial`.
+    """
     candidates = [
-        os.environ.get("IACI_SPATIAL_DIR"),
-        os.path.join(backend_dir, "data", "spatial"),
+        os.environ.get("IACI_DERIVED_DIR"),
+        os.path.join(backend_dir, "data", "derived"),
         os.path.join(os.path.dirname(repo_dir), "IACI-data_transformation",
-                     "derived", "spatial"),
+                     "projects", "india", "derived"),
     ]
     for path in candidates:
         if path and os.path.isdir(path):
             return path
     raise SystemExit(
-        "No spatial zarr directory found. Copy the IACI-data_transformation "
-        "derived/spatial output into backend/data/spatial, or point "
-        "IACI_SPATIAL_DIR at it."
+        "No derived directory found. Copy the IACI-data_transformation "
+        "projects/<country>/derived output into backend/data/derived, or "
+        "point IACI_DERIVED_DIR at it."
     )
 
 
-spatial_dir = resolve_spatial_dir()
-crosswalks_dir = os.path.join(spatial_dir, "crosswalks")
+derived_dir = resolve_derived_dir()
+composite_dir = os.path.join(derived_dir, "composite", "regional")
+crosswalks_dir = os.path.join(derived_dir, "spatial", "crosswalks")
+
+for label, path in (("composite/regional", composite_dir),
+                    ("spatial/crosswalks", crosswalks_dir)):
+    if not os.path.isdir(path):
+        raise SystemExit(
+            f"{derived_dir} has no {label}. This script expects the project "
+            "layout; a pre-refactor tree with a flat derived/spatial will not "
+            "resolve."
+        )
 frontend_public_dir = os.path.join(repo_dir, "frontend", "public")
 output_data_dir = os.path.join(frontend_public_dir, "data")
 output_districts_dir = os.path.join(output_data_dir, "districts")
@@ -78,7 +109,8 @@ output_districts_dir = os.path.join(output_data_dir, "districts")
 os.makedirs(output_data_dir, exist_ok=True)
 os.makedirs(output_districts_dir, exist_ok=True)
 
-print(f"Reading spatial stores from {spatial_dir}")
+print(f"Reading composite stores from {composite_dir}")
+print(f"Reading region names from   {crosswalks_dir}")
 
 # Zarr array names, in the order they appear in every emitted row. The frontend
 # reads the order off the `fields` key rather than assuming it, but keeping it
@@ -113,23 +145,47 @@ def region_ids_of(group):
     return [str(r) for r in group["region_id"][:]]
 
 
+def crosswalk_of(level):
+    """One level's cell-to-region table."""
+    return pd.read_parquet(os.path.join(crosswalks_dir, f"{level}_crosswalk.parquet"))
+
+
 def open_level(level):
-    """The sea-level composite store for one level, plus its region names.
+    """The composite store for one level, plus its region names.
 
-    Names live in the plain `iaci_<level>` store, so the two are checked to
-    describe the same regions in the same order before anything reads across
-    them — a silent misalignment would relabel every region's data.
+    ONE store, not two. The pipeline used to write a five-component `iaci_*`
+    and a parallel `iaci_with_sealevel_*`, and this function opened both and
+    checked their region ordering agreed. There is now a single store that
+    applies Section 10.3 per region, so there is no second family to drift
+    out of step with.
+
+    Names come from the level's crosswalk, which is the table those regions
+    were aggregated from — the composite store carries `region_id` alone. They
+    are looked up BY ID rather than by position, so nothing here depends on
+    the store and the crosswalk happening to be ordered the same way.
     """
-    composite = zarr.open(os.path.join(spatial_dir, f"iaci_with_sealevel_{level}.zarr"))
-    named = zarr.open(os.path.join(spatial_dir, f"iaci_{level}.zarr"))
+    store = zarr.open(os.path.join(composite_dir, f"iaci_{level}.zarr"))
 
-    if region_ids_of(composite) != region_ids_of(named):
+    pairs = crosswalk_of(level)[["region_id", "region_name"]].drop_duplicates()
+    conflicting = pairs["region_id"].duplicated()
+    if conflicting.any():
         raise SystemExit(
-            f"iaci_with_sealevel_{level}.zarr and iaci_{level}.zarr disagree on "
-            "region_id order — regenerate them from the same crosswalk."
+            f"{level}_crosswalk.parquet gives more than one name to "
+            f"{pairs.loc[conflicting, 'region_id'].tolist()[:5]} — "
+            "region_id must name exactly one region."
+        )
+    names = dict(zip(pairs["region_id"].astype(str), pairs["region_name"]))
+
+    ids = region_ids_of(store)
+    missing = [r for r in ids if r not in names]
+    if missing:
+        raise SystemExit(
+            f"iaci_{level}.zarr has region_id(s) absent from "
+            f"{level}_crosswalk.parquet: {missing[:5]} — the store and the "
+            "crosswalk are out of step."
         )
 
-    return composite, [normalize_name(n) for n in named["region_name"][:]]
+    return store, [normalize_name(names[r]) for r in ids]
 
 
 def build_rows(arrays, years, months, region_idx):
@@ -168,7 +224,7 @@ def mb(n_bytes):
 
 # ─── 1. India Level ───────────────────────────────────────────────────────────
 print("Processing India level data...")
-g, _ = open_level("india")
+g, _ = open_level("country")
 
 years = list(g["year"][:])
 months = list(g["month"][:])
@@ -208,7 +264,7 @@ dg, district_names = open_level("district")
 district_ids = region_ids_of(dg)
 district_arrays = load(dg)
 
-df_cw = pd.read_parquet(os.path.join(crosswalks_dir, "district_crosswalk.parquet"))
+df_cw = crosswalk_of("district")
 df_uniq = df_cw[["region_id", "STATE_UT"]].drop_duplicates()
 id_to_state_ut = dict(zip(df_uniq["region_id"].astype(str), df_uniq["STATE_UT"]))
 
