@@ -152,20 +152,16 @@ export default function GeneralHero() {
             </div>
           </div>
 
-          {/* Nepal Card - Coming Soon (Visible, not clickable) */}
-          <div className="card p-7 sm:p-8 flex flex-col justify-between gap-6 border border-foreground/10 opacity-80 hover:opacity-90 transition-all bg-surface/50 relative overflow-hidden cursor-default select-none">
+          {/* Nepal card. Present so the roadmap is visible, but inert: the
+              portal is not published yet, so there is deliberately nothing to
+              click and no action control to imply otherwise. */}
+          <div className="card p-7 sm:p-8 flex flex-col justify-between gap-6 border border-foreground/10 bg-surface/50 relative overflow-hidden cursor-default">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between gap-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" strokeWidth={2} />
-                    <polyline points="12 6 12 12 16 14" strokeWidth={2} />
-                  </svg>
-                  Coming Soon
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/6 border border-foreground/12 text-foreground/55 text-[10px] font-bold uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-foreground/30" />
+                  In Development
                 </div>
-                <span className="text-xs font-bold text-foreground/30 uppercase tracking-widest">
-                  Under Research
-                </span>
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -173,28 +169,22 @@ export default function GeneralHero() {
                   Nepal
                 </h3>
                 <span className="text-xs font-bold uppercase tracking-wider text-foreground/45">
-                  Nepal Actuaries Climate Index
+                  Nepal Actuaries Climate Index (NACI)
                 </span>
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-foreground/8">
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-foreground/5 border border-foreground/10 text-foreground/40 text-xs font-bold uppercase tracking-widest cursor-not-allowed"
-              >
-                <svg className="w-4 h-4 text-foreground/35" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m0 0v2m0-2h2m-2 0H10m11-3.5a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>Nepal Portal — Coming Soon</span>
-              </button>
+              <div className="flex flex-wrap gap-2 pt-2">
+                {["7 Provinces", "77 Districts", "750+ Local Levels", "5 Climate Hazards"].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="px-2.5 py-1 rounded-md bg-foreground/5 text-foreground/55 text-[10px] font-bold uppercase tracking-wider border border-foreground/5"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
+              </div>
             </div>
           </div>
         </div>
