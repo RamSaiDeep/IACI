@@ -20,7 +20,7 @@ export default function ScaleLegend({ field }: { field: Field }) {
           <span className="absolute left-0 text-xs font-bold text-foreground/65">
             −{SCALE_MAX}
           </span>
-          <span className="absolute left-1/2 -translate-x-1/2 text-xs font-black text-foreground/85">
+          <span className="absolute left-1/2 -translate-x-1/2 text-xs font-bold text-foreground/85">
             0
           </span>
           <span className="absolute right-0 text-xs font-bold text-foreground/65">

@@ -85,8 +85,35 @@ export const INDICATORS: Indicator[] = [
  */
 export const COMPONENTS = INDICATORS.filter((i) => i.id !== "IACI");
 
+/**
+ * Nepal's composite. A separate entry rather than a rename, because both
+ * countries' indicators have to coexist: India's UI iterates `INDICATORS` and
+ * must not offer NACI, and Nepal's must not offer IACI.
+ */
+export const NACI_INDICATOR: Indicator = {
+  id: "NACI",
+  name: "NACI Composite",
+  short: "NACI",
+  desc: "Nepal Actuaries Climate Index",
+  accent: "#f26a21",
+};
+
+/**
+ * Nepal is landlocked, so sea level is absent entirely -- not null, not "no
+ * data for this region", simply not a component of the index there. Offering
+ * it as a permanently-empty option would misrepresent the methodology.
+ */
+export const NEPAL_INDICATORS: Indicator[] = [
+  NACI_INDICATOR,
+  ...INDICATORS.filter((i) => i.id !== "IACI" && i.id !== "SS"),
+];
+
+export const NEPAL_COMPONENTS = NEPAL_INDICATORS.filter((i) => i.id !== "NACI");
+
+const ALL_INDICATORS = [...INDICATORS, NACI_INDICATOR];
+
 export function indicator(id: Field): Indicator {
-  return INDICATORS.find((i) => i.id === id) ?? INDICATORS[0];
+  return ALL_INDICATORS.find((i) => i.id === id) ?? INDICATORS[0];
 }
 
 /** Scale bound for every bar and legend — z-scores are clamped to ±4. */

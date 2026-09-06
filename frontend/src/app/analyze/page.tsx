@@ -210,7 +210,7 @@ export default function AnalyzePage() {
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               Comparative analytics
             </div>
-            <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight mt-1">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight mt-1">
               Side-by-side hazard comparison
             </h1>
           </div>
@@ -285,7 +285,7 @@ export default function AnalyzePage() {
         <div className="card card-lg p-5 sm:p-6 flex flex-col gap-4">
           <div className="flex flex-col gap-1 border-b border-foreground/8 pb-3">
             <h2 className="eyebrow">Quantitative comparison</h2>
-            <h3 className="text-lg sm:text-xl font-extrabold uppercase tracking-tight">
+            <h3 className="text-lg sm:text-xl font-bold tracking-tight">
               Component breakdown &amp; delta (&Delta;)
             </h3>
           </div>

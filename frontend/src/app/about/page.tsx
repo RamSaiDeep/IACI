@@ -39,7 +39,7 @@ function SectionHeader({
   return (
     <header className="flex flex-col gap-2.5 max-w-2xl">
       <span className="eyebrow">{eyebrow}</span>
-      <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase leading-tight">
+      <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
         {title}
       </h2>
       {lede && <p className="text-sm text-foreground/60 leading-relaxed">{lede}</p>}
@@ -58,7 +58,7 @@ export default function GeneralAboutPage() {
           <div className="hero-grid" />
 
           <div className="relative z-10 flex flex-col gap-8">
-            <div className="max-w-2xl flex flex-col gap-5">
+            <div className="w-full flex flex-col gap-5">
               <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
@@ -66,11 +66,11 @@ export default function GeneralAboutPage() {
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight uppercase leading-[1.06]">
+              <h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.06]">
                 About the Index
               </h1>
 
-              <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light">
+              <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light max-w-none">
                 An objective, science-based composite metric tracking changes in extreme weather
                 frequency and intensity over time — designed to inform actuarial risk analysis,
                 financial solvency, and climate resilience.
@@ -91,12 +91,6 @@ export default function GeneralAboutPage() {
                     />
                   </svg>
                 </Link>
-                <Link
-                  href="/india"
-                  className="inline-flex items-center px-5 py-3 rounded-xl border border-white/25 text-white text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
-                >
-                  India Portal →
-                </Link>
               </div>
             </div>
           </div>
@@ -113,7 +107,7 @@ export default function GeneralAboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {whyItMatters.map((item) => (
               <div key={item.title} className="card p-7 flex flex-col gap-3">
-                <h3 className="text-base font-bold uppercase tracking-tight text-foreground">
+                <h3 className="text-base font-bold tracking-tight text-foreground">
                   {item.title}
                 </h3>
                 <p className="text-sm text-foreground/65 leading-relaxed">{item.desc}</p>

@@ -63,7 +63,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="flex flex-col gap-0.5 group w-fit pt-1"
             >
-              <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:text-accent transition-colors">
+              <span className="text-sm font-bold tracking-[0.2em] uppercase group-hover:text-accent transition-colors">
                 SSSIA
               </span>
               <span className="text-xs text-foreground/60 group-hover:text-foreground/90 leading-relaxed transition-colors">

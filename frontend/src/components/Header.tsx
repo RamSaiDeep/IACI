@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface HeaderProps {
-  portal?: "global" | "india";
+  portal?: "global" | "india" | "nepal";
 }
 
 export default function Header({ portal }: HeaderProps) {
@@ -14,19 +14,32 @@ export default function Header({ portal }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Determine portal mode from prop or current pathname
-  const isIndiaPortal =
-    portal === "india" ||
-    (!portal && (pathname.startsWith("/india") || pathname === "/explore" || pathname === "/analyze"));
+  // Portal mode comes from the prop, or from the path when none is given.
+  // India's routes are top-level for historical reasons (/explore, /analyze);
+  // every country added since is namespaced under its own slug.
+  const activePortal: "global" | "india" | "nepal" =
+    portal ??
+    (pathname.startsWith("/nepal")
+      ? "nepal"
+      : pathname.startsWith("/india") || pathname === "/explore" || pathname === "/analyze"
+        ? "india"
+        : "global");
 
-  const homeHref = isIndiaPortal ? "/india" : "/";
-  const brandTitleMobile = isIndiaPortal ? "IACI v1" : "ACI";
+  const isIndiaPortal = activePortal === "india";
+  const isNepalPortal = activePortal === "nepal";
+
+  const homeHref = isIndiaPortal ? "/india" : isNepalPortal ? "/nepal" : "/";
+  const brandTitleMobile = isIndiaPortal ? "IACI v1" : isNepalPortal ? "NACI v1" : "ACI";
   const brandTitleDesktop = isIndiaPortal
-    ? "Indian  Actuaries  Climate  Index v1"
-    : "Actuaries  Climate  Index";
+    ? "Indian Actuaries Climate Index v1"
+    : isNepalPortal
+      ? "Nepal Actuaries Climate Index v1"
+      : "Actuaries Climate Index";
   const portalSubtitle = isIndiaPortal
     ? "Indian Actuaries Climate Index (IACI)"
-    : "Actuaries Climate Index (ACI)";
+    : isNepalPortal
+      ? "Nepal Actuaries Climate Index (NACI)"
+      : "Actuaries Climate Index (ACI)";
 
   const navLinks = isIndiaPortal
     ? [
@@ -35,10 +48,17 @@ export default function Header({ portal }: HeaderProps) {
         { href: "/analyze", label: "Analyze" },
         { href: "/india/about", label: "About the Index" },
       ]
-    : [
-        { href: "/", label: "Home" },
-        { href: "/about", label: "About the Index" },
-      ];
+    : isNepalPortal
+      ? [
+          { href: "/nepal", label: "Home" },
+          { href: "/nepal/explore", label: "Explore" },
+          { href: "/nepal/analyze", label: "Analyze" },
+          { href: "/nepal/about", label: "About the Index" },
+        ]
+      : [
+          { href: "/", label: "Home" },
+          { href: "/about", label: "About the Index" },
+        ];
 
   // The drawer's own links close it on click; keying the open state to the
   // current path also closes it when navigation comes from elsewhere
@@ -92,7 +112,7 @@ export default function Header({ portal }: HeaderProps) {
               <span className="sm:hidden">{brandTitleMobile}</span>
               <span className="hidden sm:inline">{brandTitleDesktop}</span>
             </span>
-            <span className="font-bold italic tracking-[0.05em] text-[9px] sm:text-[12px] text-white/55 uppercase">
+            <span className="font-semibold tracking-[0.14em] text-[9px] sm:text-[11px] text-white/55 uppercase">
               SSSIA
             </span>
           </span>
@@ -103,7 +123,7 @@ export default function Header({ portal }: HeaderProps) {
           <nav className="flex items-center gap-6 lg:gap-8">
             {navLinks.map((link) => {
               const isActive =
-                link.href === "/" || link.href === "/india"
+                link.href === "/" || link.href === "/india" || link.href === "/nepal"
                   ? pathname === link.href
                   : pathname === link.href || pathname.startsWith(`${link.href}/`);
               return (
@@ -111,7 +131,7 @@ export default function Header({ portal }: HeaderProps) {
                   key={link.href}
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`relative text-xs lg:text-sm font-medium tracking-wider uppercase transition-colors duration-300 py-2 group ${
+                  className={`relative text-sm lg:text-[0.9375rem] font-medium tracking-normal transition-colors duration-300 py-2 group ${
                     isActive ? "text-white font-semibold" : "text-white/75 hover:text-white"
                   }`}
                 >
@@ -127,7 +147,7 @@ export default function Header({ portal }: HeaderProps) {
           </nav>
 
           {/* Quick country switcher button when in country portal */}
-          {isIndiaPortal && (
+          {(isIndiaPortal || isNepalPortal) && (
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-[11px] font-bold text-white/90 uppercase tracking-widest transition-all duration-200 hover:scale-105"
@@ -181,7 +201,7 @@ export default function Header({ portal }: HeaderProps) {
           <nav className="flex flex-col gap-2">
             {navLinks.map((link) => {
               const isActive =
-                link.href === "/" || link.href === "/india"
+                link.href === "/" || link.href === "/india" || link.href === "/nepal"
                   ? pathname === link.href
                   : pathname === link.href || pathname.startsWith(`${link.href}/`);
               return (
@@ -219,7 +239,7 @@ export default function Header({ portal }: HeaderProps) {
               );
             })}
 
-            {isIndiaPortal && (
+            {(isIndiaPortal || isNepalPortal) && (
               <Link
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}

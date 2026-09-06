@@ -179,7 +179,7 @@ export default function ExplorePage() {
                   <span className="w-1.5 h-1.5 bg-accent rounded-full" />
                   {selectedDistrict ? "District focus" : selectedState ? "District view" : "State view"}
                 </div>
-                <h1 className="text-2xl lg:text-3xl font-black tracking-tight uppercase leading-tight">
+                <h1 className="text-2xl lg:text-3xl font-bold tracking-tight leading-tight">
                   {scopeLabel}
                 </h1>
                 <div className="w-8 h-[2.5px] bg-accent rounded-full mt-0.5" />
@@ -197,7 +197,7 @@ export default function ExplorePage() {
 
             <div className="card p-3 sm:p-3.5 flex flex-col gap-2 flex-1 justify-between min-h-0 overflow-visible">
               <div>
-                <h2 className="text-xs font-bold tracking-widest uppercase text-foreground/60 border-b border-foreground/8 pb-1.5">
+                <h2 className="text-xs font-bold tracking-widest text-foreground/60 border-b border-foreground/8 pb-1.5">
                   Filter parameters
                 </h2>
 

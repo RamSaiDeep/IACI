@@ -94,7 +94,7 @@ const FAQS: FaqItem[] = [
         <p>Two state-of-the-art reanalysis datasets are used:</p>
         <div className="flex flex-col gap-3">
           <div className="p-3.5 rounded-xl bg-surface-muted/70 border border-foreground/8 flex flex-col gap-1.5">
-            <span className="text-xs font-black uppercase tracking-wide text-accent">
+            <span className="text-xs font-bold uppercase tracking-wide text-accent">
               01 · ECMWF ERA5-Land reanalysis
             </span>
             <p className="text-xs text-foreground/70">
@@ -104,7 +104,7 @@ const FAQS: FaqItem[] = [
             </p>
           </div>
           <div className="p-3.5 rounded-xl bg-surface-muted/70 border border-foreground/8 flex flex-col gap-1.5">
-            <span className="text-xs font-black uppercase tracking-wide text-teal-700">
+            <span className="text-xs font-bold uppercase tracking-wide text-teal-700">
               02 · ECMWF ORAS5 ocean reanalysis
             </span>
             <p className="text-xs text-foreground/70">
@@ -334,7 +334,7 @@ export default function FaqSection() {
     <section id="faq" className="flex flex-col gap-9 scroll-mt-24">
       <header className="flex flex-col gap-2.5 max-w-2xl">
         <span className="eyebrow">Knowledge base</span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase leading-tight">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
           Frequently asked questions
         </h2>
         <p className="text-sm text-foreground/60 leading-relaxed">

@@ -12,7 +12,7 @@ export default function GeneralHero() {
             Sri Sathya Sai Institute of Actuaries
           </div>
 
-          <h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[62px] font-semibold tracking-tight uppercase leading-tight sm:leading-none sm:whitespace-nowrap">
+          <h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[62px] font-semibold tracking-tight leading-tight sm:leading-none sm:whitespace-nowrap">
             Actuaries Climate Index
           </h1>
 
@@ -70,7 +70,7 @@ export default function GeneralHero() {
             <span className="w-1.5 h-1.5 bg-accent rounded-full" />
             Regional Portals
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
             Select Country Portal
           </h2>
           <p className="text-sm text-foreground/60 max-w-xl">
@@ -96,7 +96,7 @@ export default function GeneralHero() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground uppercase group-hover:text-accent transition-colors">
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground group-hover:text-accent transition-colors">
                   India
                 </h3>
                 <span className="text-xs font-bold uppercase tracking-wider text-accent">
@@ -107,7 +107,7 @@ export default function GeneralHero() {
 
 
               <div className="flex flex-wrap gap-2 pt-2">
-                {["782 Districts", "36 States & UTs", "6 Climate Hazards", "Interactive Map"].map(
+                {["780+ Districts", "30+ States & UTs", "6 Climate Hazards", "Interactive Map"].map(
                   (tag) => (
                     <span
                       key={tag}
@@ -163,7 +163,7 @@ export default function GeneralHero() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground/70 uppercase">
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground group-hover:text-accent transition-colors">
                   Nepal
                 </h3>
                 <span className="text-xs font-bold uppercase tracking-wider text-foreground/45">

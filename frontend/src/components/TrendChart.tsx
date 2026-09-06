@@ -251,7 +251,7 @@ export default function TrendChart({
       <figcaption className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div className="flex flex-col gap-1">
           <span className="eyebrow">Long-run trend</span>
-          <h3 className="text-base sm:text-lg font-extrabold uppercase tracking-tight leading-tight">
+          <h3 className="text-base sm:text-lg font-bold tracking-tight leading-tight">
             {scope} — {name}
           </h3>
           <p className="text-[11px] text-foreground/55">
