@@ -111,7 +111,7 @@ export default function NepalComparePanel({
           )}
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="flex flex-col gap-1">
             <span className="text-[9px] font-bold uppercase tracking-wider text-foreground/50">
               Year
@@ -121,7 +121,7 @@ export default function NepalComparePanel({
               disabled={years.length === 0}
               onChange={(y) => onChange({ year: Number(y) })}
               options={years.map((y) => ({ value: y, label: String(y) }))}
-              buttonClassName="!py-1.5 !text-[11px]"
+              buttonClassName="!py-2 !text-[11px] min-h-[40px]"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function NepalComparePanel({
                 label: name,
                 disabled: !availableMonths.has(idx + 1),
               }))}
-              buttonClassName="!py-1.5 !text-[11px]"
+              buttonClassName="!py-2 !text-[11px] min-h-[40px]"
             />
           </div>
 
@@ -153,7 +153,7 @@ export default function NepalComparePanel({
                 value: option.id,
                 label: option.name,
               }))}
-              buttonClassName="!py-1.5 !text-[11px]"
+              buttonClassName="!py-2 !text-[11px] min-h-[40px]"
               dropdownClassName="min-w-[200px]"
             />
           </div>

@@ -5,13 +5,13 @@ import Header from "../../components/Header";
 export const metadata: Metadata = {
   title: "Nepal Actuaries Climate Index",
   description:
-    "A monthly, standardized measure of climate extremes for Nepal — nationally, and for all 7 provinces, 77 districts and 753 local levels.",
+    "A monthly, standardized measure of climate extremes for Nepal — nationally, and for all 7 provinces, 77 districts and 750+ local levels.",
 };
 
 const FACTS = [
   { value: "7", label: "Provinces" },
   { value: "77", label: "Districts" },
-  { value: "753", label: "Local Levels" },
+  { value: "750+", label: "Local Levels" },
   { value: "1991–2026", label: "Monthly Record" },
 ];
 
@@ -47,7 +47,7 @@ export default function NepalPortalPage() {
 
               <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light max-w-none">
                 A monthly, standardized measure of climate extremes, reported from the country
-                down to every one of Nepal&apos;s 753 local levels — built on the same
+                down to every one of Nepal&apos;s 750+ local levels — built on the same
                 methodology as the Indian index, on a 1991–2020 baseline.
               </p>
 

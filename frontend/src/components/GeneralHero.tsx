@@ -177,7 +177,7 @@ export default function GeneralHero() {
               </div>
 
               <div className="flex flex-wrap gap-2 pt-2">
-                {["753 Local Levels", "77 Districts", "7 Provinces", "5 Climate Hazards"].map(
+                {["750+ Local Levels", "77 Districts", "7 Provinces", "5 Climate Hazards"].map(
                   (tag) => (
                     <span
                       key={tag}
