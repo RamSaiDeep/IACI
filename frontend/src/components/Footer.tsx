@@ -1,21 +1,38 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const SUPPORT_EMAIL = "support@sssia.org";
 
-const links = [
-  { href: "/explore", label: "Explore" },
-  { href: "/analyze", label: "Analyze" },
-  { href: "/about", label: "About & FAQ" },
-];
-
 export default function Footer() {
+  const pathname = usePathname();
+  const isIndiaPortal =
+    pathname.startsWith("/india") || pathname === "/explore" || pathname === "/analyze";
+
+  const links = isIndiaPortal
+    ? [
+        { href: "/india", label: "India Home" },
+        { href: "/explore", label: "Explore Map" },
+        { href: "/analyze", label: "Analyze & Compare" },
+        { href: "/india/about", label: "India Methodology & FAQ" },
+        { href: "/", label: "All Countries Overview" },
+      ]
+    : [
+        { href: "/", label: "Home" },
+        { href: "/about", label: "About the Index" },
+        { href: "/india", label: "India Portal" },
+        { href: "/explore", label: "Explore Map" },
+      ];
+
+  const noticeText = isIndiaPortal
+    ? "If you would like to explore the Indian Actuaries Climate Index (IACI) as part of your organization’s risk assessment, we can provide a more detailed version of the index, fine-tuned to your specific requirements and intended application."
+    : "If you would like to explore the Actuaries Climate Index (ACI) or regional country implementations as part of your organization’s risk assessment, we can provide a more detailed version of the index, fine-tuned to your specific requirements and intended application.";
+
   return (
     <footer className="mt-auto border-t border-foreground/10 bg-surface-muted/50">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12 flex flex-col gap-8">
-        {/* Wraps rather than overflows: at the md breakpoint the four columns
-            want more width than a 768px window minus its scrollbar actually
-            has, and the badges were pushing past the right edge. */}
         {/* Main Footer Row: Left (Notice & SSSIA), Center (Proud Initiatives), Right (Explore) */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] items-start gap-8 lg:gap-12">
           {/* Left Column: Educational Notice & SSSIA */}
@@ -27,9 +44,7 @@ export default function Footer() {
               <p className="font-medium text-foreground/80">
                 This index is provided for educational and research purposes.
               </p>
-              <p>
-                If you would like to explore the Indian Actuaries Climate Index (IACI) as part of your organization’s risk assessment, we can provide a more detailed version of the index, fine-tuned to your specific requirements and intended application.
-              </p>
+              <p>{noticeText}</p>
               <p>
                 For further information, please contact{" "}
                 <a
@@ -83,10 +98,10 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Right Column: Explore Links */}
+          {/* Right Column: Navigation Links */}
           <nav className="flex flex-col gap-2.5 lg:items-end lg:justify-self-end">
             <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
-              Explore
+              {isIndiaPortal ? "India Portal" : "Navigation"}
             </span>
             {links.map((link) => (
               <Link

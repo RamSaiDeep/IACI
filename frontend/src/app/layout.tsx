@@ -15,8 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Indian Actuaries Climate Index",
-  description: "Indian Actuaries Climate Index (IACI) Web Application",
+  title: "Actuaries Climate Index",
+  description: "Actuaries Climate Index (ACI) Web Application",
+  icons: {
+    icon: "/sssia-logo.png",
+    apple: "/sssia-logo.png",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
