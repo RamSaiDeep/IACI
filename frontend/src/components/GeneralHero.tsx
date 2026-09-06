@@ -6,16 +6,14 @@ export default function GeneralHero() {
     <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center py-10 sm:py-16 md:py-20 gap-16 sm:gap-24">
       {/* Top Hero Section */}
       <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-14 w-full">
-        <div className="flex flex-col items-start gap-6 sm:gap-7 max-w-3xl flex-1">
+        <div className="flex flex-col items-start gap-6 sm:gap-7 max-w-3xl xl:max-w-4xl flex-1">
           <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-accent">
             <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
             Sri Sathya Sai Institute of Actuaries
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[76px] font-semibold tracking-tight uppercase leading-[1.02] sm:leading-[0.95]">
-            Actuaries
-            <br />
-            Climate &nbsp;Index
+          <h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[62px] font-semibold tracking-tight uppercase leading-tight sm:leading-none sm:whitespace-nowrap">
+            Actuaries Climate Index
           </h1>
 
           <div className="w-16 sm:w-20 h-[3px] bg-accent rounded-full" />
