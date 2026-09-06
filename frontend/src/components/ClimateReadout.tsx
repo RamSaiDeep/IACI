@@ -4,7 +4,8 @@ import {
   formatValue,
   severityOf,
 } from "../lib/indicators";
-import type { Values } from "../lib/climate";
+import type { Indicator } from "../lib/indicators";
+import type { Field, Values } from "../lib/climate";
 
 /**
  * Zero-centred diverging bar. The track spans [-SCALE_MAX, +SCALE_MAX] with the
@@ -34,15 +35,26 @@ function ValueBar({ value }: { value: number | null }) {
   );
 }
 
-/** Headline composite value with its severity band. */
-export function CompositeValue({ value }: { value: number | null }) {
+/**
+ * Headline composite value with its severity band.
+ *
+ * `label` and `field` default to India's, so every existing call site keeps its
+ * current output; Nepal passes NACI.
+ */
+export function CompositeValue({
+  value,
+  label = "IACI Composite",
+}: {
+  value: number | null;
+  label?: string;
+}) {
   const severity = severityOf(value);
 
   return (
     <div className="rounded-xl border border-accent/25 bg-gradient-to-br from-accent/10 to-accent/3 p-3.5 flex flex-col gap-1.5 shadow-sm">
       <div className="flex justify-between items-center gap-2">
         <span className="text-xs font-bold tracking-widest uppercase text-foreground/75">
-          IACI Composite
+          {label}
         </span>
         <span
           className={`text-[10px] font-bold px-2 py-0.5 border rounded-full uppercase tracking-wider whitespace-nowrap ${severity.badge}`}
@@ -51,7 +63,7 @@ export function CompositeValue({ value }: { value: number | null }) {
         </span>
       </div>
       <div className="flex items-baseline gap-2">
-        <span className="text-3xl lg:text-4xl font-black text-accent tracking-tight">
+        <span className="text-3xl lg:text-4xl font-bold text-accent tracking-tight">
           {value == null ? "—" : value.toFixed(3)}
         </span>
         <span className="text-xs text-foreground/60 font-bold uppercase tracking-widest">
@@ -71,11 +83,22 @@ export function CompositeValue({ value }: { value: number | null }) {
  * Scrolls rather than clipping: Explore gives this a fixed-height card, and six
  * bars do not always fit the shorter viewports that five did.
  */
-export function ComponentBars({ values }: { values: Values | null }) {
+export function ComponentBars({
+  values,
+  components = COMPONENTS,
+}: {
+  values: Values | null;
+  /**
+   * Which components to draw. Defaults to India's six. Nepal passes its five --
+   * omitting sea level entirely rather than drawing it permanently empty, which
+   * would read as "no data here" instead of "not part of the index".
+   */
+  components?: Indicator[];
+}) {
   return (
     <div className="flex flex-col gap-2 min-h-0 overflow-y-auto">
-      {COMPONENTS.map((component) => {
-        const value = values?.[component.id] ?? null;
+      {components.map((component) => {
+        const value = values?.[component.id as Field] ?? null;
         const severity = severityOf(value);
         const isUnavailable = component.id === "SS" && value == null;
 
@@ -93,7 +116,7 @@ export function ComponentBars({ values }: { values: Values | null }) {
                   {component.short}
                 </span>
               </span>
-              <span className={`text-xs font-black tracking-tight ${severity.text}`}>
+              <span className={`text-xs font-bold tracking-tight ${severity.text}`}>
                 {formatValue(value)}
               </span>
             </div>

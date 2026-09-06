@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 const atAGlance = [
   { value: "6", label: "Climate components" },
   { value: "1991–2020", label: "Baseline period" },
-  { value: "36", label: "States & UTs" },
-  { value: "782", label: "Districts" },
+  { value: "30+", label: "States & UTs" },
+  { value: "780+", label: "Districts" },
 ];
 
 const pillars = [
@@ -130,7 +130,7 @@ function SectionHeader({
   return (
     <header className="flex flex-col gap-2.5 max-w-2xl">
       <span className="eyebrow">{eyebrow}</span>
-      <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase leading-tight">
+      <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
         {title}
       </h2>
       {lede && <p className="text-sm text-foreground/60 leading-relaxed">{lede}</p>}
@@ -157,7 +157,7 @@ export default function AboutPage() {
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight uppercase leading-[1.06]">
+              <h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.06]">
                 About the index
               </h1>
 
@@ -195,7 +195,7 @@ export default function AboutPage() {
             <dl className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-7 pt-8 border-t border-white/15">
               {atAGlance.map((item) => (
                 <div key={item.label} className="flex flex-col gap-1.5">
-                  <dd className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                  <dd className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
                     {item.value}
                   </dd>
                   <dt className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50">
@@ -219,11 +219,11 @@ export default function AboutPage() {
             {pillars.map((pillar) => (
               <article key={pillar.n} className="card p-7 flex flex-col gap-4">
                 <div
-                  className={`w-11 h-11 rounded-xl flex items-center justify-center font-black text-sm ${pillar.accent}`}
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm ${pillar.accent}`}
                 >
                   {pillar.n}
                 </div>
-                <h3 className="text-base font-bold uppercase tracking-tight">{pillar.title}</h3>
+                <h3 className="text-base font-bold tracking-tight">{pillar.title}</h3>
                 <p className="text-sm text-foreground/65 leading-relaxed">{pillar.body}</p>
               </article>
             ))}
@@ -242,7 +242,7 @@ export default function AboutPage() {
             {components.map((c) => (
               <article key={c.symbol} className="card p-7 flex flex-col gap-4">
                 <div className="flex justify-between items-start gap-3">
-                  <span className="text-lg font-black tracking-tight font-mono">{c.symbol}</span>
+                  <span className="text-lg font-bold tracking-tight font-mono">{c.symbol}</span>
                   <span
                     className={`text-[9px] font-bold px-2.5 py-1 border rounded-full uppercase tracking-widest ${c.badgeClass}`}
                   >
@@ -250,7 +250,7 @@ export default function AboutPage() {
                   </span>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <h3 className="text-sm font-bold uppercase tracking-tight">{c.title}</h3>
+                  <h3 className="text-sm font-bold tracking-tight">{c.title}</h3>
                   <p className="text-sm text-foreground/60 leading-relaxed">{c.desc}</p>
                 </div>
               </article>
@@ -267,7 +267,7 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="card p-7 sm:p-8 flex flex-col gap-6">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/55">
+              <h3 className="text-sm font-bold tracking-widest text-foreground/55">
                 How the composite is formed
               </h3>
 
@@ -304,7 +304,7 @@ export default function AboutPage() {
             </div>
 
             <div className="card p-7 sm:p-8 flex flex-col gap-6">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/55">
+              <h3 className="text-sm font-bold tracking-widest text-foreground/55">
                 What the values mean
               </h3>
 
@@ -351,7 +351,7 @@ export default function AboutPage() {
               <li key={name} className="card p-6 flex items-center gap-4">
                 <span
                   aria-hidden="true"
-                  className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/15 to-accent/5 border border-accent/20 text-accent flex items-center justify-center font-black text-sm flex-shrink-0"
+                  className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/15 to-accent/5 border border-accent/20 text-accent flex items-center justify-center font-bold text-sm flex-shrink-0"
                 >
                   {initialsOf(name)}
                 </span>
@@ -367,7 +367,7 @@ export default function AboutPage() {
               >
                 <span
                   aria-hidden="true"
-                  className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 text-accent flex items-center justify-center font-black text-sm flex-shrink-0 group-hover:bg-accent group-hover:text-white transition-colors"
+                  className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 text-accent flex items-center justify-center font-bold text-sm flex-shrink-0 group-hover:bg-accent group-hover:text-white transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path

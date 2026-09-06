@@ -12,10 +12,10 @@ export default function GeneralHero() {
             Sri Sathya Sai Institute of Actuaries
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[76px] font-semibold tracking-tight uppercase leading-[1.02] sm:leading-[0.95]">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[76px] font-semibold tracking-tight leading-[1.02] sm:leading-[0.95]">
             Actuaries
             <br />
-            Climate &nbsp;Index
+            Climate Index
           </h1>
 
           <div className="w-16 sm:w-20 h-[3px] bg-accent rounded-full" />
@@ -72,7 +72,7 @@ export default function GeneralHero() {
             <span className="w-1.5 h-1.5 bg-accent rounded-full" />
             Regional Portals
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
             Select Country Portal
           </h2>
           <p className="text-sm text-foreground/60 max-w-xl">
@@ -98,7 +98,7 @@ export default function GeneralHero() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground uppercase group-hover:text-accent transition-colors">
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground group-hover:text-accent transition-colors">
                   India
                 </h3>
                 <span className="text-xs font-bold uppercase tracking-wider text-accent">
@@ -109,7 +109,7 @@ export default function GeneralHero() {
 
 
               <div className="flex flex-wrap gap-2 pt-2">
-                {["782 Districts", "36 States & UTs", "6 Climate Hazards", "Interactive Map"].map(
+                {["780+ Districts", "30+ States & UTs", "6 Climate Hazards", "Interactive Map"].map(
                   (tag) => (
                     <span
                       key={tag}
@@ -152,49 +152,71 @@ export default function GeneralHero() {
             </div>
           </div>
 
-          {/* Nepal Card - Coming Soon (Visible, not clickable) */}
-          <div className="card p-7 sm:p-8 flex flex-col justify-between gap-6 border border-foreground/10 opacity-80 hover:opacity-90 transition-all bg-surface/50 relative overflow-hidden cursor-default select-none">
+          {/* Nepal Card */}
+          <div className="card p-7 sm:p-8 flex flex-col justify-between gap-6 border-2 border-accent/20 hover:border-accent/60 transition-all duration-300 hover:shadow-card-lg group relative overflow-hidden bg-gradient-to-br from-surface to-accent/[0.03]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between gap-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" strokeWidth={2} />
-                    <polyline points="12 6 12 12 16 14" strokeWidth={2} />
-                  </svg>
-                  Coming Soon
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-bold uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-accent" />
+                  Active Portal
                 </div>
-                <span className="text-xs font-bold text-foreground/30 uppercase tracking-widest">
-                  Under Research
+                <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">
+                  Version 1.0
                 </span>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground/70 uppercase">
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground group-hover:text-accent transition-colors">
                   Nepal
                 </h3>
-                <span className="text-xs font-bold uppercase tracking-wider text-foreground/45">
-                  Nepal Actuaries Climate Index
+                <span className="text-xs font-bold uppercase tracking-wider text-accent">
+                  Nepal Actuaries Climate Index (NACI)
                 </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-2">
+                {["753 Local Levels", "77 Districts", "7 Provinces", "5 Climate Hazards"].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="px-2.5 py-1 rounded-md bg-foreground/5 text-foreground/70 text-[10px] font-bold uppercase tracking-wider border border-foreground/5"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
               </div>
             </div>
 
-            <div className="pt-4 border-t border-foreground/8">
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-foreground/5 border border-foreground/10 text-foreground/40 text-xs font-bold uppercase tracking-widest cursor-not-allowed"
+            <div className="pt-4 border-t border-foreground/8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <Link
+                href="/nepal"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-accent text-white text-xs font-bold uppercase tracking-widest hover:bg-accent-strong transition-all duration-200 shadow-md hover:shadow-lg group-hover:scale-[1.01]"
               >
-                <svg className="w-4 h-4 text-foreground/35" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span>Explore Nepal Portal</span>
+                <svg
+                  className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 15v2m0 0v2m0-2h2m-2 0H10m11-3.5a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
                   />
                 </svg>
-                <span>Nepal Portal — Coming Soon</span>
-              </button>
+              </Link>
+              <Link
+                href="/nepal/explore"
+                className="inline-flex items-center justify-center px-4 py-3.5 rounded-xl border border-foreground/15 hover:bg-foreground/5 text-xs font-bold uppercase tracking-widest text-foreground/75 transition-colors"
+                title="Direct link to interactive map"
+              >
+                Map View
+              </Link>
             </div>
           </div>
         </div>

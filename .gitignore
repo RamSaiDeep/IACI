@@ -25,3 +25,18 @@ frontend/out/
 .env*
 .DS_Store
 *.tsbuildinfo
+
+# Python bytecode from the backend scripts
+__pycache__/
+*.pyc
+
+# India's data in the NEW per-country layout. Regenerable at any time with
+#   python backend/process_country_data.py india
+#   python backend/process_country_boundaries.py india
+# and currently unused: the site still serves the original india_data.json,
+# state_data.json, districts/ and geojson/state_boundary.json. Ignored so the
+# repo does not carry ~31 MB of duplicate India data. UN-IGNORE THESE when the
+# frontend is migrated to read the per-country layout, or India's pages will
+# deploy without their data.
+/frontend/public/data/india/
+/frontend/public/geojson/india/

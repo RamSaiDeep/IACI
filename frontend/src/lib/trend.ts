@@ -13,7 +13,7 @@
  * because the window slid from a winter month to a summer one.
  */
 
-import { FIELDS, monthOf, yearOf } from "./climate";
+import { monthOf, yearOf } from "./climate";
 import type { Field, Series } from "./climate";
 
 /** Months in the averaging window: 5 years of monthly observations. */
@@ -75,7 +75,9 @@ export function buildTrend(series: Series, field: Field): TrendPoint[] {
 export function isEmptySeries(series: Series | null | undefined): boolean {
   if (!series) return true;
   for (const values of series.values()) {
-    if (FIELDS.some((f) => values[f] != null)) return false;
+    // Any populated field counts -- reading India's FIELDS here would call
+    // every Nepali region empty, since its composite is NACI.
+    if (Object.values(values).some((v) => v != null)) return false;
   }
   return true;
 }

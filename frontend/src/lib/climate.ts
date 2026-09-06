@@ -12,7 +12,14 @@
 // it, the same as any other unmeasured field.
 export const FIELDS = ["IACI", "DS", "PS", "SS", "T10S", "T90S", "W"] as const;
 
-export type Field = (typeof FIELDS)[number];
+/**
+ * Every field any country can carry. `FIELDS` above stays India's list — it is
+ * what India's UI iterates — while the type has to admit Nepal's composite
+ * (`NACI`) too. A country's own field list comes from its lib module.
+ */
+export type Field =
+  | (typeof FIELDS)[number]
+  | "NACI";
 
 /** One month of observations for one region. `null` means "not measured". */
 export type Values = Record<Field, number | null>;
@@ -25,7 +32,7 @@ export type RegionSeries = Map<string, Series>;
 
 type CompactRow = [number, ...(number | null)[]];
 
-interface CompactFile {
+export interface CompactFile {
   fields: string[];
   rows?: CompactRow[];
   regions?: Record<string, CompactRow[]>;
@@ -61,7 +68,7 @@ export function slugifyState(name: string): string {
     .replace(/^_+|_+$/g, "");
 }
 
-function toSeries(rows: CompactRow[], fields: string[]): Series {
+export function toSeries(rows: CompactRow[], fields: string[]): Series {
   const series: Series = new Map();
   for (const row of rows) {
     const values = {} as Values;
@@ -77,7 +84,7 @@ function toSeries(rows: CompactRow[], fields: string[]): Series {
 // single request instead of racing to fetch the same file twice.
 const cache = new Map<string, Promise<unknown>>();
 
-function loadJson<T>(url: string, parse: (raw: CompactFile) => T): Promise<T> {
+export function loadJson<T>(url: string, parse: (raw: CompactFile) => T): Promise<T> {
   const cached = cache.get(url) as Promise<T> | undefined;
   if (cached) return cached;
 
@@ -114,7 +121,7 @@ export function loadDistricts(stateName: string): Promise<RegionSeries> {
   );
 }
 
-function toRegionSeries(raw: CompactFile): RegionSeries {
+export function toRegionSeries(raw: CompactFile): RegionSeries {
   const out: RegionSeries = new Map();
   for (const [name, rows] of Object.entries(raw.regions ?? {})) {
     out.set(normalizeName(name), toSeries(rows, raw.fields));
@@ -152,7 +159,9 @@ export function choroplethValues(
 export function yearsIn(series: Series): number[] {
   const years = new Set<number>();
   for (const [period, values] of series) {
-    if (FIELDS.some((f) => values[f] != null)) years.add(yearOf(period));
+    // Any populated field counts. Reading FIELDS here would miss Nepal's NACI
+    // and report every year as empty.
+    if (Object.values(values).some((v) => v != null)) years.add(yearOf(period));
   }
   return [...years].sort((a, b) => b - a);
 }
@@ -161,7 +170,7 @@ export function yearsIn(series: Series): number[] {
 export function monthsIn(series: Series, year: number): Set<number> {
   const months = new Set<number>();
   for (const [period, values] of series) {
-    if (yearOf(period) === year && FIELDS.some((f) => values[f] != null)) {
+    if (yearOf(period) === year && Object.values(values).some((v) => v != null)) {
       months.add(monthOf(period));
     }
   }

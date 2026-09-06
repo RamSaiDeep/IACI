@@ -4,7 +4,7 @@ import Image from "next/image";
 const highlights = [
   { value: "1991–2026", label: "Monthly coverage" },
   { value: "6", label: "Climate components" },
-  { value: "782", label: "Districts mapped" },
+  { value: "780+", label: "Districts mapped" },
 ];
 
 export default function Hero() {
@@ -17,7 +17,7 @@ export default function Hero() {
             Sri Sathya Sai Institute of Actuaries
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[80px] font-semibold tracking-tight uppercase leading-[1.02] sm:leading-[0.95]">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[80px] font-semibold tracking-tight leading-[1.02] sm:leading-[0.95]">
             Indian&nbsp;&nbsp;Actuaries
             <br />
             Climate &nbsp;Index
@@ -56,7 +56,7 @@ export default function Hero() {
             {highlights.map((item) => (
               <div key={item.label} className="flex flex-col gap-1">
                 <dt className="sr-only">{item.label}</dt>
-                <dd className="text-xl sm:text-3xl font-black tracking-tight text-foreground">
+                <dd className="text-xl sm:text-3xl font-bold tracking-tight text-foreground">
                   {item.value}
                 </dd>
                 <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-foreground/50">

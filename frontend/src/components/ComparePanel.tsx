@@ -52,7 +52,7 @@ export default function ComparePanel({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <span
-              className={`px-2 py-0.5 rounded-md font-black text-[11px] tracking-wider ${chipClassName}`}
+              className={`px-2 py-0.5 rounded-md font-bold text-[11px] tracking-wider ${chipClassName}`}
             >
               {label}
             </span>
@@ -145,7 +145,7 @@ export default function ComparePanel({
           </span>
         </div>
         <div className="text-right flex-shrink-0 flex items-baseline gap-1.5">
-          <span className={`text-xl font-black ${severity.text}`}>{formatValue(active)}</span>
+          <span className={`text-xl font-bold ${severity.text}`}>{formatValue(active)}</span>
           <span className="text-[10px] text-foreground/45 font-semibold">z</span>
         </div>
       </div>
