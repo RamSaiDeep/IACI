@@ -56,23 +56,25 @@ NOISE_WORDS = {"AND", "THE", "ISLANDS", "ISLAND", "OF"}
 def derived_dir(country: dict) -> str:
     """The pipeline's `derived` root for one country's project.
 
-    `<COUNTRY>_DERIVED_DIR` overrides, then a local copy, then a sibling
-    checkout of the pipeline repo.
+    `<COUNTRY>_DERIVED_DIR` overrides, then a local copy, then the pipeline's
+    own `IACI_DERIVED_ROOT` -- the same variable its project.toml reads, so
+    the two repos agree on where the stores are without either naming a disk.
     """
     project = country["project"]
+    root = os.environ.get("IACI_DERIVED_ROOT")
     candidates = [
         os.environ.get(f"{project.upper()}_DERIVED_DIR"),
         os.environ.get("IACI_DERIVED_DIR") if project == "india" else None,
         os.path.join(BACKEND_DIR, "data", "derived", project),
-        os.path.join(os.path.dirname(REPO_DIR), "IACI-data_transformation",
-                     "projects", project, "derived"),
+        os.path.join(root, project, "derived") if root else None,
     ]
     for path in candidates:
         if path and os.path.isdir(path):
             return path
     raise SystemExit(
-        f"No derived directory found for {country['name']}. Point "
-        f"{project.upper()}_DERIVED_DIR at projects/{project}/derived."
+        f"No derived directory found for {country['name']}. Set "
+        f"IACI_DERIVED_ROOT to the pipeline's derived root, or point "
+        f"{project.upper()}_DERIVED_DIR straight at {project}/derived."
     )
 
 

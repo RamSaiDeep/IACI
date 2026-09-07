@@ -52,6 +52,31 @@ export default function Hero() {
             </Link>
           </div>
 
+          <div className="flex items-center gap-2 text-xs text-foreground/60">
+            <span>Geographical Boundary:</span>
+            <a
+              href="https://onlinemaps.surveyofindia.gov.in/Home.aspx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent-strong underline underline-offset-4 transition-colors font-medium inline-flex items-center gap-1"
+            >
+              Survey of India
+              <svg
+                className="w-3 h-3 opacity-70"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+          </div>
+
           <dl className="grid grid-cols-3 gap-4 sm:gap-8 pt-6 sm:pt-8 border-t border-foreground/10 w-full max-w-2xl">
             {highlights.map((item) => (
               <div key={item.label} className="flex flex-col gap-1">

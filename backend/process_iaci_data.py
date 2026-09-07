@@ -60,9 +60,11 @@ import pandas as pd
 import numpy as np
 
 # Paths resolve from this file so the script runs from any checkout. The zarr
-# stores are gitignored (far past GitHub's file limit), so they are either
-# copied into backend/data/derived or read straight out of a sibling
-# IACI-data_transformation checkout. IACI_DERIVED_DIR overrides both.
+# stores are gitignored (far past GitHub's file limit) and no longer sit
+# beside the pipeline's source: code lives on the SSD and the archive on bulk
+# storage, so the pipeline names its derived root in IACI_DERIVED_ROOT and
+# this reads the same variable. A local copy under backend/data/derived still
+# wins over it, and IACI_DERIVED_DIR overrides both.
 backend_dir = os.path.dirname(os.path.abspath(__file__))
 repo_dir = os.path.dirname(backend_dir)
 
@@ -74,19 +76,20 @@ def resolve_derived_dir():
     the pipeline was made country-independent, so this points at the project's
     derived tree rather than at a bare `derived/spatial`.
     """
+    root = os.environ.get("IACI_DERIVED_ROOT")
     candidates = [
         os.environ.get("IACI_DERIVED_DIR"),
         os.path.join(backend_dir, "data", "derived"),
-        os.path.join(os.path.dirname(repo_dir), "IACI-data_transformation",
-                     "projects", "india", "derived"),
+        os.path.join(root, "india", "derived") if root else None,
     ]
     for path in candidates:
         if path and os.path.isdir(path):
             return path
     raise SystemExit(
-        "No derived directory found. Copy the IACI-data_transformation "
-        "projects/<country>/derived output into backend/data/derived, or "
-        "point IACI_DERIVED_DIR at it."
+        "No derived directory found. Set IACI_DERIVED_ROOT to the pipeline's "
+        "derived root (the directory holding <country>/derived), copy that "
+        "output into backend/data/derived, or point IACI_DERIVED_DIR "
+        "straight at one project's derived tree."
     )
 
 

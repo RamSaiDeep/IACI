@@ -56,18 +56,21 @@ SMALL_AREA_SHARE = 0.002
 
 def boundaries_dir(country: dict) -> str:
     project = country["project"]
+    # Boundaries are archive data, not derived output, so they follow
+    # IACI_DATA_ROOT -- the bulk-storage half of the pipeline's split.
+    root = os.environ.get("IACI_DATA_ROOT")
     candidates = [
         os.environ.get(f"{project.upper()}_BOUNDARIES_DIR"),
         os.path.join(BACKEND_DIR, "data", "boundaries", project),
-        os.path.join(os.path.dirname(REPO_DIR), "IACI-data_transformation",
-                     "projects", project, "boundaries"),
+        os.path.join(root, project, "boundaries") if root else None,
     ]
     for path in candidates:
         if path and os.path.isdir(path):
             return path
     raise SystemExit(
-        f"No boundaries directory for {country['name']}. Point "
-        f"{project.upper()}_BOUNDARIES_DIR at projects/{project}/boundaries."
+        f"No boundaries directory for {country['name']}. Set IACI_DATA_ROOT "
+        f"to the pipeline's data root, or point "
+        f"{project.upper()}_BOUNDARIES_DIR straight at {project}/boundaries."
     )
 
 
