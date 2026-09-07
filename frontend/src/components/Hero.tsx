@@ -7,6 +7,24 @@ const highlights = [
   { value: "780+", label: "Districts mapped" },
 ];
 
+function AsteriskIcon({ className = "w-2 h-2" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <line x1="12" y1="4" x2="12" y2="20" />
+      <line x1="5.07" y1="8" x2="18.93" y2="16" />
+      <line x1="5.07" y1="16" x2="18.93" y2="8" />
+    </svg>
+  );
+}
+
 export default function Hero() {
   return (
     <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center py-10 sm:py-16 md:py-20">
@@ -28,7 +46,11 @@ export default function Hero() {
           <p className="text-sm sm:text-base text-foreground/70 leading-relaxed max-w-2xl">
             A standardized, reproducible measure of climate extremes across India — six hazard
             components, standardized against the 1991–2020 baseline and reported monthly for every
-            state and district.
+            state and district
+            <span className="inline-block text-accent align-super ml-0.5">
+              <AsteriskIcon className="w-2 h-2" />
+            </span>
+            .
           </p>
 
           <div className="flex flex-wrap gap-3">
@@ -52,10 +74,15 @@ export default function Hero() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-foreground/60">
-            <span>Geographical Boundary:</span>
+          <div className="flex items-center gap-1.5 text-xs text-foreground/60">
+            <span>
+              <span className="inline-block text-accent align-super mr-0.5">
+                <AsteriskIcon className="w-2 h-2" />
+              </span>
+              Geographical Boundary:
+            </span>
             <a
-              href="https://onlinemaps.surveyofindia.gov.in/Home.aspx"
+              href="https://onlinemaps.surveyofindia.gov.in/Digital_Product_Show.aspx"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:text-accent-strong underline underline-offset-4 transition-colors font-medium inline-flex items-center gap-1"

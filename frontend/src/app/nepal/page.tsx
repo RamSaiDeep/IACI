@@ -23,6 +23,24 @@ const COMPONENTS = [
   { short: "W", name: "Wind", desc: "Frequency of high wind speeds" },
 ];
 
+function AsteriskIcon({ className = "w-2 h-2" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <line x1="12" y1="4" x2="12" y2="20" />
+      <line x1="5.07" y1="8" x2="18.93" y2="16" />
+      <line x1="5.07" y1="16" x2="18.93" y2="8" />
+    </svg>
+  );
+}
+
 export default function NepalPortalPage() {
   return (
     <div className="flex-1 flex flex-col font-sans">
@@ -47,8 +65,11 @@ export default function NepalPortalPage() {
 
               <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light max-w-none">
                 A monthly, standardized measure of climate extremes, reported from the country
-                down to every one of Nepal&apos;s 750+ local levels — built on the same
-                methodology as the Indian index, on a 1991–2020 baseline.
+                down to every one of Nepal&apos;s 750+ local levels
+                <span className="inline-block text-accent align-super ml-0.5">
+                  <AsteriskIcon className="w-2 h-2" />
+                </span>{" "}
+                — built on the same methodology as the Indian index, on a 1991–2020 baseline.
               </p>
 
               <div className="flex flex-wrap gap-3 pt-2">
@@ -66,8 +87,13 @@ export default function NepalPortalPage() {
                 </Link>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-white/65 pt-1">
-                <span>Geographical Boundary:</span>
+              <div className="flex items-center gap-1.5 text-xs text-white/65 pt-1">
+                <span>
+                  <span className="inline-block text-accent align-super mr-0.5">
+                    <AsteriskIcon className="w-2 h-2" />
+                  </span>
+                  Geographical Boundary:
+                </span>
                 <a
                   href="https://nationalgeoportal.gov.np/#/"
                   target="_blank"
