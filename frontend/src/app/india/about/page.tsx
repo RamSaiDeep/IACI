@@ -149,7 +149,7 @@ export default function AboutPage() {
           <div className="hero-grid" />
 
           <div className="relative z-10 flex flex-col gap-10">
-            <div className="max-w-2xl flex flex-col gap-5">
+            <div className="w-full flex flex-col gap-5">
               <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
@@ -161,7 +161,7 @@ export default function AboutPage() {
                 About the index
               </h1>
 
-              <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light">
+              <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light max-w-none">
                 A standardized, reproducible measure of climate extremes across India — built for
                 risk management, insurance pricing and infrastructure planning.
               </p>

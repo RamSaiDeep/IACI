@@ -64,7 +64,7 @@ export default function NepalPortalPage() {
               </h1>
 
               <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light max-w-none">
-                A monthly, standardized measure of climate extremes, reported from the country
+                A monthly, standardized measure of change of frequency of climate extremes, reported from the country
                 down to every one of Nepal&apos;s 750+ local levels
                 <span className="inline-block text-accent align-super ml-0.5">
                   <AsteriskIcon className="w-2 h-2" />
@@ -134,15 +134,13 @@ export default function NepalPortalPage() {
         </section>
 
         <section className="flex flex-col gap-8">
-          <header className="flex flex-col gap-2.5 max-w-2xl">
+          <header className="flex flex-col gap-2.5 max-w-4xl">
             <span className="eyebrow">Five Components</span>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
               What the index measures
             </h2>
             <p className="text-sm text-foreground/60 leading-relaxed">
-              Each component is a standardized anomaly against 1991–2020, and the composite is
-              their mean. Nepal is landlocked, so the sea-level component of the wider index does
-              not apply and the five-component equation is used everywhere.
+              Each component is a standardized anomaly against 1991–2020, and the composite is their mean.
             </p>
           </header>
 

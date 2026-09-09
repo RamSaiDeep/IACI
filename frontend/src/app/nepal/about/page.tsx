@@ -24,7 +24,7 @@ const pillars = [
     body: (
       <>
         A <strong className="font-semibold">grid-cell-first</strong> architecture. Every component
-        is computed independently for each ERA5 grid cell, then aggregated to provinces, districts
+        is computed independently for each grid cell, then aggregated to provinces, districts
         and local levels — each level built straight from the grid, never from the level below.
       </>
     ),
@@ -35,8 +35,8 @@ const pillars = [
     accent: "bg-teal-600/10 text-teal-600",
     body: (
       <>
-        Standardized against the <strong className="font-semibold">1991–2020 baseline</strong>, the
-        WMO 30-year climate norm, per grid cell and per calendar month. Every output is a z-score.
+        Standardized against the <strong className="font-semibold">1991–2020 baseline</strong>,
+        the World Meteorogical Organization (WMO) 30-year climate norm.
       </>
     ),
   },
@@ -46,9 +46,7 @@ const pillars = [
     accent: "bg-blue-600/10 text-blue-600",
     body: (
       <>
-        <strong className="font-semibold">ERA5-Land</strong> supplies temperature, precipitation,
-        drought and wind. The ocean reanalysis used for sea level elsewhere is not read at all —
-        Nepal has no coastline.
+        The land surface data were obtained from the ERA5-Land global dataset, an enhanced-resolution reanalysis produced by the European Centre for Medium-Range Weather Forecasts (ECMWF).
       </>
     ),
   },
@@ -74,7 +72,7 @@ const components = [
     title: "Extreme precipitation",
     badge: "Rainfall",
     badgeClass: "bg-blue-500/10 text-blue-600 border-blue-500/25",
-    desc: "Maximum consecutive five-day precipitation anomaly — flood and deluge potential.",
+    desc: "Maximum consecutive five-day precipitation.",
   },
   {
     symbol: "W",
@@ -129,7 +127,7 @@ export default function NepalAboutPage() {
           <div className="hero-grid" />
 
           <div className="relative z-10 flex flex-col gap-10">
-            <div className="max-w-2xl flex flex-col gap-5">
+            <div className="w-full flex flex-col gap-5">
               <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 w-fit">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
@@ -141,8 +139,8 @@ export default function NepalAboutPage() {
                 About the index
               </h1>
 
-              <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light">
-                A standardized, reproducible measure of climate extremes across Nepal — reported
+              <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light max-w-none">
+                A standardized, reproducible measure of change in frequency of climate extremes across Nepal — reported
                 nationally, for all 7 provinces and 77 districts, and down to individual
                 municipalities.
               </p>
@@ -216,7 +214,7 @@ export default function NepalAboutPage() {
           <SectionHeader
             eyebrow="Coverage"
             title="Four administrative levels"
-            lede="Nepal is reported one level deeper than most country portals. Each level is aggregated directly from the grid, so the values are independent of one another rather than nested averages."
+            lede=""
           />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
