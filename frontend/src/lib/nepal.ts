@@ -11,7 +11,16 @@
  * India drills country → state → district. Nepal adds a fourth:
  * country → province → district → local level. Each child level is split into
  * one file per parent, so opening a district fetches only that district's
- * local levels (~200 KB) rather than all 753.
+ * local levels (~200 KB) rather than all 777.
+ *
+ * LOCAL LEVELS ARE KEYED BY ID
+ * ----------------------------
+ * The other levels are keyed by name; the local level cannot be. Its 777
+ * regions carry only 734 distinct names, and two of the repeats sit inside a
+ * single district, so a name would silently merge two regions. These files are
+ * keyed by the pipeline's `region_id` (`NP_LU_<fid>`) and carry a `names` map
+ * for display and a `meta` map with each region's municipality type and source
+ * `fid`. The boundary features carry the same `id`, which is what joins them.
  *
  * NO SEA LEVEL
  * ------------

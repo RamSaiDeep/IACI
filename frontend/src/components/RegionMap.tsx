@@ -12,7 +12,7 @@ import type { Field } from "../lib/climate";
  * Deliberately simpler than `IndiaMap`, which owns India's whole drill-down —
  * which file to fetch, which level it is on, and what a click means. That works
  * for exactly three levels. This one draws whatever collection it is pointed at
- * and reports clicks by name; the page owns the hierarchy, so the same
+ * and reports clicks by key; the page owns the hierarchy, so the same
  * component serves Nepal's four levels and would serve a fifth.
  *
  * The projection auto-fits the features it is given, so nothing here knows
@@ -21,7 +21,7 @@ import type { Field } from "../lib/climate";
 
 interface GeoJsonFeature {
   type: string;
-  properties: { name?: string; parent?: string; [key: string]: unknown };
+  properties: { name?: string; id?: string; parent?: string; [key: string]: unknown };
   geometry: unknown;
 }
 
@@ -56,28 +56,43 @@ function featureName(feature: GeoJsonFeature): string {
   return String(feature.properties.name ?? "Unknown");
 }
 
+/**
+ * What this feature is keyed by — its `id` where the level has one, its name
+ * otherwise.
+ *
+ * Names are unique for provinces and districts and read well in a URL, so they
+ * stay the key there. Nepal's local level cannot use them: 777 polygons carry
+ * 734 distinct names, and two of the repeats fall inside a single district
+ * file, so a name would silently collapse two regions into one. Those levels
+ * ship an `id` on the feature and are keyed by it in the data files too, which
+ * is why the same helper serves both lookups.
+ */
+function featureKey(feature: GeoJsonFeature): string {
+  return String(feature.properties.id ?? feature.properties.name ?? "Unknown");
+}
+
 export default function RegionMap({
   url,
   values,
   variable,
   onSelect,
   levelLabel,
-  focusName,
+  focusKey,
   hint,
   className,
   heightClassName,
 }: {
   /** Boundary file to draw. Null renders the empty state. */
   url: string | null;
-  /** Region name (upper-cased) -> value, for shading. */
+  /** Region key (upper-cased) -> value, for shading. */
   values: Record<string, number>;
   variable: Field;
-  /** Called with the clicked region's name. */
-  onSelect?: (name: string) => void;
+  /** Called with the clicked region's key and its display name. */
+  onSelect?: (key: string, name: string) => void;
   /** What one feature is, for the tooltip ("Province", "District"…). */
   levelLabel: string;
-  /** When set, only this region is drawn — the zoomed-in view. */
-  focusName?: string | null;
+  /** When set, only the region with this key is drawn — the zoomed-in view. */
+  focusKey?: string | null;
   /** Tooltip footer line. */
   hint?: string;
   className?: string;
@@ -109,11 +124,11 @@ export default function RegionMap({
   }, [url]);
 
   const { paths, viewBox } = useMemo(() => {
-    const source = focusName
+    const source = focusKey
       ? {
           type: "FeatureCollection",
           features: (data?.features ?? []).filter(
-            (f) => normalizeName(featureName(f)) === normalizeName(focusName)
+            (f) => normalizeName(featureKey(f)) === normalizeName(focusKey)
           ),
         }
       : data;
@@ -126,7 +141,7 @@ export default function RegionMap({
     const list = source.features.map((feature, idx) => ({
       feature,
       d: generator(feature as never) || "",
-      key: `${url}-${focusName ?? ""}-${idx}`,
+      key: `${url}-${focusKey ?? ""}-${idx}`,
     }));
 
     const [[x0, y0], [x1, y1]] = generator.bounds(source as never);
@@ -139,7 +154,7 @@ export default function RegionMap({
       paths: list,
       viewBox: `${(x0 - pad).toFixed(1)} ${(y0 - pad).toFixed(1)} ${(width + pad * 2).toFixed(1)} ${(height + pad * 2).toFixed(1)}`,
     };
-  }, [data, focusName, url]);
+  }, [data, focusKey, url]);
 
   /** Position the tooltip by writing to the node directly. */
   const handlePointerMove = (e: React.PointerEvent) => {
@@ -158,7 +173,7 @@ export default function RegionMap({
 
   const isLoading = Boolean(url) && !data;
   const hoveredName = hovered ? featureName(hovered) : null;
-  const hoveredValue = hoveredName ? values[normalizeName(hoveredName)] : undefined;
+  const hoveredValue = hovered ? values[normalizeName(featureKey(hovered))] : undefined;
 
   return (
     <div
@@ -190,14 +205,14 @@ export default function RegionMap({
           <g>
             {paths.map(({ feature, d, key }) => {
               const name = featureName(feature);
-              const value = values[normalizeName(name)];
+              const value = values[normalizeName(featureKey(feature))];
               const isHovered = hovered === feature;
 
               return (
                 <path
                   key={key}
                   d={d}
-                  onClick={() => onSelect?.(name)}
+                  onClick={() => onSelect?.(featureKey(feature), name)}
                   onPointerEnter={() => setHovered(feature)}
                   onPointerLeave={() => setHovered(null)}
                   onPointerCancel={() => setHovered(null)}

@@ -93,10 +93,10 @@ const components = [
 ];
 
 const levels = [
-  { count: "1", name: "Country", note: "Nepal as a whole" },
-  { count: "7", name: "Provinces", note: "Koshi through Sudurpashchim" },
-  { count: "77", name: "Districts", note: "Nested within provinces" },
-  { count: "750+", name: "Local levels", note: "Gaunpalika and nagarpalika" },
+  { count: "1", name: "Country" },
+  { count: "7", name: "Provinces" },
+  { count: "77", name: "Districts" },
+  { count: "750+", name: "Local levels" },
 ];
 
 /** Section heading with consistent spacing above and below. */
@@ -226,7 +226,6 @@ export default function NepalAboutPage() {
                   {level.count}
                 </span>
                 <h3 className="text-sm font-bold tracking-tight">{level.name}</h3>
-                <p className="text-xs text-foreground/55 leading-relaxed">{level.note}</p>
               </article>
             ))}
           </div>

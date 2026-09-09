@@ -53,6 +53,23 @@ PRECISION = 3
 NOISE_WORDS = {"AND", "THE", "ISLANDS", "ISLAND", "OF"}
 
 
+# Keys in a level spec that tell THIS SCRIPT where to read, and mean nothing to
+# a browser: the shapefile stem, which of its attribute fields hold the name,
+# the parent and the id, and the prefix that builds a region_id. They are
+# stripped from the manifest so it stays a description of the data on offer
+# rather than a dump of build configuration.
+BUILD_ONLY_KEYS = ("layer", "id_prefix")
+
+
+def for_manifest(spec: dict, **extra) -> dict:
+    kept = {
+        key: value
+        for key, value in spec.items()
+        if not (key in BUILD_ONLY_KEYS or key.startswith("layer_"))
+    }
+    return {**kept, **extra}
+
+
 def derived_dir(country: dict) -> str:
     """The pipeline's `derived` root for one country's project.
 
@@ -155,6 +172,54 @@ class Level:
         self.names = [normalize_name(self.name_of[r]) for r in self.region_ids]
         self.arrays = [self.store[f][:] for f in self.fields]
 
+        # WHAT THE REGION DICT IS KEYED BY. Names are the default and read
+        # well, but they are only usable where they are unique. A level that
+        # declares `"key": "id"` is keyed by region_id instead, and ships the
+        # display names beside the values so the UI loses nothing.
+        self.key_by_id = spec.get("key") == "id"
+        self.keys = list(self.region_ids) if self.key_by_id else self.names
+        self.labels = {
+            r: str(self.name_of[r]).strip() for r in self.region_ids
+        }
+        self.meta = self.carried_metadata(spec.get("carry", ()))
+
+    def carried_metadata(self, fields) -> dict:
+        """region_id -> the level's carried attributes, straight off the crosswalk.
+
+        These are per-region constants -- municipality type, the source
+        shapefile's own row id -- so they are read once here rather than
+        repeated on every monthly row.
+        """
+        wanted = [f for f in fields if f in self.crosswalk.columns]
+        if not wanted:
+            return {}
+        frame = self.crosswalk[["region_id", *wanted]].drop_duplicates("region_id")
+        out = {}
+        for row in frame.itertuples(index=False):
+            values = {}
+            for field in wanted:
+                value = getattr(row, field)
+                if pd.isna(value):
+                    values[field] = None
+                elif isinstance(value, (int, np.integer)):
+                    values[field] = int(value)
+                elif isinstance(value, (float, np.floating)):
+                    values[field] = int(value) if float(value).is_integer() else float(value)
+                else:
+                    values[field] = str(value).strip()
+            out[str(row.region_id)] = values
+        return out
+
+    def annotate(self, payload: dict, keys) -> dict:
+        """Add the names and metadata for `keys`, where the level is id-keyed."""
+        if not self.key_by_id:
+            return payload
+        selected = [k for k in keys]
+        payload["names"] = {k: self.labels[k] for k in selected}
+        if self.meta:
+            payload["meta"] = {k: self.meta[k] for k in selected if k in self.meta}
+        return payload
+
     def rows_for(self, index: int, years, months) -> list:
         rows = []
         for y_idx, year in enumerate(years):
@@ -203,8 +268,7 @@ def process(slug: str, country: dict) -> dict:
     rows = country_level.rows_for(0, years, months)
     size = write_json(os.path.join(out_dir, "country.json"), {"fields": fields, "rows": rows})
     print(f"  country      {len(rows)} periods ({rows[0][0]}-{rows[-1][0]}) -> {mb(size)}")
-    manifest_levels.append({**{k: v for k, v in levels["country"].spec.items()},
-                            "file": "country.json"})
+    manifest_levels.append(for_manifest(levels["country"].spec, file="country.json"))
 
     # --- levels with no parent split: one file listing every region ---------
     for spec in country["levels"]:
@@ -212,13 +276,13 @@ def process(slug: str, country: dict) -> dict:
             continue
         level = levels[spec["id"]]
         regions = {
-            name: level.rows_for(i, years, months)
-            for i, name in enumerate(level.names)
+            key: level.rows_for(i, years, months)
+            for i, key in enumerate(level.keys)
         }
-        size = write_json(os.path.join(out_dir, f"{spec['id']}.json"),
-                          {"fields": fields, "regions": regions})
+        payload = level.annotate({"fields": fields, "regions": regions}, regions)
+        size = write_json(os.path.join(out_dir, f"{spec['id']}.json"), payload)
         print(f"  {spec['id']:12s} {len(regions)} regions -> {mb(size)}")
-        manifest_levels.append({**spec, "file": f"{spec['id']}.json"})
+        manifest_levels.append(for_manifest(spec, file=f"{spec['id']}.json"))
 
     # --- levels split one file per parent region ----------------------------
     for spec in child_levels(country):
@@ -233,8 +297,8 @@ def process(slug: str, country: dict) -> dict:
             resolved = canonical.get(name_tokens(raw))
             if resolved is None:
                 resolved = normalize_name(raw)
-                unmapped.append(f"{level.names[i]} ({raw})")
-            grouped.setdefault(resolved, {})[level.names[i]] = level.rows_for(i, years, months)
+                unmapped.append(f"{level.labels[level.region_ids[i]]} ({raw})")
+            grouped.setdefault(resolved, {})[level.keys[i]] = level.rows_for(i, years, months)
 
         if unmapped:
             print(f"  ! {len(unmapped)} {spec['id']} rows have no canonical "
@@ -246,8 +310,8 @@ def process(slug: str, country: dict) -> dict:
         for parent_name, regions in sorted(grouped.items()):
             stem = f"{slugify(parent_name)}.json"
             written.add(stem)
-            total += write_json(os.path.join(sub_dir, stem),
-                                {"fields": fields, "regions": regions})
+            payload = level.annotate({"fields": fields, "regions": regions}, regions)
+            total += write_json(os.path.join(sub_dir, stem), payload)
 
         # Drop files an earlier run wrote under a spelling nothing writes now.
         for stale in sorted(set(os.listdir(sub_dir)) - written):
@@ -257,7 +321,7 @@ def process(slug: str, country: dict) -> dict:
 
         print(f"  {spec['id']:12s} {sum(len(v) for v in grouped.values())} regions "
               f"across {len(grouped)} {spec['parent']} files -> {mb(total)}")
-        manifest_levels.append({**spec, "dir": spec["id"]})
+        manifest_levels.append(for_manifest(spec, dir=spec["id"]))
 
     return {
         "slug": slug,

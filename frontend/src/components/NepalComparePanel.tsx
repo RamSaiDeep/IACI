@@ -20,7 +20,9 @@ import type { Field, Values } from "../lib/climate";
 export interface NepalPanelState {
   province: string | null;
   district: string | null;
-  local: string | null;
+  // Key and name both, because a local level's name is not unique and its key
+  // is not presentable. See RegionMap's `featureKey`.
+  local: { key: string; name: string } | null;
   year: number | null;
   month: number | null;
   variable: Field;
@@ -50,7 +52,7 @@ export default function NepalComparePanel({
   values: Values | null;
 }) {
   const scope = panel.local
-    ? `${panel.local}, ${panel.district}`
+    ? `${panel.local.name}, ${panel.district}`
     : panel.district
       ? `${panel.district}, ${panel.province}`
       : panel.province || "Nepal Overall";
@@ -67,10 +69,10 @@ export default function NepalComparePanel({
 
   const mapLevelLabel = panel.district ? "Local Level" : panel.province ? "District" : "Province";
 
-  const handleSelect = (name: string) => {
+  const handleSelect = (key: string, name: string) => {
     if (!panel.province) onChange({ province: name, district: null, local: null });
     else if (!panel.district) onChange({ district: name, local: null });
-    else onChange({ local: panel.local === name ? null : name });
+    else onChange({ local: panel.local?.key === key ? null : { key, name } });
   };
 
   const stepBack = () => {
@@ -166,7 +168,7 @@ export default function NepalComparePanel({
         variable={panel.variable}
         onSelect={handleSelect}
         levelLabel={mapLevelLabel}
-        focusName={panel.local}
+        focusKey={panel.local?.key}
         hint={
           panel.district
             ? "Tap a local level to focus it"
@@ -184,7 +186,7 @@ export default function NepalComparePanel({
             {indicator(panel.variable).name}
           </span>
           <span className="text-xs font-bold truncate">
-            {panel.local || panel.district || panel.province || "Nepal average"}
+            {panel.local?.name || panel.district || panel.province || "Nepal average"}
           </span>
         </div>
         <div className="text-right flex-shrink-0 flex items-baseline gap-1.5">

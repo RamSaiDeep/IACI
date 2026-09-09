@@ -90,7 +90,7 @@ const FAQS: FaqItem[] = [
     category: "Overview",
     question: "Which administrative levels are reported?",
     keywords:
-      "country province district local level gaunpalika nagarpalika municipality 7 77 750 protected areas national parks",
+      "country province district local level gaunpalika nagarpalika municipality 7 77 750",
     answer: (
       <>
         <p>Four levels, one deeper than most country portals:</p>
@@ -110,13 +110,6 @@ const FAQS: FaqItem[] = [
             </li>
           ))}
         </ul>
-        <div className="p-3.5 rounded-xl bg-surface-muted/70 border border-foreground/8 text-xs text-foreground/75 leading-relaxed">
-          <strong className="text-foreground">Protected areas are excluded from the local level.</strong>{" "}
-          National parks and reserves are carved out of municipal territory rather than sitting
-          inside it, and they are not local governments. Excluding them leaves roughly 3% of
-          Nepal&apos;s area outside any local-level region — that land still belongs to its district
-          and province, which are unaffected.
-        </div>
       </>
     ),
   },

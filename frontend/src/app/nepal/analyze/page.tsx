@@ -141,7 +141,7 @@ export default function NepalAnalyzePage() {
 
   const seriesOf = useCallback(
     (panel: ResolvedNepalPanel, districts: RegionSeries | null, locals: RegionSeries | null) => {
-      if (panel.local) return locals?.get(normalizeName(panel.local)) ?? null;
+      if (panel.local) return locals?.get(normalizeName(panel.local.key)) ?? null;
       if (panel.district) return districts?.get(normalizeName(panel.district)) ?? null;
       if (panel.province) return provinces?.get(normalizeName(panel.province)) ?? null;
       return nepal;
@@ -195,7 +195,7 @@ export default function NepalAnalyzePage() {
     panel.year === null ? "—" : `${MONTHS[panel.month - 1].slice(0, 3)} ${panel.year}`;
 
   const scopeOf = (panel: ResolvedNepalPanel) =>
-    panel.local || panel.district || panel.province || "Nepal";
+    panel.local?.name || panel.district || panel.province || "Nepal";
 
   const isLoading = !nepal || !provinces;
 

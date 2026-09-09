@@ -40,7 +40,9 @@ import type { Field, RegionSeries, Series } from "../../../lib/climate";
 export default function NepalExplorePage() {
   const [province, setProvince] = useState<string | null>(null);
   const [district, setDistrict] = useState<string | null>(null);
-  const [local, setLocal] = useState<string | null>(null);
+  // Province and district are held by name; a local level is held by key AND
+  // name, because its name is not unique and the key is not presentable.
+  const [local, setLocal] = useState<{ key: string; name: string } | null>(null);
 
   // null means "follow the data" — the newest year and month on offer.
   const [yearChoice, setYearChoice] = useState<number | null>(null);
@@ -104,7 +106,7 @@ export default function NepalExplorePage() {
   const depth = local ? "local" : district ? "district" : province ? "province" : "country";
 
   const focusedSeries = useMemo(() => {
-    if (local) return localSeries?.get(normalizeName(local)) ?? null;
+    if (local) return localSeries?.get(normalizeName(local.key)) ?? null;
     if (district) return districtSeries?.get(normalizeName(district)) ?? null;
     if (province) return provinces?.get(normalizeName(province)) ?? null;
     return nepal;
@@ -131,10 +133,10 @@ export default function NepalExplorePage() {
 
   const mapLevelLabel = district ? "Local Level" : province ? "District" : "Province";
 
-  const handleSelect = (name: string) => {
+  const handleSelect = (key: string, name: string) => {
     if (!province) setProvince(name);
     else if (!district) setDistrict(name);
-    else setLocal((current) => (current === name ? null : name));
+    else setLocal((current) => (current?.key === key ? null : { key, name }));
   };
 
   const trend = useMemo(
@@ -142,7 +144,7 @@ export default function NepalExplorePage() {
     [focusedSeries, variable]
   );
 
-  const scopeLabel = local || district || province || "Nepal";
+  const scopeLabel = local?.name || district || province || "Nepal";
   const isLoading =
     !nepal ||
     !provinces ||
@@ -326,7 +328,7 @@ export default function NepalExplorePage() {
               variable={variable}
               onSelect={handleSelect}
               levelLabel={mapLevelLabel}
-              focusName={local}
+              focusKey={local?.key}
               hint={
                 district
                   ? "Tap a local level to focus it"

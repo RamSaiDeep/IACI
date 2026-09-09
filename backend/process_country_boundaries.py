@@ -21,8 +21,8 @@ fact appears in this file.
 
 SIMPLIFICATION IS PER LEVEL, NOT GLOBAL
 ---------------------------------------
-A tolerance that suits 36 state outlines is far too coarse for 753 Nepali
-municipalities, several of which are only a few kilometres across. Tolerance
+A tolerance that suits 36 state outlines is far too coarse for 777 Nepali
+local levels, several of which are only a few kilometres across. Tolerance
 scales with how much of the country each polygon covers, so small regions keep
 their shape and large ones stop shipping vertices nobody can see.
 
@@ -98,14 +98,51 @@ def load_layer(directory: str, spec: dict) -> gpd.GeoDataFrame:
         keep = ~frame[field].fillna("").astype(str).str.upper().str.startswith(prefix.upper())
         frame = frame.loc[keep]
 
-    name_field = spec["layer_name_field"]
-    if name_field not in frame.columns:
-        raise SystemExit(
-            f"{spec['layer']}.shp has no {name_field!r}; it carries "
-            f"{sorted(c for c in frame.columns if c != 'geometry')}"
-        )
-    frame = frame.loc[frame[name_field].notna()]
+    required = [spec["layer_name_field"]]
+    if spec.get("layer_id_field"):
+        required.append(spec["layer_id_field"])
+    required += list(spec.get("carry", ()))
+    for field in required:
+        if field not in frame.columns:
+            raise SystemExit(
+                f"{spec['layer']}.shp has no {field!r}; it carries "
+                f"{sorted(c for c in frame.columns if c != 'geometry')}"
+            )
+
+    frame = frame.loc[frame[spec["layer_name_field"]].notna()]
+
+    # A level keyed by id is only as good as that id. Checked here rather than
+    # trusted, because a duplicate would silently draw one region over another.
+    id_field = spec.get("layer_id_field")
+    if id_field:
+        if frame[id_field].isna().any():
+            raise SystemExit(f"{spec['layer']}.shp has rows with no {id_field!r}")
+        if not frame[id_field].is_unique:
+            raise SystemExit(
+                f"{spec['layer']}.shp: {id_field!r} is not unique, so it "
+                "cannot identify a region"
+            )
     return frame
+
+
+def carried_value(value):
+    """A carried attribute as JSON, keeping numbers numeric.
+
+    A shapefile `fid` read through geopandas arrives as a numpy integer, and
+    stringifying it would leave the map holding `"607"` where the data files
+    hold `607`. Anything non-numeric is stripped text.
+    """
+    if value is None or (isinstance(value, float) and value != value):
+        return None
+    if isinstance(value, (bool, str)):
+        return str(value).strip()
+    if hasattr(value, "item"):
+        value = value.item()
+    if isinstance(value, int):
+        return int(value)
+    if isinstance(value, float):
+        return int(value) if value.is_integer() else float(value)
+    return str(value).strip()
 
 
 def simplified_features(frame: gpd.GeoDataFrame, spec: dict, level_key: str) -> list:
@@ -118,6 +155,9 @@ def simplified_features(frame: gpd.GeoDataFrame, spec: dict, level_key: str) -> 
         areas = frame.geometry.area
         total_area = areas.sum()
     parent_field = spec.get("layer_parent_field")
+    id_field = spec.get("layer_id_field")
+    id_prefix = spec.get("id_prefix", "")
+    carry = list(spec.get("carry", ()))
     features, dropped = [], []
 
     for row in frame.itertuples(index=False):
@@ -138,8 +178,15 @@ def simplified_features(frame: gpd.GeoDataFrame, spec: dict, level_key: str) -> 
             continue
 
         properties = {"name": name, level_key: name}
+        # `id` is what the data files are keyed by where a level declares one,
+        # and it is the join key the map uses. Prefixed to match the pipeline's
+        # region_id exactly, so a feature and its series share one identifier.
+        if id_field:
+            properties["id"] = id_prefix + str(getattr(row, id_field))
         if parent_field:
             properties["parent"] = str(getattr(row, parent_field)).strip()
+        for field in carry:
+            properties[field] = carried_value(getattr(row, field, None))
         features.append({"type": "Feature", "properties": properties, "geometry": cleaned})
 
     if dropped:

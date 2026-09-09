@@ -94,13 +94,25 @@ COUNTRIES = {
                 "parent": "district",
                 "parent_field": "DISTRICT",
                 # Municipality type rides along so the UI can group or filter by
-                # it without another request.
-                "carry": ["Type_GN"],
-                # Prepared by notebooks/nepal.ipynb: protected areas excluded,
-                # the two split municipalities dissolved. 753 rows.
-                "layer": "local_level",
+                # it -- municipality against national park -- without another
+                # request. `fid` comes with it so a feature on the map can be
+                # traced back to its row in the shapefile.
+                "carry": ["Type_GN", "fid"],
+                # The layer exactly as it ships: 777 polygons, protected areas
+                # included and nothing dissolved. See the `local` level in
+                # projects/nepal/config/project.toml for why.
+                "layer": "local_unit",
                 "layer_name_field": "GaPa_NaPa",
                 "layer_parent_field": "DISTRICT",
+                # KEYED BY ID, NOT NAME. The other levels get away with names
+                # because theirs are unique; these are not. 777 rows carry 734
+                # distinct names, and `Bansagadhi` and `Binayee Tribeni` each
+                # name two rows of the SAME district -- so even within one
+                # district file a name is not a key. `fid` is, and the prefix
+                # matches the pipeline's region_id so the two join directly.
+                "layer_id_field": "fid",
+                "id_prefix": "NP_LU_",
+                "key": "id",
             },
         ],
         "geojson": {"top": "province_boundary.json", "children": "districts"},
