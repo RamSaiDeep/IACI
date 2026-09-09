@@ -64,7 +64,7 @@ export default function NepalPortalPage() {
               </h1>
 
               <p className="text-base sm:text-lg text-white/75 leading-relaxed font-light max-w-none">
-                A monthly, standardized measure of change of frequency of climate extremes, reported from the country
+                A monthly, standardized measure of change in frequency of climate extremes, reported from the country
                 down to every one of Nepal&apos;s 750+ local levels
                 <span className="inline-block text-accent align-super ml-0.5">
                   <AsteriskIcon className="w-2 h-2" />
