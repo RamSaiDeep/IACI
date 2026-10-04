@@ -2,6 +2,8 @@ import { Redis } from "@upstash/redis";
 import { NextResponse } from "next/server";
 
 const KEY = "visitors:total";
+// Visitors counted before this counter existed; added to the stored total.
+const BASE_COUNT = 9000;
 
 // The Vercel Marketplace integration prefixes its variables with the database
 // name ("iaci_"), so Redis.fromEnv() would not find them.
@@ -19,7 +21,7 @@ export async function GET() {
   if (!redis) return NextResponse.json({ error: "unavailable" }, { status: 503 });
   try {
     const count = (await redis.get<number>(KEY)) ?? 0;
-    return NextResponse.json({ count }, noStore);
+    return NextResponse.json({ count: count + BASE_COUNT }, noStore);
   } catch {
     return NextResponse.json({ error: "unavailable" }, { status: 503 });
   }
@@ -31,7 +33,7 @@ export async function POST() {
   if (!redis) return NextResponse.json({ error: "unavailable" }, { status: 503 });
   try {
     const count = await redis.incr(KEY);
-    return NextResponse.json({ count }, noStore);
+    return NextResponse.json({ count: count + BASE_COUNT }, noStore);
   } catch {
     return NextResponse.json({ error: "unavailable" }, { status: 503 });
   }
