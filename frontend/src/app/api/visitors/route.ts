@@ -13,12 +13,20 @@ function getRedis() {
   return url && token ? new Redis({ url, token }) : null;
 }
 
+// Without Redis credentials (e.g. a local `npm run dev`) show the base count so
+// the footer can be previewed. Never applies to a production build.
+const devPreview = process.env.NODE_ENV === "development";
+
 const noStore = { headers: { "Cache-Control": "no-store" } };
 
 // Read the current total.
 export async function GET() {
   const redis = getRedis();
-  if (!redis) return NextResponse.json({ error: "unavailable" }, { status: 503 });
+  if (!redis) {
+    return devPreview
+      ? NextResponse.json({ count: BASE_COUNT }, noStore)
+      : NextResponse.json({ error: "unavailable" }, { status: 503 });
+  }
   try {
     const count = (await redis.get<number>(KEY)) ?? 0;
     return NextResponse.json({ count: count + BASE_COUNT }, noStore);
@@ -30,7 +38,11 @@ export async function GET() {
 // Count one new visitor and return the new total.
 export async function POST() {
   const redis = getRedis();
-  if (!redis) return NextResponse.json({ error: "unavailable" }, { status: 503 });
+  if (!redis) {
+    return devPreview
+      ? NextResponse.json({ count: BASE_COUNT }, noStore)
+      : NextResponse.json({ error: "unavailable" }, { status: 503 });
+  }
   try {
     const count = await redis.incr(KEY);
     return NextResponse.json({ count: count + BASE_COUNT }, noStore);

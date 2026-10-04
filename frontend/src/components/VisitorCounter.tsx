@@ -3,6 +3,57 @@
 import { useEffect, useState } from "react";
 
 const FLAG = "aci-visitor-counted";
+const FLIP_MS = 180;
+
+// One split-flap block. Starts at 0 and folds over once per number until it
+// reaches its digit, like a flip clock. `delay` staggers the blocks (seconds).
+function FlipDigit({ target, delay }: { target: number; delay: number }) {
+  const [{ cur, prev }, setState] = useState({ cur: 0, prev: 0 });
+
+  useEffect(() => {
+    if (target === 0) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let steps = 0;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    const step = () => {
+      steps++;
+      setState((s) => (s.cur >= target ? s : { prev: s.cur, cur: reduce ? target : s.cur + 1 }));
+      if (reduce || steps >= target) clearInterval(interval);
+    };
+
+    const start = setTimeout(() => {
+      step();
+      if (!reduce && target > 1) interval = setInterval(step, FLIP_MS);
+    }, delay * 1000);
+
+    return () => {
+      clearTimeout(start);
+      clearInterval(interval);
+    };
+  }, [target, delay]);
+
+  return (
+    <div className="flip" aria-hidden="true">
+      <div className="flip-half flip-top">
+        <span>{cur}</span>
+      </div>
+      <div className="flip-half flip-bottom">
+        <span>{prev}</span>
+      </div>
+      {cur !== prev && (
+        <>
+          <div key={`t${cur}`} className="flip-half flip-top flip-flap-top">
+            <span>{prev}</span>
+          </div>
+          <div key={`b${cur}`} className="flip-half flip-bottom flip-flap-bottom">
+            <span>{cur}</span>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 // Counts each browser once (localStorage flag) and shows the running total.
 // Renders nothing if the counter is unavailable so the footer is never affected.
@@ -32,26 +83,17 @@ export default function VisitorCounter() {
   if (count === null) return null;
 
   // At least four blocks; more appear as the total grows. Keyed from the right
-  // so existing blocks keep their place (and do not re-roll) when a digit is added.
+  // so existing blocks keep their place (and do not re-flip) when a digit is added.
   const digits = String(count).padStart(4, "0").split("");
 
   return (
-    <div className="flex flex-col lg:items-end gap-1.5">
+    <div className="flex flex-row items-center gap-3">
       <span className="whitespace-nowrap text-[10px] font-bold uppercase tracking-widest text-foreground/45">
         Total visitors
       </span>
-      <div role="img" aria-label={count.toLocaleString("en-IN")} className="flex gap-1">
+      <div role="img" aria-label={count.toLocaleString("en-IN")} className="flex gap-0.5">
         {digits.map((digit, i) => (
-          <div key={digits.length - i} aria-hidden="true" className="odometer-digit">
-            <div
-              className="odometer-strip"
-              style={{ "--d": digit, "--delay": `${i * 0.12}s` } as React.CSSProperties}
-            >
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
-                <span key={n}>{n}</span>
-              ))}
-            </div>
-          </div>
+          <FlipDigit key={digits.length - i} target={Number(digit)} delay={i * 0.15} />
         ))}
       </div>
     </div>
