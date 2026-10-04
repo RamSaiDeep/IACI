@@ -124,11 +124,11 @@ export default function Footer() {
 
           {/* Right Column: visitor total beside the navigation links */}
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-end lg:justify-self-end gap-6 lg:gap-14">
-            <div className="order-2 lg:order-1">
+            <div className="order-2">
               <VisitorCounter />
             </div>
             {/* Navigation Links */}
-            <nav className="order-1 lg:order-2 flex flex-col gap-2.5 lg:items-end">
+            <nav className="order-1 flex flex-col gap-2.5 lg:items-end">
               <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
                 {isIndiaPortal ? "India Portal" : isNepalPortal ? "Nepal Portal" : "Navigation"}
               </span>
