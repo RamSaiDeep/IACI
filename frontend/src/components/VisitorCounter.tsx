@@ -32,8 +32,13 @@ export default function VisitorCounter() {
   if (count === null) return null;
 
   return (
-    <span className="text-[11px] text-foreground/50">
-      Visitors: {count.toLocaleString("en-IN")}
-    </span>
+    <div className="mt-3 flex flex-col lg:items-end gap-0.5">
+      <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
+        Visitors
+      </span>
+      <span className="text-2xl font-bold tabular-nums text-accent">
+        {count.toLocaleString("en-IN")}
+      </span>
+    </div>
   );
 }

@@ -136,6 +136,7 @@ export default function Footer() {
                 {link.label}
               </Link>
             ))}
+            <VisitorCounter />
           </nav>
         </div>
 
@@ -152,12 +153,9 @@ export default function Footer() {
             </a>
             . All rights reserved.
           </span>
-          <div className="flex flex-col sm:items-end gap-1">
-            <span className="text-[11px] text-foreground/40">
-              Built on ECMWF ERA5-Land and ORAS5 reanalysis.
-            </span>
-            <VisitorCounter />
-          </div>
+          <span className="text-[11px] text-foreground/40">
+            Built on ECMWF ERA5-Land and ORAS5 reanalysis.
+          </span>
         </div>
       </div>
     </footer>
