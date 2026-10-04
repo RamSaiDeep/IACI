@@ -34,7 +34,7 @@ export default function VisitorCounter() {
   return (
     <div className="mt-3 flex flex-col lg:items-end gap-0.5">
       <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
-        Visitors
+        Total visitors till date
       </span>
       <span className="text-2xl font-bold tabular-nums text-accent">
         {count.toLocaleString("en-IN")}
