@@ -37,8 +37,8 @@ export default function VisitorCounter() {
 
   return (
     <div className="flex flex-col lg:items-end gap-1.5">
-      <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
-        Total visitors till date
+      <span className="whitespace-nowrap text-[10px] font-bold uppercase tracking-widest text-foreground/45">
+        Total visitors
       </span>
       <div role="img" aria-label={count.toLocaleString("en-IN")} className="flex gap-1">
         {digits.map((digit, i) => (
