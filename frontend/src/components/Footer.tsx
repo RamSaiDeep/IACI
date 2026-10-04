@@ -122,22 +122,27 @@ export default function Footer() {
           </div>
           )}
 
-          {/* Right Column: Navigation Links */}
-          <nav className="flex flex-col gap-2.5 lg:items-end lg:justify-self-end">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
-              {isIndiaPortal ? "India Portal" : isNepalPortal ? "Nepal Portal" : "Navigation"}
-            </span>
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-xs font-semibold text-foreground/70 hover:text-accent transition-colors w-fit"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <VisitorCounter />
-          </nav>
+          {/* Right Column: visitor total beside the navigation links */}
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-end lg:justify-self-end gap-6 lg:gap-14">
+            <div className="order-2 lg:order-1">
+              <VisitorCounter />
+            </div>
+            {/* Navigation Links */}
+            <nav className="order-1 lg:order-2 flex flex-col gap-2.5 lg:items-end">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
+                {isIndiaPortal ? "India Portal" : isNepalPortal ? "Nepal Portal" : "Navigation"}
+              </span>
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-xs font-semibold text-foreground/70 hover:text-accent transition-colors w-fit"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
         </div>
 
         <div className="pt-6 border-t border-foreground/8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">

@@ -32,7 +32,7 @@ export default function VisitorCounter() {
   if (count === null) return null;
 
   return (
-    <div className="mt-3 flex flex-col lg:items-end gap-0.5">
+    <div className="flex flex-col lg:items-end gap-0.5">
       <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/45">
         Total visitors till date
       </span>
