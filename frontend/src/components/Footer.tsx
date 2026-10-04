@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import VisitorCounter from "./VisitorCounter";
 
 const SUPPORT_EMAIL = "support@sssia.org";
 
@@ -151,9 +152,12 @@ export default function Footer() {
             </a>
             . All rights reserved.
           </span>
-          <span className="text-[11px] text-foreground/40">
-            Built on ECMWF ERA5-Land and ORAS5 reanalysis.
-          </span>
+          <div className="flex flex-col sm:items-end gap-1">
+            <span className="text-[11px] text-foreground/40">
+              Built on ECMWF ERA5-Land and ORAS5 reanalysis.
+            </span>
+            <VisitorCounter />
+          </div>
         </div>
       </div>
     </footer>
