@@ -98,9 +98,8 @@ const FAQS: FaqItem[] = [
               01 · Copernicus (C3S) ERA5-Land reanalysis
             </span>
             <p className="text-xs text-foreground/70">
-              Hourly 2 m air temperature (used to derive daily max/min for the warm and cold
-              components), daily total precipitation (for the precipitation and drought components),
-              and 10 m U- and V-wind components (for the wind component).
+              Hourly 2 m air temperature, daily total precipitation, and 10 m U- and V-wind
+              components.
             </p>
             <p className="text-[11px] text-foreground/55 break-words">
               Muñoz Sabater, J. (2019): ERA5-Land hourly data from 1950 to present. Copernicus
@@ -113,7 +112,7 @@ const FAQS: FaqItem[] = [
               02 · Copernicus (C3S) ORAS5 ocean reanalysis
             </span>
             <p className="text-xs text-foreground/70">
-              Monthly mean sea level at coastal grid cells, used for the sea-level anomaly component.
+              Monthly mean sea level at coastal grid cells.
             </p>
             <p className="text-[11px] text-foreground/55 break-words">
               Copernicus Climate Change Service (2021): ORAS5 global ocean reanalysis monthly data
@@ -126,7 +125,7 @@ const FAQS: FaqItem[] = [
               03 · Survey of India – Administrative Boundary Database
             </span>
             <p className="text-xs text-foreground/70">
-              Official district and state boundaries used to aggregate grid cells.
+              Official district and state boundaries.
             </p>
           </div>
         </div>
