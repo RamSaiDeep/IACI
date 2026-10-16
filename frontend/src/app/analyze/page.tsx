@@ -7,7 +7,6 @@ import ComparePanel, {
   type ResolvedPanel,
 } from "../../components/ComparePanel";
 import ScaleLegend from "../../components/ScaleLegend";
-import BoundaryCredit from "../../components/BoundaryCredit";
 import TrendChart from "../../components/TrendChart";
 import { buildTrend } from "../../lib/trend";
 import { INDICATORS, formatValue, severityOf } from "../../lib/indicators";
@@ -262,7 +261,6 @@ export default function AnalyzePage() {
 
         <div className="card p-4 sm:p-5">
           <ScaleLegend field={resolvedA.variable} />
-          <BoundaryCredit className="mt-2 justify-center" />
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">

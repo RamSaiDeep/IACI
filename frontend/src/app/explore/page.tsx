@@ -5,7 +5,6 @@ import Link from "next/link";
 import Header from "../../components/Header";
 import IndiaMap from "../../components/IndiaMap";
 import ScaleLegend from "../../components/ScaleLegend";
-import BoundaryCredit from "../../components/BoundaryCredit";
 import CustomSelect from "../../components/CustomSelect";
 import { CompositeValue, ComponentBars } from "../../components/ClimateReadout";
 import TrendChart from "../../components/TrendChart";
@@ -322,7 +321,6 @@ export default function ExplorePage() {
             />
             <div className="mt-2 flex-shrink-0">
               <ScaleLegend field={variable} />
-              <BoundaryCredit className="mt-1.5 justify-center" />
             </div>
           </main>
 
