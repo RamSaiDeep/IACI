@@ -48,10 +48,10 @@ export default function Footer() {
 
   return (
     <footer className="mt-auto border-t border-foreground/10 bg-surface-muted/50">
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12 flex flex-col gap-8">
+      <div className="max-w-[90rem] mx-auto w-full px-4 sm:px-6 lg:px-10 py-10 sm:py-12 flex flex-col gap-8">
         {/* Main Footer Row: Left (Notice & SSSIA), Center (Proud Initiatives), Right (Explore) */}
         <div
-          className={`grid grid-cols-1 items-start gap-8 lg:gap-12 ${
+          className={`grid grid-cols-1 items-start gap-8 lg:gap-16 ${
             isNepalPortal ? "lg:grid-cols-[1fr_auto]" : "lg:grid-cols-[1fr_auto_1fr]"
           }`}
         >
