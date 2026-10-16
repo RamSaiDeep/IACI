@@ -33,14 +33,14 @@ const dataSources = [
     accent: "text-accent",
     desc: "Hourly 2 m air temperature, daily total precipitation, and 10 m U- and V-wind components.",
     citation:
-      "Muñoz Sabater, J. (2019): ERA5-Land hourly data from 1950 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.e2161bac (Accessed on 2026)",
+      "Muñoz Sabater, J. (2019): ERA5-Land hourly data from 1950 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.e2161bac (Accessed in 2026)",
   },
   {
     title: "Copernicus (C3S) ORAS5 ocean reanalysis",
     accent: "text-teal-700",
     desc: "Monthly mean sea level at coastal grid cells (India).",
     citation:
-      "Copernicus Climate Change Service (2021): ORAS5 global ocean reanalysis monthly data from 1958 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.67e8eeb7 (Accessed on 2026)",
+      "Copernicus Climate Change Service (2021): ORAS5 global ocean reanalysis monthly data from 1958 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.67e8eeb7 (Accessed in 2026)",
   },
 ];
 

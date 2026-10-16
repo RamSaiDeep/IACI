@@ -104,7 +104,7 @@ const FAQS: FaqItem[] = [
             <p className="text-[11px] text-foreground/55 break-words">
               Muñoz Sabater, J. (2019): ERA5-Land hourly data from 1950 to present. Copernicus
               Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.e2161bac
-              (Accessed on 2026)
+              (Accessed in 2026)
             </p>
           </div>
           <div className="p-3.5 rounded-xl bg-surface-muted/70 border border-foreground/8 flex flex-col gap-1.5">
@@ -117,7 +117,7 @@ const FAQS: FaqItem[] = [
             <p className="text-[11px] text-foreground/55 break-words">
               Copernicus Climate Change Service (2021): ORAS5 global ocean reanalysis monthly data
               from 1958 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS).
-              DOI: 10.24381/cds.67e8eeb7 (Accessed on 2026)
+              DOI: 10.24381/cds.67e8eeb7 (Accessed in 2026)
             </p>
           </div>
           <div className="p-3.5 rounded-xl bg-surface-muted/70 border border-foreground/8 flex flex-col gap-1.5">
