@@ -27,6 +27,35 @@ const whyItMatters = [
   },
 ];
 
+const dataSources = [
+  {
+    title: "Copernicus (C3S) ERA5-Land reanalysis",
+    accent: "text-accent",
+    desc: "Hourly 2 m air temperature, daily total precipitation, and 10 m U- and V-wind components.",
+    citation:
+      "Muñoz Sabater, J. (2019): ERA5-Land hourly data from 1950 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.e2161bac (Accessed on 2026)",
+  },
+  {
+    title: "Copernicus (C3S) ORAS5 ocean reanalysis",
+    accent: "text-teal-700",
+    desc: "Monthly mean sea level at coastal grid cells (India).",
+    citation:
+      "Copernicus Climate Change Service (2021): ORAS5 global ocean reanalysis monthly data from 1958 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.67e8eeb7 (Accessed on 2026)",
+  },
+  {
+    title: "Survey of India – Administrative Boundary Database",
+    accent: "text-blue-700",
+    desc: "Official district and state boundaries for India.",
+    href: "https://onlinemaps.surveyofindia.gov.in/Digital_Product_Show.aspx",
+  },
+  {
+    title: "National Geoportal of Nepal",
+    accent: "text-blue-700",
+    desc: "Official province, district and local-level boundaries for Nepal.",
+    href: "https://nationalgeoportal.gov.np/#/",
+  },
+];
+
 function SectionHeader({
   eyebrow,
   title,
@@ -114,6 +143,44 @@ export default function GeneralAboutPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Data Sources */}
+        <section className="flex flex-col gap-9">
+          <SectionHeader eyebrow="Datasets" title="Data sources" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {dataSources.map((source) => (
+              <div key={source.title} className="card p-7 flex flex-col gap-3">
+                <h3 className={`text-xs font-bold uppercase tracking-wide ${source.accent}`}>
+                  {source.href ? (
+                    <a
+                      href={source.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline underline-offset-4"
+                    >
+                      {source.title}
+                    </a>
+                  ) : (
+                    source.title
+                  )}
+                </h3>
+                <p className="text-sm text-foreground/65 leading-relaxed">{source.desc}</p>
+                {source.citation && (
+                  <p className="text-[11px] text-foreground/55 leading-relaxed break-words">
+                    {source.citation}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <p className="text-[11px] text-foreground/55 leading-relaxed">
+            Generated using Copernicus Climate Change Service information 2026. Neither the European
+            Commission nor ECMWF is responsible for any use that may be made of the Copernicus
+            information or data it contains.
+          </p>
         </section>
       </main>
     </div>
