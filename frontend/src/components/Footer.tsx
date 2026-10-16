@@ -48,10 +48,10 @@ export default function Footer() {
 
   return (
     <footer className="mt-auto border-t border-foreground/10 bg-surface-muted/50">
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12 flex flex-col gap-8">
+      <div className="max-w-[90rem] mx-auto w-full px-4 sm:px-6 lg:px-10 py-10 sm:py-12 flex flex-col gap-8">
         {/* Main Footer Row: Left (Notice & SSSIA), Center (Proud Initiatives), Right (Explore) */}
         <div
-          className={`grid grid-cols-1 items-start gap-8 lg:gap-12 ${
+          className={`grid grid-cols-1 items-start gap-8 lg:gap-16 ${
             isNepalPortal ? "lg:grid-cols-[1fr_auto]" : "lg:grid-cols-[1fr_auto_1fr]"
           }`}
         >
@@ -136,7 +136,7 @@ export default function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-xs font-semibold text-foreground/70 hover:text-accent transition-colors w-fit"
+                  className="text-xs font-semibold text-foreground/70 hover:text-accent transition-colors w-fit whitespace-nowrap lg:text-right"
                 >
                   {link.label}
                 </Link>
@@ -159,7 +159,9 @@ export default function Footer() {
             . All rights reserved.
           </span>
           <span className="text-[11px] text-foreground/40">
-            Built on ECMWF ERA5-Land and ORAS5 reanalysis.
+            {isNepalPortal
+              ? "Built on Copernicus (C3S) ERA5-Land reanalysis."
+              : "Built on Copernicus (C3S) ERA5-Land and ORAS5 reanalysis."}
           </span>
         </div>
       </div>

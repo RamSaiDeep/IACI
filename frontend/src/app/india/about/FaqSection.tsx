@@ -88,30 +88,52 @@ const FAQS: FaqItem[] = [
     category: "Datasets",
     question: "What datasets were used to build the index?",
     keywords:
-      "ERA5-Land ORAS5 ECMWF reanalysis hourly 2m air temperature daily total precipitation 10m U V wind sea level",
+      "ERA5-Land ORAS5 ECMWF Copernicus C3S Climate Data Store reanalysis hourly 2m air temperature daily total precipitation 10m U V wind sea level Survey of India administrative boundary district state citation DOI",
     answer: (
       <>
-        <p>Two state-of-the-art reanalysis datasets are used:</p>
+        <p>Two reanalysis datasets and one official boundary dataset are used.</p>
         <div className="flex flex-col gap-3">
           <div className="p-3.5 rounded-xl bg-surface-muted/70 border border-foreground/8 flex flex-col gap-1.5">
             <span className="text-xs font-bold uppercase tracking-wide text-accent">
-              01 · ECMWF ERA5-Land reanalysis
+              01 · Copernicus (C3S) ERA5-Land reanalysis
             </span>
             <p className="text-xs text-foreground/70">
-              Hourly 2 m air temperature (used to derive daily max/min for the warm and cold
-              components), daily total precipitation (for the precipitation and drought components),
-              and 10 m U- and V-wind components (for the wind component).
+              Hourly 2 m air temperature, daily total precipitation, and 10 m U- and V-wind
+              components.
+            </p>
+            <p className="text-[11px] text-foreground/55 break-words">
+              Muñoz Sabater, J. (2019): ERA5-Land hourly data from 1950 to present. Copernicus
+              Climate Change Service (C3S) Climate Data Store (CDS). DOI: 10.24381/cds.e2161bac
+              (Accessed on 2026)
             </p>
           </div>
           <div className="p-3.5 rounded-xl bg-surface-muted/70 border border-foreground/8 flex flex-col gap-1.5">
             <span className="text-xs font-bold uppercase tracking-wide text-teal-700">
-              02 · ECMWF ORAS5 ocean reanalysis
+              02 · Copernicus (C3S) ORAS5 ocean reanalysis
             </span>
             <p className="text-xs text-foreground/70">
-              Monthly mean sea level at coastal grid cells, used for the sea-level anomaly component.
+              Monthly mean sea level at coastal grid cells.
+            </p>
+            <p className="text-[11px] text-foreground/55 break-words">
+              Copernicus Climate Change Service (2021): ORAS5 global ocean reanalysis monthly data
+              from 1958 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS).
+              DOI: 10.24381/cds.67e8eeb7 (Accessed on 2026)
+            </p>
+          </div>
+          <div className="p-3.5 rounded-xl bg-surface-muted/70 border border-foreground/8 flex flex-col gap-1.5">
+            <span className="text-xs font-bold uppercase tracking-wide text-blue-700">
+              03 · Survey of India – Administrative Boundary Database
+            </span>
+            <p className="text-xs text-foreground/70">
+              Official district and state boundaries.
             </p>
           </div>
         </div>
+        <p className="text-[11px] text-foreground/55">
+          Generated using Copernicus Climate Change Service information 2026. Neither the European
+          Commission nor ECMWF is responsible for any use that may be made of the Copernicus
+          information or data it contains.
+        </p>
       </>
     ),
   },
