@@ -159,7 +159,7 @@ export default function Footer() {
             . All rights reserved.
           </span>
           <span className="text-[11px] text-foreground/40">
-            Built on ECMWF ERA5-Land and ORAS5 reanalysis.
+            Built on Copernicus (C3S) ERA5-Land and ORAS5 reanalysis.
           </span>
         </div>
       </div>

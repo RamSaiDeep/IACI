@@ -228,6 +228,19 @@ export default function AboutPage() {
               </article>
             ))}
           </div>
+
+          <p className="text-sm text-foreground/65 leading-relaxed">
+            IACI is adapted from the North American{" "}
+            <a
+              href="https://actuariesclimateindex.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent-strong underline underline-offset-4 transition-colors font-medium"
+            >
+              Actuaries Climate Index
+            </a>{" "}
+            framework.
+          </p>
         </section>
 
         {/* Components */}
