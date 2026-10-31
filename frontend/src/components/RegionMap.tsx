@@ -101,7 +101,7 @@ export default function RegionMap({
   const [collection, setCollection] = useState<{ url: string; data: GeoJsonCollection } | null>(
     null
   );
-  const [hovered, setHovered] = useState<GeoJsonFeature | null>(null);
+  const [hoverState, setHovered] = useState<GeoJsonFeature | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
@@ -170,6 +170,13 @@ export default function RegionMap({
     const y = Math.max(tooltip.offsetHeight + 8, e.clientY - rect.top + 12);
     tooltip.style.transform = `translate3d(${x}px, ${y}px, 0) translateY(-100%)`;
   };
+
+  // A click that drills in swaps the boundary file under a still pointer, so
+  // no pointerleave fires and the old region would stay "hovered" -- the
+  // tooltip then names the nation just clicked, labelled as a county. Only
+  // count the hover while that feature is on the map being drawn.
+  const hovered =
+    hoverState && paths.some((p) => p.feature === hoverState) ? hoverState : null;
 
   const isLoading = Boolean(url) && !data;
   const hoveredName = hovered ? featureName(hovered) : null;

@@ -40,3 +40,4 @@ __pycache__/
 # deploy without their data.
 /frontend/public/data/india/
 /frontend/public/geojson/india/
+.vercel

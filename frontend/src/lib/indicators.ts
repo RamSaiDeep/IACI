@@ -112,8 +112,27 @@ export const NEPAL_COMPONENTS = NEPAL_INDICATORS.filter((i) => i.id !== "NACI");
 
 const ALL_INDICATORS = [...INDICATORS, NACI_INDICATOR];
 
+/**
+ * A composite indicator for any country, built from its index code. Used for
+ * countries added through `lib/countries/` so they need no entry above.
+ */
+export function compositeIndicator(code: string, indexName: string): Indicator {
+  return {
+    id: code as Field,
+    name: `${code} Composite`,
+    short: code,
+    desc: indexName,
+    accent: "#f26a21",
+  };
+}
+
 export function indicator(id: Field): Indicator {
-  return ALL_INDICATORS.find((i) => i.id === id) ?? INDICATORS[0];
+  const known = ALL_INDICATORS.find((i) => i.id === id);
+  if (known) return known;
+  // An unlisted composite (e.g. UKACI): describe it generically rather than
+  // falling back to India's IACI label.
+  if (id.endsWith("ACI")) return compositeIndicator(id, `${id} composite index`);
+  return INDICATORS[0];
 }
 
 /** Scale bound for every bar and legend — z-scores are clamped to ±4. */

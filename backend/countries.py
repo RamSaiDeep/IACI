@@ -117,6 +117,57 @@ COUNTRIES = {
         ],
         "geojson": {"top": "province_boundary.json", "children": "districts"},
     },
+    # ------------------------------------------------------------------
+    # United Kingdom: four nations (England, Scotland, Wales, Northern
+    # Ireland) and their 218 counties and unitary authorities, including
+    # Northern Ireland's 11 council areas. The boundary layers come from
+    # backend/prepare_uk_boundaries.py, which adds the NATION column the ONS
+    # file lacks and builds the nation layer by dissolving counties.
+    # ------------------------------------------------------------------
+    "uk": {
+        "name": "United Kingdom",
+        "project": "uk",              # projects/uk/derived in the pipeline
+        "store_prefix": "ukaci",      # ukaci_<level>.zarr
+        "index_code": "UKACI",
+        "index_variable": "UKACI",
+        "index_name": "UK Actuaries Climate Index",
+        # SS (sea level) is present for regions that touch the coast, which is
+        # most of them, and null for inland ones. As for India, the composite
+        # is the six-component equation of Section 10.3 where SS exists and
+        # the five-component one where it does not.
+        "fields": ["UKACI", "DS", "PS", "SS", "T10S", "T90S", "W"],
+        "levels": [
+            {"id": "country", "label": "United Kingdom", "plural": "Country"},
+            {
+                "id": "nation",
+                "label": "Nation",
+                "plural": "Nations",
+                "parent": "country",
+                # The pipeline writes no nation store. Nation values are built
+                # from the counties, area-weighted (process_country_data.py).
+                # Delete this line if the pipeline ever writes ukaci_nation.zarr.
+                "derive_from": "county_ua",
+                "layer": "nation",
+                "layer_name_field": "NATION",
+            },
+            {
+                # "county_ua" because that is what the pipeline calls this level:
+                # its files are ukaci_county_ua.zarr and county_ua_crosswalk.parquet.
+                "id": "county_ua",
+                "label": "County",
+                "plural": "Counties",
+                "parent": "nation",
+                "parent_field": "NATION",
+                # The pipeline's county crosswalk has no NATION column, so each
+                # county's nation is read from the boundary files instead.
+                "parent_from_geojson": True,
+                "layer": "county",
+                "layer_name_field": "NAME",
+                "layer_parent_field": "NATION",
+            },
+        ],
+        "geojson": {"top": "nation.json", "children": "county_ua"},
+    },
 }
 
 
