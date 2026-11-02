@@ -24,14 +24,14 @@ export const COUNTRY: CountryConfig = {
   // composite is the five-component average. Same rule as India.
   components: ["T90S", "T10S", "PS", "W", "DS", "SS"],
 
-  top: { id: "nation", label: "Nation", plural: "Nations" },
+  top: { id: "nation", label: "Constituent Country", plural: "Constituent Countries" },
   child: { id: "county_ua", label: "County", plural: "Counties" }, // id = the pipeline's level name
 
   tagline:
     "A monthly, standardized measure of change in the frequency of climate extremes across the United Kingdom, reported for England, Scotland, Wales and Northern Ireland and for every county and unitary authority, on a 1991–2020 baseline.",
 
   facts: [
-    { value: "4", label: "Nations" },
+    { value: "4", label: "Constituent Countries" },
     { value: "218", label: "Counties & Unitary Authorities" },
     { value: "6", label: "Climate Hazards" },
     { value: "1991–2026", label: "Monthly Record" },
