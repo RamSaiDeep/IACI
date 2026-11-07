@@ -19,7 +19,10 @@ export const FIELDS = ["IACI", "DS", "PS", "SS", "T10S", "T90S", "W"] as const;
  */
 export type Field =
   | (typeof FIELDS)[number]
-  | "NACI";
+  | "NACI"
+  // Any other country's composite (UKACI, and whatever comes next). Matching
+  // the pattern means a new country needs no edit here.
+  | `${string}ACI`;
 
 /** One month of observations for one region. `null` means "not measured". */
 export type Values = Record<Field, number | null>;

@@ -29,10 +29,12 @@ untouched, so the current frontend keeps working while the new layout is
 brought up beside it.
 """
 
+import glob
 import json
 import os
 import re
 import sys
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -43,6 +45,7 @@ from countries import COUNTRIES, child_levels, level_of
 BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_DIR = os.path.dirname(BACKEND_DIR)
 OUTPUT_ROOT = os.path.join(REPO_DIR, "frontend", "public", "data")
+GEOJSON_ROOT = os.path.join(REPO_DIR, "frontend", "public", "geojson")
 
 # z-scores are read to 2 decimals in the UI; 3 keeps headroom and cuts the
 # payload by roughly 4x versus full float repr.
@@ -58,7 +61,7 @@ NOISE_WORDS = {"AND", "THE", "ISLANDS", "ISLAND", "OF"}
 # the parent and the id, and the prefix that builds a region_id. They are
 # stripped from the manifest so it stays a description of the data on offer
 # rather than a dump of build configuration.
-BUILD_ONLY_KEYS = ("layer", "id_prefix")
+BUILD_ONLY_KEYS = ("layer", "id_prefix", "derive_from", "parent_from_geojson")
 
 
 def for_manifest(spec: dict, **extra) -> dict:
@@ -125,6 +128,95 @@ def write_json(path: str, payload: dict) -> int:
 
 def mb(n_bytes: int) -> str:
     return f"{n_bytes / 1e6:.2f} MB"
+
+
+# ---------------------------------------------------------------------------
+# WHEN THE PIPELINE DID NOT PRODUCE A LEVEL
+# ---------------------------------------------------------------------------
+# Two optional keys in countries.py, used for the UK, whose pipeline wrote
+# country and county stores only:
+#
+#   "parent_from_geojson": True   on a child level whose crosswalk has no
+#       parent column. The parent is read from the level's boundary files
+#       (frontend/public/geojson/<country>/<level>/*.json), which carry it as
+#       the `parent` property. Run process_country_boundaries.py first.
+#
+#   "derive_from": "<child level>"   on a level that has no store. Its values
+#       are built from the child level: each component is the AREA-WEIGHTED
+#       mean of the children that have it (so sea level averages only the
+#       coastal children), and the composite is the mean of those components,
+#       formed only where every land component exists -- the same rule the
+#       pipeline applies to a region.
+#
+# The derived values are an approximation of what the pipeline would compute
+# from grid cells directly. Say so wherever they are shown.
+
+
+def geojson_features(slug: str, level_id: str) -> list:
+    folder = os.path.join(GEOJSON_ROOT, slug, level_id)
+    paths = sorted(glob.glob(os.path.join(folder, "*.json")))
+    if not paths:
+        raise SystemExit(
+            f"no boundary files in {folder}. Run "
+            f"`python backend/process_country_boundaries.py {slug}` first."
+        )
+    features = []
+    for path in paths:
+        with open(path, encoding="utf-8") as handle:
+            features += json.load(handle)["features"]
+    return features
+
+
+def geojson_parents(slug: str, level_id: str) -> dict:
+    """Normalized region name -> parent name, from the boundary files."""
+    return {
+        normalize_name(f["properties"]["name"]): f["properties"]["parent"]
+        for f in geojson_features(slug, level_id)
+    }
+
+
+def geojson_areas(slug: str, level_id: str) -> dict:
+    """Normalized region name -> area in km^2, for weighting."""
+    import geopandas as gpd  # only needed for derived levels
+
+    frame = gpd.GeoDataFrame.from_features(geojson_features(slug, level_id), crs="EPSG:4326")
+    areas = frame.to_crs("EPSG:6933").area / 1e6  # equal-area projection
+    return {normalize_name(n): float(a) for n, a in zip(frame["name"], areas)}
+
+
+def derive_rows(child, indices, weights, fields, index_field, years, months) -> list:
+    """Rows for one derived region, from its children at `indices`."""
+    w = np.array([weights.get(child.names[i], np.nan) for i in indices], dtype=float)
+    if np.isnan(w).any():
+        # A child with no boundary gets the average weight rather than none.
+        w = np.where(np.isnan(w), np.nanmean(w) if not np.isnan(w).all() else 1.0, w)
+
+    values = {}
+    for field, array in zip(child.fields, child.arrays):
+        if field == index_field:
+            continue
+        sub = np.asarray(array[:, :, indices], dtype=float)
+        present = ~np.isnan(sub)
+        weight_sum = (present * w).sum(axis=2)
+        total = np.where(present, sub, 0.0) @ w
+        values[field] = np.where(weight_sum > 0, total / np.where(weight_sum > 0, weight_sum, 1), np.nan)
+
+    components = [f for f in fields if f != index_field]
+    land = [f for f in components if f != "SS"]
+    stack = np.stack([values[f] for f in components], axis=-1)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)  # all-NaN months
+        composite = np.nanmean(stack, axis=-1)
+    complete = np.all([~np.isnan(values[f]) for f in land], axis=0)
+    values[index_field] = np.where(complete, composite, np.nan)
+
+    rows = []
+    for y_idx, year in enumerate(years):
+        for m_idx, month in enumerate(months):
+            row = [safe(values[f][y_idx, m_idx]) for f in fields]
+            if any(v is not None for v in row):
+                rows.append([int(year) * 100 + int(month), *row])
+    return rows
 
 
 class Level:
@@ -232,6 +324,11 @@ class Level:
     def parent_name_of(self) -> dict:
         """region_id -> the raw parent name its crosswalk carries."""
         field = self.spec["parent_field"]
+        if field not in self.crosswalk.columns and getattr(self, "geo_parents", None):
+            return {
+                r: self.geo_parents.get(normalize_name(self.name_of[r]))
+                for r in self.region_ids
+            }
         if field not in self.crosswalk.columns:
             raise SystemExit(
                 f"{self.id}_crosswalk.parquet has no {field!r}; countries.py "
@@ -255,7 +352,15 @@ def process(slug: str, country: dict) -> dict:
     print(f"reading {root}")
 
     out_dir = os.path.join(OUTPUT_ROOT, slug)
-    levels = {spec["id"]: Level(country, spec, roots) for spec in country["levels"]}
+    levels = {
+        spec["id"]: Level(country, spec, roots)
+        for spec in country["levels"]
+        if not spec.get("derive_from")
+    }
+    for spec in country["levels"]:
+        if spec.get("parent_from_geojson") and spec["id"] in levels:
+            levels[spec["id"]].geo_parents = geojson_parents(slug, spec["id"])
+            print(f"  {spec['id']}: parent {spec['parent']} read from the boundary files")
 
     country_level = levels["country"]
     years = list(country_level.store["year"][:])
@@ -263,6 +368,7 @@ def process(slug: str, country: dict) -> dict:
     fields = country["fields"]
 
     manifest_levels = []
+    children_of = {}
 
     # --- the country itself: one series, no region keys ---------------------
     rows = country_level.rows_for(0, years, months)
@@ -272,7 +378,7 @@ def process(slug: str, country: dict) -> dict:
 
     # --- levels with no parent split: one file listing every region ---------
     for spec in country["levels"]:
-        if spec["id"] == "country" or spec.get("parent_field"):
+        if spec["id"] == "country" or spec.get("parent_field") or spec.get("derive_from"):
             continue
         level = levels[spec["id"]]
         regions = {
@@ -287,11 +393,15 @@ def process(slug: str, country: dict) -> dict:
     # --- levels split one file per parent region ----------------------------
     for spec in child_levels(country):
         level = levels[spec["id"]]
-        parent = levels[spec["parent"]]
-        canonical = {name_tokens(n): n for n in parent.names}
-
         parent_raw = level.parent_name_of()
+        if spec["parent"] in levels:
+            parent_names = levels[spec["parent"]].names
+        else:  # the parent level is derived: its regions are whatever parents occur
+            parent_names = sorted({normalize_name(v) for v in parent_raw.values() if v})
+        canonical = {name_tokens(n): n for n in parent_names}
+
         grouped, unmapped = {}, []
+        grouped_idx = {}
         for i, region_id in enumerate(level.region_ids):
             raw = parent_raw.get(region_id)
             resolved = canonical.get(name_tokens(raw))
@@ -299,6 +409,7 @@ def process(slug: str, country: dict) -> dict:
                 resolved = normalize_name(raw)
                 unmapped.append(f"{level.labels[level.region_ids[i]]} ({raw})")
             grouped.setdefault(resolved, {})[level.keys[i]] = level.rows_for(i, years, months)
+            grouped_idx.setdefault(resolved, []).append(i)
 
         if unmapped:
             print(f"  ! {len(unmapped)} {spec['id']} rows have no canonical "
@@ -322,6 +433,31 @@ def process(slug: str, country: dict) -> dict:
         print(f"  {spec['id']:12s} {sum(len(v) for v in grouped.values())} regions "
               f"across {len(grouped)} {spec['parent']} files -> {mb(total)}")
         manifest_levels.append(for_manifest(spec, dir=spec["id"]))
+        children_of[spec["id"]] = grouped_idx
+
+    # --- levels with no store, built from their children --------------------
+    for spec in country["levels"]:
+        source = spec.get("derive_from")
+        if not source:
+            continue
+        child = levels[source]
+        weights = geojson_areas(slug, source)
+        missing = [child.names[i] for i in range(len(child.names)) if child.names[i] not in weights]
+        if missing:
+            print(f"  ! {len(missing)} {source} regions have no boundary to weight by "
+                  f"(given the average weight): {', '.join(missing[:4])}")
+        regions = {
+            parent: derive_rows(child, idx, weights, fields, country["index_code"], years, months)
+            for parent, idx in sorted(children_of[source].items())
+        }
+        size = write_json(os.path.join(out_dir, f"{spec['id']}.json"),
+                          {"fields": fields, "regions": regions})
+        print(f"  {spec['id']:12s} {len(regions)} regions DERIVED from {source} "
+              f"(area-weighted) -> {mb(size)}")
+        manifest_levels.append(for_manifest(spec, file=f"{spec['id']}.json"))
+
+    order = [lv["id"] for lv in country["levels"]]
+    manifest_levels.sort(key=lambda lv: order.index(lv["id"]))
 
     return {
         "slug": slug,
