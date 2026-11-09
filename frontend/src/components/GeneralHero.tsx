@@ -223,6 +223,9 @@ export default function GeneralHero() {
                   <span className="w-2 h-2 rounded-full bg-accent" />
                   Active Portal
                 </div>
+                <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">
+                  Version 1.0
+                </span>
               </div>
 
               <div className="flex flex-col gap-1.5">
