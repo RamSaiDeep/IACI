@@ -150,9 +150,7 @@ export default function GeneralHero() {
             </div>
           </div>
 
-          {/* UK card. Clickable: links to /uk. The UK pages still carry
-              `noindex` (app/uk/layout.tsx), so search engines will not list
-              them; this card only makes the portal findable from this page. */}
+          {/* UK card. Clickable: links to /uk. */}
           <div className="card p-7 sm:p-8 flex flex-col justify-between gap-6 border-2 border-accent/20 hover:border-accent/60 transition-all duration-300 hover:shadow-card-lg group relative overflow-hidden bg-gradient-to-br from-surface to-accent/[0.03]">
             <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
 
@@ -163,7 +161,7 @@ export default function GeneralHero() {
                   Active Portal
                 </div>
                 <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">
-                  Version 1.0
+                  Draft Version 1.0
                 </span>
               </div>
 
@@ -215,15 +213,15 @@ export default function GeneralHero() {
             </div>
           </div>
 
-          {/* Nepal card. Present so the roadmap is visible, but inert: the
-              portal is not published yet, so there is deliberately nothing to
-              click and no action control to imply otherwise. */}
-          <div className="card p-7 sm:p-8 flex flex-col justify-between gap-6 border border-foreground/10 bg-surface/50 relative overflow-hidden cursor-default">
+          {/* Nepal card. Clickable: links to /nepal. */}
+          <div className="card p-7 sm:p-8 flex flex-col justify-between gap-6 border-2 border-accent/20 hover:border-accent/60 transition-all duration-300 hover:shadow-card-lg group relative overflow-hidden bg-gradient-to-br from-surface to-accent/[0.03]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between gap-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/6 border border-foreground/12 text-foreground/55 text-[10px] font-bold uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-foreground/30" />
-                  In Development
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-bold uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-accent" />
+                  Active Portal
                 </div>
               </div>
 
@@ -231,7 +229,7 @@ export default function GeneralHero() {
                 <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground group-hover:text-accent transition-colors">
                   Nepal
                 </h3>
-                <span className="text-xs font-bold uppercase tracking-wider text-foreground/45">
+                <span className="text-xs font-bold uppercase tracking-wider text-accent">
                   Nepal Actuaries Climate Index (NACI)
                 </span>
               </div>
@@ -241,13 +239,37 @@ export default function GeneralHero() {
                   (tag) => (
                     <span
                       key={tag}
-                      className="px-2.5 py-1 rounded-md bg-foreground/5 text-foreground/55 text-[10px] font-bold uppercase tracking-wider border border-foreground/5"
+                      className="px-2.5 py-1 rounded-md bg-foreground/5 text-foreground/70 text-[10px] font-bold uppercase tracking-wider border border-foreground/5"
                     >
                       {tag}
                     </span>
                   )
                 )}
               </div>
+            </div>
+
+            <div className="pt-4 border-t border-foreground/8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <Link
+                href="/nepal"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-accent text-white text-xs font-bold uppercase tracking-widest hover:bg-accent-strong transition-all duration-200 shadow-md hover:shadow-lg group-hover:scale-[1.01]"
+              >
+                <span>Explore Nepal Portal</span>
+                <svg
+                  className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
+              <Link
+                href="/nepal/explore"
+                className="inline-flex items-center justify-center px-4 py-3.5 rounded-xl border border-foreground/15 hover:bg-foreground/5 text-xs font-bold uppercase tracking-widest text-foreground/75 transition-colors"
+                title="Direct link to interactive map"
+              >
+                Map View
+              </Link>
             </div>
           </div>
         </div>
