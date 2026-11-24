@@ -109,11 +109,6 @@ function requirePlace(id: unknown): Place | ToolError {
 }
 const isErr = (x: unknown): x is ToolError => !!x && typeof x === "object" && "error" in (x as object);
 
-function specOf(args: Record<string, unknown>): PeriodSpec {
-  const p = (args.period ?? {}) as PeriodSpec;
-  return typeof p === "object" && p ? p : {};
-}
-
 function resolveFor(country: CountrySlug, spec: PeriodSpec): Period {
   const d = loadCountry(country);
   return resolvePeriod(spec, d.first, d.last);
@@ -332,7 +327,7 @@ export function comparePlaces(args: { place_ids?: string[]; components?: string[
   const rows = places.map((p) => {
     const values: Record<string, number | null> = {};
     for (const c of wanted) values[c] = round(periodMean(p, c, period).value, 2);
-    return { place: placeRef(p), values };
+    return { place: { ...placeRef(p), coastal: p.coastal }, values };
   });
   const missing: Record<string, string[]> = {};
   places.forEach((p) => {
