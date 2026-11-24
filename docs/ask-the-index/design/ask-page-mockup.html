@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<!-- Design reference for the "Ask the Index" page (IACI). Static mockup exported from the Claude design canvas.
+     Use as a visual/structural reference only: match the site's real components and styling when implementing.
+     Brand colours are placeholders (accent #0E5C57). Example questions are illustrative. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask the Index – design reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0E5C57}a:hover{color:#093E3B}
+input,select,button{font-family:inherit}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #F6F7F4; color: #14211D; font-family: 'Inter', system-ui, sans-serif; font-size: 16px; line-height: 1.5">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #DDE3DF">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+      <a href="#" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #14211D">
+        <span style="width: 40px; height: 40px; border-radius: 10px; background: #0E5C57; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px">ACI</span>
+        <span style="display: flex; flex-direction: column; line-height: 1.2">
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 17px">Actuaries Climate Index</span>
+          <span style="font-size: 12px; color: #4A5A55">Sri Sathya Sai Institute of Actuaries</span>
+        </span>
+      </a>
+      <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px">
+        <a href="#" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #4A5A55; font-size: 15px">Home</a>
+        <a href="#" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #4A5A55; font-size: 15px">About the Index</a>
+        <a href="#" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #4A5A55; font-size: 15px">India Portal</a>
+        <a href="#" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #4A5A55; font-size: 15px">Explore Map</a>
+        <a href="#" aria-current="page" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #0E5C57; background: #E6F0ED; font-weight: 600; font-size: 15px">Ask the Index</a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 1040px; margin: 0 auto; padding: 56px 24px 32px; display: flex; flex-direction: column; gap: 40px">
+
+    <section style="display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center">
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #0E5C57">Ask the Index · AI assistant</span>
+      <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 44px; line-height: 1.1; letter-spacing: -0.01em; max-width: 760px">Ask anything about climate extremes</h1>
+      <p style="margin: 0; font-size: 18px; color: #4A5A55; max-width: 640px">Get a written answer, a chart and a map, built from the index's own monthly district values. No component codes needed.</p>
+
+      <div style="width: 100%; max-width: 860px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 2px rgba(20,33,29,0.06), 0 8px 24px rgba(20,33,29,0.06); border: 1px solid #DDE3DF; padding: 16px; display: flex; flex-direction: column; gap: 12px; text-align: left; box-sizing: border-box">
+        <label for="ask" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Your question</label>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 4px 4px 4px 8px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A5A55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input id="ask" type="text" placeholder="e.g. How was 2024 for Guntur district?" style="flex: 1; min-width: 0; border: none; outline: none; font-size: 18px; padding: 12px 0; color: #14211D; background: transparent">
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #EEF1EF; padding-top: 12px">
+          <div role="group" aria-label="Country" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="font-size: 14px; color: #4A5A55; margin-right: 4px">Country</span>
+            <button type="button" data-country="india" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: none; font-size: 14px; cursor: pointer; background: #0E5C57; color: #FFFFFF; font-weight: 600;">India</button>
+            <button type="button" data-country="uk" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: none; font-size: 14px; cursor: pointer; background: #F0F3F1; color: #2E3B37;">United Kingdom</button>
+            <button type="button" data-country="nepal" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: none; font-size: 14px; cursor: pointer; background: #F0F3F1; color: #2E3B37;">Nepal</button>
+          </div>
+          <button type="button" style="min-height: 48px; padding: 0 28px; border-radius: 12px; border: none; background: #0E5C57; color: #FFFFFF; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px">Ask
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="start-h" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px">
+        <h2 id="start-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 22px">Or pick a starting point</h2>
+        <span style="font-size: 14px; color: #4A5A55">Each one opens a short guided form</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+
+        <button type="button" aria-pressed="true" data-mode="year" style="text-align: left; border: none; border-radius: 14px; padding: 20px; cursor: pointer; display: flex; flex-direction: column; gap: 12px; color: #14211D; box-shadow: inset 0 0 0 2px #0E5C57, 0 4px 16px rgba(20,33,29,0.08); background: #F1F7F5;">
+          <span style="width: 44px; height: 44px; border-radius: 10px; background: #E6F0ED; display: flex; align-items: center; justify-content: center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E5C57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          </span>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Year in review</span>
+          <span style="font-size: 14px; color: #4A5A55">How one place's year went, which months and hazards stood out, and how it ranks since 1991.</span>
+          <span style="font-size: 14px; color: #14211D; background: #F3F5F3; border-radius: 8px; padding: 8px 10px">“How was 2024 for Guntur?”</span>
+        </button>
+
+        <button type="button" aria-pressed="false" data-mode="compare" style="text-align: left; border: none; border-radius: 14px; padding: 20px; cursor: pointer; display: flex; flex-direction: column; gap: 12px; color: #14211D; box-shadow: inset 0 0 0 1px #D5DDD9; background: #FFFFFF;">
+          <span style="width: 44px; height: 44px; border-radius: 10px; background: #E6F0ED; display: flex; align-items: center; justify-content: center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E5C57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"></rect><rect x="14" y="4" width="7" height="16" rx="1.5"></rect></svg>
+          </span>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Compare places</span>
+          <span style="font-size: 14px; color: #4A5A55">Two places side by side over a period: which faces more of each hazard, and why they differ.</span>
+          <span style="font-size: 14px; color: #14211D; background: #F3F5F3; border-radius: 8px; padding: 8px 10px">“Chennai vs Hyderabad, 2015–2025”</span>
+        </button>
+
+        <button type="button" aria-pressed="false" data-mode="find" style="text-align: left; border: none; border-radius: 14px; padding: 20px; cursor: pointer; display: flex; flex-direction: column; gap: 12px; color: #14211D; box-shadow: inset 0 0 0 1px #D5DDD9; background: #FFFFFF;">
+          <span style="width: 44px; height: 44px; border-radius: 10px; background: #E6F0ED; display: flex; align-items: center; justify-content: center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E5C57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          </span>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Find places</span>
+          <span style="font-size: 14px; color: #4A5A55">A ranked list of districts for any hazard and period, with a map of where they are.</span>
+          <span style="font-size: 14px; color: #14211D; background: #F3F5F3; border-radius: 8px; padding: 8px 10px">“Worst drought districts in Maharashtra”</span>
+        </button>
+
+        <button type="button" aria-pressed="false" data-mode="event" style="text-align: left; border: none; border-radius: 14px; padding: 20px; cursor: pointer; display: flex; flex-direction: column; gap: 12px; color: #14211D; box-shadow: inset 0 0 0 1px #D5DDD9; background: #FFFFFF;">
+          <span style="width: 44px; height: 44px; border-radius: 10px; background: #FBEEE2; display: flex; align-items: center; justify-content: center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9A4708" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          </span>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Explain an event</span>
+          <span style="font-size: 14px; color: #4A5A55">What the index recorded during a flood, heatwave or drought, and how rare it was for that place.</span>
+          <span style="font-size: 14px; color: #14211D; background: #F3F5F3; border-radius: 8px; padding: 8px 10px">“Wayanad, July 2024”</span>
+        </button>
+      </div>
+
+      <div style="background: #FFFFFF; border-radius: 14px; border: 1px solid #DDE3DF; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+
+        <div data-panel="year">
+          <div style="display: flex; flex-direction: column; gap: 16px">
+            <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Set up a year in review</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; align-items: end">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="yr-place" style="font-size: 14px; font-weight: 500">District or state</label>
+                <input id="yr-place" type="text" placeholder="Start typing, e.g. Guntur" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; box-sizing: border-box">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="yr-year" style="font-size: 14px; font-weight: 500">Year</label>
+                <select id="yr-year" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; background: #FFFFFF">
+                  <option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option><option>2020</option>
+                </select>
+              </div>
+              <button type="button" style="min-height: 44px; border-radius: 10px; border: none; background: #0E5C57; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">Generate report</button>
+            </div>
+          </div>
+        </div>
+
+        <div data-panel="compare" hidden>
+          <div style="display: flex; flex-direction: column; gap: 16px">
+            <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Set up a comparison</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; align-items: end">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="cmp-a" style="font-size: 14px; font-weight: 500">First place</label>
+                <input id="cmp-a" type="text" placeholder="e.g. Chennai" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; box-sizing: border-box">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="cmp-b" style="font-size: 14px; font-weight: 500">Second place</label>
+                <input id="cmp-b" type="text" placeholder="e.g. Hyderabad" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; box-sizing: border-box">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="cmp-from" style="font-size: 14px; font-weight: 500">From</label>
+                <select id="cmp-from" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; background: #FFFFFF"><option>2015</option><option>2010</option><option>2000</option><option>1991</option></select>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="cmp-to" style="font-size: 14px; font-weight: 500">To</label>
+                <select id="cmp-to" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; background: #FFFFFF"><option>2025</option><option>2024</option><option>2020</option></select>
+              </div>
+              <button type="button" style="min-height: 44px; border-radius: 10px; border: none; background: #0E5C57; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">Compare</button>
+            </div>
+          </div>
+        </div>
+
+        <div data-panel="find" hidden>
+          <div style="display: flex; flex-direction: column; gap: 16px">
+            <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Find places</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; align-items: end">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="fd-region" style="font-size: 14px; font-weight: 500">Within</label>
+                <input id="fd-region" type="text" placeholder="All India, or a state" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; box-sizing: border-box">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="fd-hazard" style="font-size: 14px; font-weight: 500">Hazard</label>
+                <select id="fd-hazard" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; background: #FFFFFF"><option>Overall index</option><option>Extreme heat</option><option>Extreme cold</option><option>Heavy rainfall</option><option>Drought</option><option>Strong wind</option><option>Sea level</option></select>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="fd-period" style="font-size: 14px; font-weight: 500">Period</label>
+                <select id="fd-period" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; background: #FFFFFF"><option>Monsoon 2024</option><option>Summer 2024</option><option>Year 2024</option><option>Last 10 years</option></select>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="fd-rank" style="font-size: 14px; font-weight: 500">Rank by</label>
+                <select id="fd-rank" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; background: #FFFFFF"><option>Most extreme</option><option>Fastest worsening</option></select>
+              </div>
+              <button type="button" style="min-height: 44px; border-radius: 10px; border: none; background: #0E5C57; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">Show ranking</button>
+            </div>
+          </div>
+        </div>
+
+        <div data-panel="event" hidden>
+          <div style="display: flex; flex-direction: column; gap: 16px">
+            <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Explain an event</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; align-items: end">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="ev-place" style="font-size: 14px; font-weight: 500">Place</label>
+                <input id="ev-place" type="text" placeholder="e.g. Wayanad" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; box-sizing: border-box">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="ev-month" style="font-size: 14px; font-weight: 500">Month</label>
+                <select id="ev-month" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; background: #FFFFFF"><option>July</option><option>June</option><option>August</option><option>May</option></select>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="ev-year" style="font-size: 14px; font-weight: 500">Year</label>
+                <select id="ev-year" style="min-height: 44px; border: 1px solid #C9D2CE; border-radius: 10px; padding: 0 12px; font-size: 15px; background: #FFFFFF"><option>2024</option><option>2023</option><option>2022</option></select>
+              </div>
+              <button type="button" style="min-height: 44px; border-radius: 10px; border: none; background: #0E5C57; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">Explain</button>
+            </div>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #4A5A55; min-height: 44px">
+              <input type="checkbox" checked style="width: 18px; height: 18px">
+              Include news coverage (shown separately from index values)
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="try-h" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 id="try-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">Try asking</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        
+          <button type="button" data-prompt style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #14211D; font-size: 14px; cursor: pointer">Which Odisha districts had the worst rainfall extremes in monsoon 2024?</button>
+        
+          <button type="button" data-prompt style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #14211D; font-size: 14px; cursor: pointer">Where is drought getting worse fastest?</button>
+        
+          <button type="button" data-prompt style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #14211D; font-size: 14px; cursor: pointer">How did 2023 compare with 2024 for Chennai?</button>
+        
+          <button type="button" data-prompt style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #14211D; font-size: 14px; cursor: pointer">Top 10 districts for extreme heat in summer 2024</button>
+        
+          <button type="button" data-prompt style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #14211D; font-size: 14px; cursor: pointer">Is Mumbai seeing more sea-level extremes than before?</button>
+        
+          <button type="button" data-prompt style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #14211D; font-size: 14px; cursor: pointer">What drove the high index in Assam in June 2022?</button>
+        
+      </div>
+    </section>
+
+    <section aria-labelledby="how-h" style="background: #FFFFFF; border: 1px solid #DDE3DF; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+      <h2 id="how-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 18px">How answers work</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px">
+        <div style="display: flex; gap: 14px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E5C57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span style="font-weight: 600; font-size: 15px">Numbers come only from the index</span>
+            <span style="font-size: 14px; color: #4A5A55">Every figure is read from the published district values, never estimated by the AI.</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 14px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E5C57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="15" y2="17"></line></svg>
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span style="font-weight: 600; font-size: 15px">You can see how it was worked out</span>
+            <span style="font-size: 14px; color: #4A5A55">Each answer lists the places, hazards, periods and baseline it used.</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 14px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E5C57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span style="font-weight: 600; font-size: 15px">Clear about limits</span>
+            <span style="font-size: 14px; color: #4A5A55">Baseline 1991–2020 · monthly district averages · IACI Draft 1.0. Context, not attribution.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="border-top: 1px solid #DDE3DF; margin-top: 24px">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 13px; color: #4A5A55">
+      <span>Built on Copernicus (C3S) ERA5-Land and ORAS5 reanalysis.</span>
+      <span>For educational and research purposes · Sri Sathya Sai Institute of Actuaries</span>
+    </div>
+  </footer>
+</div>
+<script>
+{const A='#0E5C57',SEL='box-shadow: inset 0 0 0 2px #0E5C57, 0 4px 16px rgba(20,33,29,0.08); background: #F1F7F5;',UNS='box-shadow: inset 0 0 0 1px #D5DDD9; background: #FFFFFF;',ON='background: #0E5C57; color: #FFFFFF; font-weight: 600;',OFF='background: #F0F3F1; color: #2E3B37;';
+const strip=s=>s.replace(/box-shadow:[^;]*;\s*background:[^;]*;\s*$/,'');
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('[data-mode]').forEach(x=>{const on=x===b;x.setAttribute('aria-pressed',on);x.style.cssText=strip(x.style.cssText)+(on?SEL:UNS);});
+ document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==b.dataset.mode);}));
+document.querySelectorAll('[data-country]').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('[data-country]').forEach(x=>{x.style.background=x===b?A:'#F0F3F1';x.style.color=x===b?'#FFFFFF':'#2E3B37';x.style.fontWeight=x===b?'600':'400';});}));
+const q=document.getElementById('ask');
+document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>{q.value=b.textContent;q.focus();}));}
+</script>
+</body>
+</html>
