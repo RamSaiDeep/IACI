@@ -48,4 +48,4 @@ Server-side `fs` reads of `frontend/public/data/**` (resolved from `process.cwd(
 3. **No place-name index / aliases**: built at runtime from the data files; a small alias table covers renamed districts (Gurgaon/Gurugram, Bombay/Mumbai, Madras/Chennai...). District names are *not unique* inside a country, so place ids include the parent.
 4. **No data for "annual" values**: annual values are the mean of the 12 monthly anomalies (documented). Season windows (monsoon = Jun–Sep, summer = Mar–May, etc.) are defined in code.
 5. The index is not published as raw (un-standardized) values, so all comparisons are on anomalies by construction.
-6. Index version string is not in the data. "IACI Draft 1.0" is taken from the existing site copy (the home page marks India Draft 1.0).
+6. Index version string is not in the data. Taken from the home-page cards: India and Nepal "Version 1.0", UK "Draft Version 1.0".

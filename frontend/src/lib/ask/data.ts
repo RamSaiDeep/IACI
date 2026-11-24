@@ -74,7 +74,11 @@ export function displayName(key: string): string {
     .toLowerCase()
     .split(/(\s+|-|\()/)
     .map((w, i) =>
-      i > 0 && SMALL.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)
+      i > 0 && SMALL.has(w)
+        ? w
+        : /^[^aeiouy]{2,3}$/.test(w) && /^[a-z]+$/.test(w)
+          ? w.toUpperCase() // acronyms such as NTR
+          : w.charAt(0).toUpperCase() + w.slice(1)
     )
     .join("")
     .replace(/\bAnd\b/g, "and");

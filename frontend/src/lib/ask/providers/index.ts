@@ -2,10 +2,10 @@ import { AnthropicProvider } from "./anthropic";
 import { MockProvider } from "./mock";
 import { AskError, DEFAULT_MODEL, MODELS, type LLMProvider } from "./types";
 
-/** `mock` is only honoured when ASK_ALLOW_MOCK=1 (set it in .env.local for development). */
+/** `mock` is only honoured when NEXT_PUBLIC_ASK_ALLOW_MOCK=1 (set it in .env.local for development). */
 export function makeProvider(opts: { key?: string | null; model?: string; mock?: boolean }): LLMProvider {
   if (opts.mock) {
-    if (process.env.ASK_ALLOW_MOCK !== "1" && process.env.NODE_ENV === "production")
+    if (process.env.NEXT_PUBLIC_ASK_ALLOW_MOCK !== "1" && process.env.NODE_ENV === "production")
       throw new AskError("bad_request", "The demo (mock) assistant is disabled on this server.", 400);
     return new MockProvider();
   }

@@ -17,3 +17,18 @@ One line each: decision — why — how to reverse.
 - Version strings: India/Nepal "Version 1.0", UK "Draft Version 1.0" — copied from the site's home page.
 - Tool results are memoised in memory; finished reports are not cached (every one embeds LLM text and costs the user's key; revisit if needed).
 - vitest added as a dev dependency (no test runner existed); `vite-node` (bundled with it) runs the demo script.
+
+## Agent / providers
+- LLM does not compute: guided forms run a fixed tool plan in code and the model only fills named prose slots (`finish` tool); free text lets the model plan via tool calls, ending in `build_report` which runs the same fixed plan (`lib/ask/agent.ts`, `reports.ts`).
+- Report section structure is fixed in `reports.ts`; tables and charts come from tool results, never from model text.
+- Grounding check: every number in model prose must match a tool-result number (rounding and sign tolerant; constants 1991/2020/0.05/5/12/10/1 allowed). One regeneration with feedback, then ungrounded sentences are dropped and the card says so. Attribution sentences ("caused by climate change") are always stripped (`grounding.ts`).
+- Anthropic is called over raw `fetch` (no SDK dependency, full control of key handling). Default `claude-sonnet-5-5`; options haiku-5-5, opus-5-5, fable-5-2 (IDs and list prices from the claude-api skill cache dated 2026-11-03; cost shown is an estimate). Sends `output_config.effort: "low"`, no temperature, no forced tool_choice; response blocks (incl. thinking) are passed back unchanged (`providers/anthropic.ts`).
+- Key travels in the `x-llm-key` header to `/api/ask`; the route does no logging, error text is built from fixed messages and provider text is scrubbed of the key. Storage: sessionStorage by default, localStorage only with the opt-in box (`lib/ask/client.ts`).
+- Mock provider is a scripted rule-based stand-in. Demo mode shows in the UI in dev, or in production only when `NEXT_PUBLIC_ASK_ALLOW_MOCK=1` (the server enforces the same) (`providers/index.ts`).
+- Clarification: ambiguous or unknown names return a `clarify` response with options; the chosen id is sent back in `resolved`. Guided forms resolve names server-side too.
+- Share link puts the request (never the key) in the URL hash and asks the user to press "Run it", so opening a link never spends a key silently.
+- PDF = browser print dialog with a print stylesheet (no PDF library).
+- News context (Feature 4) is off; the separate "Reported context" box shows a placeholder only when ticked.
+- Map highlight for Feature 3 not built: a ranked bar chart is shown instead.
+- `next.config.ts` gets `outputFileTracingIncludes` for `/api/ask` so the JSON ships with the function on Vercel.
+- "Ask the Index" nav link added to the global header only (not inside the country portals).
