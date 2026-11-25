@@ -1,18 +1,20 @@
 import { AnthropicProvider } from "./anthropic";
 import { MockProvider } from "./mock";
 import { OpenAICompatProvider } from "./openai-compat";
-import { AskError, DEFAULT_MODEL, MODELS, type LLMProvider } from "./types";
+import { AskError, DEFAULT_MODELS, PROVIDER_LABELS, type LLMProvider, type ProviderId } from "./types";
 
 /** `mock` is only honoured when NEXT_PUBLIC_ASK_ALLOW_MOCK=1 (set it in .env.local for development). */
-export function makeProvider(opts: { key?: string | null; model?: string; mock?: boolean }): LLMProvider {
+export function makeProvider(opts: { key?: string | null; provider?: string; model?: string; mock?: boolean }): LLMProvider {
   if (opts.mock) {
     if (process.env.NEXT_PUBLIC_ASK_ALLOW_MOCK !== "1" && process.env.NODE_ENV === "production")
       throw new AskError("bad_request", "The demo (mock) assistant is disabled on this server.", 400);
     return new MockProvider();
   }
   if (!opts.key) throw new AskError("missing_key", "Add your API key to get answers. The starting points and forms work without one.", 401);
-  const chosen = MODELS.find((m) => m.id === opts.model)
-    ?? MODELS.find((m) => m.id === (process.env.ASK_DEFAULT_MODEL ?? DEFAULT_MODEL))!;
-  if (chosen.provider === "anthropic") return new AnthropicProvider(opts.key, chosen.id);
-  return new OpenAICompatProvider(chosen.provider, opts.key, chosen.id);
+  const provider = (opts.provider ?? "anthropic") as ProviderId;
+  if (!(provider in PROVIDER_LABELS)) throw new AskError("bad_request", "Unknown provider.", 400);
+  const model = opts.model?.trim() || DEFAULT_MODELS[provider];
+  if (!/^[\w.:\/-]{1,100}$/.test(model)) throw new AskError("bad_request", "That model name looks invalid. Copy it exactly from the provider's model list.", 400);
+  if (provider === "anthropic") return new AnthropicProvider(opts.key, model);
+  return new OpenAICompatProvider(provider, opts.key, model);
 }

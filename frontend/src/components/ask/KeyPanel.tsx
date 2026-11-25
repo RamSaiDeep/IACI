@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { forgetKey, saveKey, saveModel, testKey, type KeyStore } from "../../lib/ask/client";
-import { MODELS, PROVIDER_LABELS } from "../../lib/ask/providers/types";
+import { forgetKey, saveChoice, saveKey, testKey, type KeyStore } from "../../lib/ask/client";
+import { DEFAULT_MODELS, PROVIDER_LABELS, type ProviderId } from "../../lib/ask/providers/types";
 
 const KEY_HELP = {
   anthropic: { url: "https://console.anthropic.com/settings/keys", hint: "sk-ant-…" },
@@ -10,7 +10,7 @@ const KEY_HELP = {
   openrouter: { url: "https://openrouter.ai/keys", hint: "sk-or-…" },
 } as const;
 
-export interface KeyState { key: string; store: KeyStore; demo: boolean; model: string }
+export interface KeyState { key: string; store: KeyStore; demo: boolean; provider: ProviderId; model: string }
 
 const ALLOW_DEMO = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ASK_ALLOW_MOCK === "1";
 
@@ -21,7 +21,7 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
   const [testing, setTesting] = useState(false);
 
   const connected = !!state.key || state.demo;
-  const prov = MODELS.find((m) => m.id === state.model)?.provider ?? "anthropic";
+  const prov = state.provider;
   const help = KEY_HELP[prov];
 
   const test = async () => {
@@ -30,7 +30,7 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
     setTesting(true);
     setStatus(null);
     try {
-      await testKey(key, state.model, state.demo);
+      await testKey(key, state.provider, state.model, state.demo);
       if (draft.trim()) {
         saveKey(draft.trim(), remember);
         onChange({ ...state, key: draft.trim(), store: remember ? "device" : "session" });
@@ -60,7 +60,7 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
         </span>
       </div>
       <p className="mt-1 text-sm text-foreground/70">
-        Answers are written by an AI model using <strong>your own</strong> {PROVIDER_LABELS[prov]} key (Anthropic, Google Gemini or OpenRouter: pick a model below), so we never pay for or hold your usage.
+        Answers are written by an AI model using <strong>your own</strong> {PROVIDER_LABELS[prov]} key, so we never pay for or hold your usage.
         Without a key you can still explore the starting points and forms below.
       </p>
 
@@ -85,11 +85,20 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
           <span>Remember on this device <span className="text-foreground/60">(stored in this browser; anyone using this browser profile could use it. Leave off on shared computers.)</span></span>
         </label>
         <div className="flex flex-wrap items-center gap-3">
-          <label htmlFor="model" className="text-sm font-medium">Model</label>
-          <select id="model" value={state.model} onChange={(e) => { saveModel(e.target.value); onChange({ ...state, model: e.target.value }); }}
-            className="min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 text-sm">
-            {MODELS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+          <label htmlFor="provider" className="text-sm font-medium">Provider</label>
+          <select id="provider" value={prov} onChange={(e) => {
+            const p = e.target.value as ProviderId;
+            const next = { ...state, provider: p, model: DEFAULT_MODELS[p] };
+            saveChoice({ provider: p, model: next.model });
+            onChange(next);
+          }} className="min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 text-sm">
+            {(Object.keys(PROVIDER_LABELS) as ProviderId[]).map((p) => <option key={p} value={p}>{PROVIDER_LABELS[p]}</option>)}
           </select>
+          <label htmlFor="model" className="text-sm font-medium">Model name</label>
+          <input id="model" value={state.model} spellCheck={false} autoComplete="off" maxLength={100}
+            onChange={(e) => { saveChoice({ provider: prov, model: e.target.value }); onChange({ ...state, model: e.target.value }); }}
+            placeholder={DEFAULT_MODELS[prov]}
+            className="min-h-11 w-64 max-w-full rounded-xl border border-foreground/20 bg-surface px-3 font-mono text-sm" />
           <a href={help.url} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-2">
             How to get a key
           </a>

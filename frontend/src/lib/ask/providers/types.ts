@@ -59,7 +59,7 @@ export const PROVIDER_LABELS: Record<ProviderId, string> = {
 };
 
 /**
- * Approximate USD per million tokens (input, output). Anthropic list prices checked Nov 2026;
+ * Price hints only (used for the cost estimate when the typed model matches). Approximate USD per million tokens (input, output). Anthropic list prices checked Nov 2026;
  * Gemini / OpenRouter figures are approximate, so verify before relying on them. The model id decides the provider.
  */
 export const MODELS: { id: string; provider: ProviderId; label: string; inPerM: number; outPerM: number }[] = [
@@ -74,7 +74,12 @@ export const MODELS: { id: string; provider: ProviderId; label: string; inPerM: 
   { id: "openai/gpt-4o-mini", provider: "openrouter", label: "OpenRouter: GPT-4o mini", inPerM: 0.15, outPerM: 0.6 },
   { id: "meta-llama/llama-3.3-70b-instruct:free", provider: "openrouter", label: "OpenRouter: Llama 3.3 70B (free)", inPerM: 0, outPerM: 0 },
 ];
-export const DEFAULT_MODEL = "claude-sonnet-5-5";
+/** Suggested model names (placeholders only; users may type any model their key can use). */
+export const DEFAULT_MODELS: Record<ProviderId, string> = {
+  anthropic: "claude-sonnet-5-5",
+  gemini: "gemini-2.5-flash",
+  openrouter: "google/gemini-2.5-flash",
+};
 
 export function estimateCostUsd(model: string, inputTokens: number, outputTokens: number): number | null {
   const m = MODELS.find((x) => x.id === model);

@@ -72,6 +72,7 @@ export interface AskRequest {
   /** The report this follow-up refers to. */
   previous?: { question?: string; feature: Feature; summary: string };
   model?: string;
+  provider?: string;
 }
 
 export interface ClarifyResponse {

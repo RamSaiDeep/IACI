@@ -19,10 +19,10 @@ const noStore = { "Cache-Control": "no-store" };
 export async function POST(req: Request) {
   const key = req.headers.get("x-llm-key");
   try {
-    const body = (await req.json()) as { action?: string; request?: AskRequest; model?: string; mock?: boolean };
+    const body = (await req.json()) as { action?: string; request?: AskRequest; model?: string; provider?: string; mock?: boolean };
 
     if (body.action === "test-key") {
-      const provider = makeProvider({ key, model: body.model, mock: body.mock });
+      const provider = makeProvider({ key, provider: body.provider, model: body.model, mock: body.mock });
       await provider.testKey();
       return NextResponse.json({ ok: true, model: provider.model }, { headers: noStore });
     }
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     if (r.question && r.question.length > 600) throw new AskError("bad_request", "Please keep the question under 600 characters.");
     if (r.mode === "free" && !r.question?.trim()) throw new AskError("bad_request", "Type a question first.");
 
-    const provider = makeProvider({ key, model: r.model ?? body.model, mock: body.mock });
+    const provider = makeProvider({ key, provider: r.provider ?? body.provider, model: r.model ?? body.model, mock: body.mock });
     const out = await runAsk(r, provider);
     return NextResponse.json(out, { headers: noStore });
   } catch (e) {

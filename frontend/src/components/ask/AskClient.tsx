@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ApiError, ask, loadKey, loadModel, readSharedRequest } from "../../lib/ask/client";
+import { ApiError, ask, loadKey, loadChoice, readSharedRequest } from "../../lib/ask/client";
 import { COUNTRY_INFO, COUNTRY_SLUGS, MONTH_NAMES, type CountrySlug } from "../../lib/ask/labels";
-import { DEFAULT_MODEL } from "../../lib/ask/providers/types";
+import { DEFAULT_MODELS } from "../../lib/ask/providers/types";
 import type { AskRequest, ClarifyResponse, Feature, GuidedParams, ReportCard } from "../../lib/ask/report-types";
 import KeyPanel, { type KeyState } from "./KeyPanel";
 import ReportView from "./ReportView";
@@ -56,7 +56,7 @@ export default function AskClient() {
   const [country, setCountry] = useState<CountrySlug>("india");
   const [question, setQuestion] = useState("");
   const [mode, setMode] = useState<Mode>("year");
-  const [keyState, setKeyState] = useState<KeyState>({ key: "", store: null, demo: false, model: DEFAULT_MODEL });
+  const [keyState, setKeyState] = useState<KeyState>({ key: "", store: null, demo: false, provider: "anthropic", model: DEFAULT_MODELS.anthropic });
   const [busy, setBusy] = useState(false);
   const [report, setReport] = useState<ReportCard | null>(null);
   const [clarify, setClarify] = useState<{ c: ClarifyResponse; req: AskRequest } | null>(null);
@@ -80,9 +80,9 @@ export default function AskClient() {
   // Restore the key and any shared request once, after mount (storage is client-only).
   useEffect(() => {
     const k = loadKey();
-    const m = loadModel();
+    const m = loadChoice();
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setKeyState((s) => ({ ...s, key: k.key, store: k.store, model: m ?? s.model }));
+    setKeyState((s) => ({ ...s, key: k.key, store: k.store, ...(m ?? {}) }));
     setShared(readSharedRequest());
   }, []);
 
@@ -99,7 +99,7 @@ export default function AskClient() {
     }
     setBusy(true);
     try {
-      const out = await ask({ ...req, model: keyState.model }, keyState.key, keyState.demo);
+      const out = await ask({ ...req, model: keyState.model, provider: keyState.provider }, keyState.key, keyState.demo);
       if (out.kind === "report") setReport(out.report);
       else { setReport(null); setClarify({ c: out, req }); }
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);

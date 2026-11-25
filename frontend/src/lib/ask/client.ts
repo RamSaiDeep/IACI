@@ -1,6 +1,7 @@
 /** Browser-side helpers for Ask the Index: key storage and the API call. */
 
 import type { AskRequest, AskResponse } from "./report-types";
+import { PROVIDER_LABELS, type ProviderId } from "./providers/types";
 
 const KEY_NAME = "aci-ask-llm-key";
 const MODEL_NAME = "aci-ask-model";
@@ -33,11 +34,15 @@ export function forgetKey(): void {
   } catch { /* ignore */ }
 }
 
-export function loadModel(): string | null {
-  try { return window.localStorage.getItem(MODEL_NAME); } catch { return null; }
+export interface Choice { provider: ProviderId; model: string }
+export function loadChoice(): Choice | null {
+  try {
+    const c = JSON.parse(window.localStorage.getItem(MODEL_NAME) ?? "null") as Choice | null;
+    return c && c.provider in PROVIDER_LABELS && typeof c.model === "string" ? c : null;
+  } catch { return null; }
 }
-export function saveModel(m: string): void {
-  try { window.localStorage.setItem(MODEL_NAME, m); } catch { /* ignore */ }
+export function saveChoice(c: Choice): void {
+  try { window.localStorage.setItem(MODEL_NAME, JSON.stringify(c)); } catch { /* ignore */ }
 }
 
 export class ApiError extends Error {
@@ -70,13 +75,13 @@ export async function ask(request: AskRequest, key: string, mock: boolean): Prom
   return parse<AskResponse>(await post({ request, mock }, key));
 }
 
-export async function testKey(key: string, model: string, mock: boolean): Promise<void> {
-  await parse(await post({ action: "test-key", model, mock }, key));
+export async function testKey(key: string, provider: string, model: string, mock: boolean): Promise<void> {
+  await parse(await post({ action: "test-key", provider, model, mock }, key));
 }
 
 /** Share link: the request (never the key) in the URL hash. */
 export function shareUrl(request: AskRequest): string {
-  const clean = { ...request, model: undefined };
+  const clean = { ...request, model: undefined, provider: undefined };
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(clean))));
   return `${window.location.origin}/ask#r=${b64}`;
 }

@@ -294,7 +294,7 @@ export async function runAsk(req: AskRequest, provider: LLMProvider): Promise<As
     const { sections, notes } = assemble(planned, narrative, { placeId, news });
     const report: ReportCard = {
       feature: planned.feature, title: planned.title, subtitle: planned.subtitle, country: planned.country,
-      request: { ...req, model: undefined },
+      request: { ...req, model: undefined, provider: undefined },
       headline: narrative.headline, sections, followups: narrative.followups, notes,
       method: methodFor(planned.country), trace: ctx.trace,
       grounding: { status, removed }, usage: usageCard(provider, usage), createdAt: new Date().toISOString(),
