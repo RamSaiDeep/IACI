@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { forgetKey, saveChoice, saveKey, testKey, type KeyStore } from "../../lib/ask/client";
-import { DEFAULT_MODELS, PROVIDER_LABELS, type ProviderId } from "../../lib/ask/providers/types";
+import { DEFAULT_MODELS, PROVIDER_LABELS, forgetKey, saveChoice, saveKey, testKey, type KeyStore, type ProviderId } from "../../lib/ask/client";
 
 const KEY_HELP = {
   anthropic: { url: "https://console.anthropic.com/settings/keys", hint: "sk-ant-…" },
@@ -10,33 +9,32 @@ const KEY_HELP = {
   openrouter: { url: "https://openrouter.ai/keys", hint: "sk-or-…" },
 } as const;
 
-export interface KeyState { key: string; store: KeyStore; demo: boolean; provider: ProviderId; model: string }
+export interface KeyState { key: string; store: KeyStore; provider: ProviderId; model: string }
 
-const ALLOW_DEMO = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ASK_ALLOW_MOCK === "1";
-
-export default function KeyPanel({ state, onChange }: { state: KeyState; onChange: (s: KeyState) => void }) {
+/** The "Set API key" panel, opened from the bar under the header. */
+export default function KeyPanel({ state, onChange, onClose, notice }: {
+  state: KeyState; onChange: (s: KeyState) => void; onClose: () => void; notice?: string | null;
+}) {
   const [draft, setDraft] = useState("");
   const [remember, setRemember] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [testing, setTesting] = useState(false);
-
-  const connected = !!state.key || state.demo;
   const prov = state.provider;
   const help = KEY_HELP[prov];
 
   const test = async () => {
     const key = draft.trim() || state.key;
-    if (!key && !state.demo) { setStatus({ ok: false, text: "Paste a key first." }); return; }
+    if (!key) { setStatus({ ok: false, text: "Paste a key first." }); return; }
     setTesting(true);
     setStatus(null);
     try {
-      await testKey(key, state.provider, state.model, state.demo);
+      await testKey(key, state.provider, state.model);
       if (draft.trim()) {
         saveKey(draft.trim(), remember);
         onChange({ ...state, key: draft.trim(), store: remember ? "device" : "session" });
         setDraft("");
       }
-      setStatus({ ok: true, text: "Key works." });
+      setStatus({ ok: true, text: "Key works. You can ask questions now." });
     } catch (e) {
       setStatus({ ok: false, text: e instanceof Error ? e.message : "The key could not be tested." });
     } finally {
@@ -52,17 +50,38 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
   };
 
   return (
-    <section aria-labelledby="key-h" className="rounded-2xl border border-foreground/10 bg-surface p-5 shadow-card">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="key-h" className="text-base font-bold">Connect your API key</h2>
-        <span className={`text-xs font-semibold ${connected ? "text-teal-700" : "text-foreground/50"}`} role="status">
-          {state.demo ? "Demo mode: no AI model used" : state.key ? `Key connected (${state.store === "device" ? "remembered on this device" : "this tab only"})` : "No key yet"}
-        </span>
+    <section id="key-panel" aria-labelledby="key-h" className="rounded-2xl border border-foreground/10 bg-surface p-5 shadow-card">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h2 id="key-h" className="text-base font-bold">Set your API key</h2>
+          <p className="mt-1 text-sm text-foreground/70">
+            Finding the right data and calculating every number happen on our side. Your own key is used only to write the answer text.
+          </p>
+        </div>
+        <button type="button" onClick={onClose} aria-label="Close the API key panel"
+          className="min-h-11 min-w-11 rounded-xl border border-foreground/20 px-3 text-sm font-semibold hover:border-accent">Close</button>
       </div>
-      <p className="mt-1 text-sm text-foreground/70">
-        Answers are written by an AI model using <strong>your own</strong> {PROVIDER_LABELS[prov]} key, so we never pay for or hold your usage.
-        Without a key you can still explore the starting points and forms below.
-      </p>
+      {notice && <p role="alert" className="mt-3 rounded-lg border border-accent/40 bg-accent/5 p-3 text-sm">{notice}</p>}
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-[auto_1fr] sm:items-end">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="provider" className="text-sm font-medium">Provider</label>
+          <select id="provider" value={prov} onChange={(e) => {
+            const p = e.target.value as ProviderId;
+            saveChoice({ provider: p, model: DEFAULT_MODELS[p] });
+            onChange({ ...state, provider: p, model: DEFAULT_MODELS[p] });
+          }} className="min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 text-sm">
+            {(Object.keys(PROVIDER_LABELS) as ProviderId[]).map((p) => <option key={p} value={p}>{PROVIDER_LABELS[p]}</option>)}
+          </select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="model" className="text-sm font-medium">Model name</label>
+          <input id="model" value={state.model} spellCheck={false} autoComplete="off" maxLength={100}
+            onChange={(e) => { saveChoice({ provider: prov, model: e.target.value }); onChange({ ...state, model: e.target.value }); }}
+            placeholder={DEFAULT_MODELS[prov]}
+            className="min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 font-mono text-sm" />
+        </div>
+      </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
         <div className="flex flex-col gap-1">
@@ -73,48 +92,26 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
         </div>
         <div className="flex gap-2">
           <button type="button" onClick={test} disabled={testing} className="min-h-11 rounded-xl bg-accent px-5 text-sm font-semibold text-white disabled:opacity-50">
-            {testing ? "Testing…" : "Test key"}
+            {testing ? "Testing…" : "Save and test"}
           </button>
           <button type="button" onClick={forget} disabled={!state.key} className="min-h-11 rounded-xl border border-foreground/20 px-4 text-sm font-semibold disabled:opacity-40">Forget key</button>
         </div>
       </div>
 
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <label className="flex min-h-11 items-start gap-2 text-sm">
           <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="mt-1 h-4 w-4" />
-          <span>Remember on this device <span className="text-foreground/60">(stored in this browser; anyone using this browser profile could use it. Leave off on shared computers.)</span></span>
+          <span>Remember on this device <span className="text-foreground/60">(leave off on shared computers)</span></span>
         </label>
-        <div className="flex flex-wrap items-center gap-3">
-          <label htmlFor="provider" className="text-sm font-medium">Provider</label>
-          <select id="provider" value={prov} onChange={(e) => {
-            const p = e.target.value as ProviderId;
-            const next = { ...state, provider: p, model: DEFAULT_MODELS[p] };
-            saveChoice({ provider: p, model: next.model });
-            onChange(next);
-          }} className="min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 text-sm">
-            {(Object.keys(PROVIDER_LABELS) as ProviderId[]).map((p) => <option key={p} value={p}>{PROVIDER_LABELS[p]}</option>)}
-          </select>
-          <label htmlFor="model" className="text-sm font-medium">Model name</label>
-          <input id="model" value={state.model} spellCheck={false} autoComplete="off" maxLength={100}
-            onChange={(e) => { saveChoice({ provider: prov, model: e.target.value }); onChange({ ...state, model: e.target.value }); }}
-            placeholder={DEFAULT_MODELS[prov]}
-            className="min-h-11 w-64 max-w-full rounded-xl border border-foreground/20 bg-surface px-3 font-mono text-sm" />
-          <a href={help.url} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-2">
-            How to get a key
-          </a>
-          {ALLOW_DEMO && (
-            <label className="flex min-h-11 items-center gap-2 text-sm">
-              <input type="checkbox" checked={state.demo} onChange={(e) => onChange({ ...state, demo: e.target.checked })} className="h-4 w-4" />
-              Demo mode (scripted, no key)
-            </label>
-          )}
-        </div>
-        {status && <p role="status" className={`text-sm ${status.ok ? "text-teal-700" : "text-rose-700"}`}>{status.text}</p>}
+        <a href={help.url} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-2">
+          How to get a {PROVIDER_LABELS[prov]} key
+        </a>
       </div>
+      {status && <p role="status" className={`mt-2 text-sm ${status.ok ? "text-teal-700" : "text-rose-700"}`}>{status.text}</p>}
 
       <p className="mt-3 rounded-lg bg-surface-muted p-3 text-xs leading-relaxed text-foreground/70">
-        <strong>What happens to your key:</strong> it stays in your browser (this tab only, unless you tick &ldquo;Remember&rdquo;) and is sent over HTTPS with each question to our server, which uses it once to call the AI provider.
-        It is never saved, logged or shown back. Forget it any time.
+        <strong>What happens to your key:</strong> it stays in your browser (this tab only, unless you tick &ldquo;Remember&rdquo;) and is sent over HTTPS with each question to our service, which uses it once to call {PROVIDER_LABELS[prov]}.
+        It is never saved, logged or shown back.
       </p>
     </section>
   );

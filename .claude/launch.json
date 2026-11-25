@@ -7,6 +7,12 @@
       "runtimeArgs": ["--prefix", "frontend", "run", "dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "ask-api",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "--app-dir", "backend", "ask_api.main:app", "--port", "8000"],
+      "port": 8000
     }
   ]
 }

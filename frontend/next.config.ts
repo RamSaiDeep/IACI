@@ -3,12 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
-  // The Ask API reads the index JSON and boundary files with fs; make sure
-  // they are bundled with that serverless function on Vercel.
-  outputFileTracingIncludes: {
-    "/api/ask": ["./public/data/**/*", "./public/geojson/**/*"],
-  },
-
   images: {
     // Next 16 restricts quality to this allowlist and silently coerces anything
     // else to the nearest entry. The logo is a lossy JPEG, so re-encoding it at

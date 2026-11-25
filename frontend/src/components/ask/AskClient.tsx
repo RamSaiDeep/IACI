@@ -1,47 +1,51 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ApiError, ask, loadKey, loadChoice, readSharedRequest } from "../../lib/ask/client";
+import { ApiError, DEFAULT_MODELS, PROVIDER_LABELS, ask, loadChoice, loadKey, readSharedRequest } from "../../lib/ask/client";
 import { COUNTRY_INFO, COUNTRY_SLUGS, MONTH_NAMES, type CountrySlug } from "../../lib/ask/labels";
-import { DEFAULT_MODELS } from "../../lib/ask/providers/types";
-import type { AskRequest, ClarifyResponse, Feature, GuidedParams, ReportCard } from "../../lib/ask/report-types";
+import type { AskRequest, Category, ClarifyResponse, ReportCard, Slots } from "../../lib/ask/report-types";
 import KeyPanel, { type KeyState } from "./KeyPanel";
 import ReportView from "./ReportView";
 
-type Mode = Feature;
+type Mode = Exclude<Category, "help">;
 
 const CARDS: { mode: Mode; title: string; blurb: string; example: string; icon: string }[] = [
-  { mode: "year", title: "Year in review", blurb: "How one place's year went, which months and hazards stood out, and how it ranks since 1991.", example: "“How was 2024 for Guntur?”", icon: "M3 4h18v18H3zM16 2v4M8 2v4M3 10h18" },
-  { mode: "compare", title: "Compare places", blurb: "Two places side by side over a period: which faces more of each hazard, and why they differ.", example: "“Chennai vs Hyderabad, 2015–2025”", icon: "M3 4h7v16H3zM14 4h7v16h-7z" },
-  { mode: "screen", title: "Find places", blurb: "A ranked list of districts for any hazard and period, with a chart of the result.", example: "“Worst drought districts in Maharashtra”", icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
-  { mode: "event", title: "Explain an event", blurb: "What the index recorded during a flood, heatwave or drought, and how rare it was for that place.", example: "“Wayanad, July 2024”", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
+  { mode: "snapshot", title: "Snapshot", blurb: "How one place did in a year, season or month, ranked against every year since 1991.", example: "“How was 2024 for Nellore?”", icon: "M3 4h18v18H3zM16 2v4M8 2v4M3 10h18" },
+  { mode: "compare", title: "Compare", blurb: "Two places side by side over a period, hazard by hazard.", example: "“Chennai vs Hyderabad, 2015–2025”", icon: "M3 4h7v16H3zM14 4h7v16h-7z" },
+  { mode: "rank", title: "Ranking", blurb: "A ranked list of districts for any hazard and period.", example: "“Worst drought districts in Maharashtra”", icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
+  { mode: "trend", title: "Trend", blurb: "Is a hazard rising or falling at a place, and how sure is that?", example: "“Is heat increasing in Guntur?”", icon: "M3 17l6-6 4 4 8-8M14 7h7v7" },
+  { mode: "event", title: "Event", blurb: "One month against the same month in every other year.", example: "“Wayanad, July 2024”", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
 ];
 
 const EXAMPLES = [
-  "Which Odisha districts had the worst rainfall extremes in monsoon 2024?",
-  "Where is drought getting worse fastest?",
+  "How was 2024 for Nellore?",
+  "Which Odisha districts had the worst rainfall in monsoon 2024?",
+  "Is extreme heat increasing in Guntur?",
   "Chennai vs Hyderabad, 2015–2025",
-  "Top 10 districts for extreme heat in summer 2024",
-  "How was 2024 for Guntur district?",
-  "What drove the high index in Assam in June 2022?",
+  "What happened in Wayanad in July 2024?",
+  "What does the drought component measure?",
 ];
 
 const HAZARDS: [string, string][] = [
   ["composite", "Overall index"], ["heat", "Extreme heat"], ["cold", "Extreme cold"],
   ["rainfall", "Heavy rainfall"], ["drought", "Drought"], ["wind", "Strong wind"], ["sea level", "Sea level"],
 ];
-
-const PERIODS: { id: string; label: string; apply: (p: GuidedParams) => void }[] = [
-  { id: "monsoon2024", label: "Monsoon 2024", apply: (p) => { p.season = "monsoon"; p.periodYear = 2024; } },
-  { id: "summer2024", label: "Summer 2024", apply: (p) => { p.season = "summer"; p.periodYear = 2024; } },
-  { id: "year2024", label: "Year 2024", apply: (p) => { p.periodYear = 2024; } },
-  { id: "last10", label: "Last 10 years", apply: (p) => { p.lastYears = 10; } },
-  { id: "all", label: "Whole record (1991 onwards)", apply: () => {} },
+const SEASONS: [string, string][] = [["", "Whole year"], ["monsoon", "Monsoon (Jun–Sep)"], ["summer", "Summer (Mar–May)"], ["post_monsoon", "Post-monsoon (Oct–Nov)"], ["winter", "Winter (Dec–Feb)"]];
+const RANK_PERIODS: { id: string; label: string; slots: Slots }[] = [
+  { id: "monsoon2024", label: "Monsoon 2024", slots: { year: 2024, season: "monsoon" } },
+  { id: "summer2024", label: "Summer 2024", slots: { year: 2024, season: "summer" } },
+  { id: "year2024", label: "Year 2024", slots: { year: 2024 } },
+  { id: "last10", label: "Last 10 years", slots: { last_years: 10 } },
+  { id: "all", label: "Whole record (1991 onwards)", slots: { from_year: 1991 } },
 ];
-
 const YEARS = Array.from({ length: 2026 - 1991 + 1 }, (_, i) => 2026 - i);
-
 const field = "min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 text-[15px]";
+
+/** Elapsed-seconds ticker for the progress box. */
+function startTimer(set: (s: number) => void) {
+  const t0 = Date.now();
+  return setInterval(() => set(Math.floor((Date.now() - t0) / 1000)), 1000);
+}
 
 function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return (
@@ -55,8 +59,10 @@ function Field({ id, label, children }: { id: string; label: string; children: R
 export default function AskClient() {
   const [country, setCountry] = useState<CountrySlug>("india");
   const [question, setQuestion] = useState("");
-  const [mode, setMode] = useState<Mode>("year");
-  const [keyState, setKeyState] = useState<KeyState>({ key: "", store: null, demo: false, provider: "anthropic", model: DEFAULT_MODELS.anthropic });
+  const [mode, setMode] = useState<Mode>("snapshot");
+  const [keyState, setKeyState] = useState<KeyState>({ key: "", store: null, provider: "anthropic", model: DEFAULT_MODELS.anthropic });
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [steps, setSteps] = useState<string[]>([]);
   const [secs, setSecs] = useState(0);
@@ -70,16 +76,16 @@ export default function AskClient() {
   const [place, setPlace] = useState("");
   const [placeB, setPlaceB] = useState("");
   const [year, setYear] = useState(2024);
+  const [season, setSeason] = useState("");
   const [fromYear, setFromYear] = useState(2015);
   const [toYear, setToYear] = useState(2025);
   const [region, setRegion] = useState("");
   const [hazard, setHazard] = useState("composite");
   const [period, setPeriod] = useState("monsoon2024");
-  const [rankBy, setRankBy] = useState<"most_extreme" | "fastest_worsening">("most_extreme");
+  const [rankBy, setRankBy] = useState<"value" | "worsening">("value");
   const [month, setMonth] = useState(7);
-  const [news, setNews] = useState(false);
 
-  // Restore the key and any shared request once, after mount (storage is client-only).
+  // Restore the key, model choice and any shared request once, after mount (storage is client-only).
   useEffect(() => {
     const k = loadKey();
     const m = loadChoice();
@@ -88,64 +94,93 @@ export default function AskClient() {
     setShared(readSharedRequest());
   }, []);
 
-  const hasAccess = !!keyState.key || keyState.demo;
+  const hasKey = !!keyState.key;
   const info = COUNTRY_INFO[country];
   const hazards = HAZARDS.filter(([id]) => !(country === "nepal" && id === "sea level"));
+
+  const openPanel = (msg?: string) => {
+    setNotice(msg ?? null);
+    setPanelOpen(true);
+    setTimeout(() => document.getElementById("key-panel")?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+  };
 
   async function run(req: AskRequest) {
     setError(null);
     setClarify(null);
-    if (!hasAccess) {
-      setError("Add your API key above to get answers. The forms work, but the writing needs a model.");
+    if (!hasKey) {
+      openPanel("Set an API key to get answers.");
       return;
     }
     setBusy(true);
     setSteps([]);
     setSecs(0);
-    const t0 = Date.now();
-    const timer = setInterval(() => setSecs(Math.floor((Date.now() - t0) / 1000)), 1000);
+    const timer = startTimer(setSecs);
     try {
-      const out = await ask({ ...req, model: keyState.model, provider: keyState.provider }, keyState.key, keyState.demo,
-        (t) => setSteps((s) => [...s, t]));
+      const out = await ask({ ...req, model: keyState.model, provider: keyState.provider }, keyState.key, (t) => setSteps((s) => [...s, t]));
       if (out.kind === "report") setReport(out.report);
       else { setReport(null); setClarify({ c: out, req }); }
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Something went wrong. Please try again.");
+      if (e instanceof ApiError && (e.code === "missing_key" || e.code === "invalid_key")) openPanel(e.message);
+      else setError(e instanceof ApiError ? e.message : "Something went wrong. Please try again.");
     } finally {
       clearInterval(timer);
       setBusy(false);
     }
   }
 
-  const askFree = (q: string, previous?: AskRequest["previous"]) =>
-    run({ mode: "free", country, question: q, previous });
+  const askFree = (q: string, previous?: AskRequest["previous"]) => run({ country, question: q, previous });
 
-  const submitGuided = () => {
-    const params: GuidedParams = {};
-    if (mode === "year") Object.assign(params, { place, year });
-    if (mode === "compare") Object.assign(params, { place, placeB, fromYear, toYear });
-    if (mode === "screen") {
-      Object.assign(params, { region: region || undefined, component: hazard, rankBy });
-      PERIODS.find((p) => p.id === period)?.apply(params);
-    }
-    if (mode === "event") Object.assign(params, { place, month, year, news });
-    void run({ mode, country, params });
+  const pick = (o: ClarifyResponse["options"][number]) => {
+    if (!clarify) return;
+    const { c, req } = clarify;
+    if (o.question) { setQuestion(o.question); void askFree(o.question); return; }
+    if (o.category) { void run({ ...req, category: o.category, slots: null }); return; }
+    void run({ ...req, category: c.category ?? req.category, slots: c.slots ?? req.slots,
+      resolved: { ...req.resolved, [(c.query ?? "").toLowerCase()]: o.id ?? "" } });
   };
 
-  const guidedReady =
-    mode === "year" ? !!place.trim() : mode === "compare" ? !!place.trim() && !!placeB.trim() : mode === "event" ? !!place.trim() : true;
+  const submitGuided = () => {
+    const slots: Slots =
+      mode === "snapshot" ? { place, year, season: season || null, month: null }
+      : mode === "compare" ? { places: [place, placeB], from_year: fromYear, to_year: toYear, hazard: null }
+      : mode === "rank" ? { region: region || null, country, hazard, rank_by: rankBy, order: "highest", limit: null,
+          year: null, season: null, month: null, from_year: null, to_year: null, last_years: null,
+          ...RANK_PERIODS.find((p) => p.id === period)!.slots }
+      : mode === "trend" ? { place, hazard, season: null, from_year: null, to_year: null }
+      : { place, month, year };
+    void run({ country, category: mode, slots });
+  };
+
+  const guidedReady = mode === "compare" ? !!place.trim() && !!placeB.trim() : mode === "rank" ? true : !!place.trim();
 
   const followUp = (q: string) =>
-    askFree(q, report ? { question: report.request.question, feature: report.feature, summary: `${report.title}. ${report.headline}` } : undefined);
+    askFree(q, report ? { question: report.request.question, category: report.feature, slots: report.request.slots, summary: `${report.title}. ${report.headline}` } : undefined);
 
   return (
     <div className="flex flex-col gap-10">
       <style>{`@media print{header,footer,.no-print{display:none!important}main{padding:0!important}}`}</style>
 
+      {/* API key bar: directly under the site header */}
+      <div className="no-print -mt-4 flex flex-col gap-3 sm:-mt-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-foreground/10 bg-surface px-4 py-2.5 text-sm">
+          <span className="flex items-center gap-2" role="status">
+            <span aria-hidden className={`h-2.5 w-2.5 rounded-full ${hasKey ? "bg-teal-600" : "bg-foreground/30"}`} />
+            {hasKey
+              ? <>API key set · <span className="font-mono text-xs">{PROVIDER_LABELS[keyState.provider]} · {keyState.model}</span></>
+              : "No API key set. Answers need your own key."}
+          </span>
+          <button type="button" onClick={() => (panelOpen ? setPanelOpen(false) : openPanel())} aria-expanded={panelOpen} aria-controls="key-panel"
+            className={`min-h-11 rounded-xl px-4 font-semibold ${hasKey ? "border border-foreground/20 hover:border-accent" : "bg-accent text-white"}`}>
+            {hasKey ? "Change API key" : "Set API key"}
+          </button>
+        </div>
+        {panelOpen && <KeyPanel state={keyState} onChange={setKeyState} onClose={() => setPanelOpen(false)} notice={notice} />}
+      </div>
+
       {shared && !report && (
         <div className="no-print flex flex-wrap items-center gap-3 rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm" role="status">
-          <span>A shared question was loaded: <strong>{shared.question ?? `${shared.mode} report`}</strong>.</span>
+          <span>A shared question was loaded: <strong>{shared.question ?? `${shared.category} report`}</strong>.</span>
           <button type="button" className="min-h-11 rounded-xl bg-accent px-4 font-semibold text-white" onClick={() => { setCountry(shared.country); void run(shared); setShared(null); }}>Run it</button>
         </div>
       )}
@@ -181,8 +216,6 @@ export default function AskClient() {
         </form>
       </section>
 
-      <div className="no-print"><KeyPanel state={keyState} onChange={setKeyState} /></div>
-
       {/* Result area */}
       <div ref={resultRef} aria-live="polite" className="flex flex-col gap-4 scroll-mt-24">
         {busy && (
@@ -204,8 +237,7 @@ export default function AskClient() {
             {clarify.c.options.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {clarify.c.options.map((o) => (
-                  <button key={o.id ?? o.label} type="button" disabled={busy}
-                    onClick={() => void run({ ...clarify.req, resolved: { ...clarify.req.resolved, [(clarify.c.query ?? "").toLowerCase()]: o.id ?? "" } })}
+                  <button key={o.id ?? o.category ?? o.question ?? o.label} type="button" disabled={busy} onClick={() => pick(o)}
                     className="min-h-11 rounded-full border border-foreground/20 px-4 text-sm hover:border-accent">{o.label}</button>
                 ))}
               </div>
@@ -222,7 +254,7 @@ export default function AskClient() {
           <h2 id="start-h" className="text-xl font-bold">Or pick a starting point</h2>
           <span className="text-sm text-foreground/60">Each one opens a short guided form</span>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {CARDS.map((c) => (
             <button key={c.mode} type="button" aria-pressed={mode === c.mode} onClick={() => setMode(c.mode)}
               className={`flex flex-col gap-3 rounded-2xl p-5 text-left ${mode === c.mode ? "bg-accent/5 shadow-card ring-2 ring-accent" : "bg-surface ring-1 ring-foreground/15 hover:ring-accent/60"}`}>
@@ -239,9 +271,10 @@ export default function AskClient() {
         <form className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-surface p-5 sm:p-6" onSubmit={(e) => { e.preventDefault(); submitGuided(); }}>
           <h3 className="text-lg font-semibold">{CARDS.find((c) => c.mode === mode)!.title}</h3>
           <div className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {mode === "year" && (<>
-              <Field id="yr-place" label={`${info.childLabel} or ${info.topLabel.toLowerCase()}`}><input id="yr-place" className={field} value={place} onChange={(e) => setPlace(e.target.value)} placeholder={`Start typing, e.g. ${info.example}`} /></Field>
-              <Field id="yr-year" label="Year"><select id="yr-year" className={field} value={year} onChange={(e) => setYear(+e.target.value)}>{YEARS.map((y) => <option key={y}>{y}</option>)}</select></Field>
+            {mode === "snapshot" && (<>
+              <Field id="sn-place" label={`${info.childLabel} or ${info.topLabel.toLowerCase()}`}><input id="sn-place" className={field} value={place} onChange={(e) => setPlace(e.target.value)} placeholder={`e.g. ${info.example}`} /></Field>
+              <Field id="sn-year" label="Year"><select id="sn-year" className={field} value={year} onChange={(e) => setYear(+e.target.value)}>{YEARS.map((y) => <option key={y}>{y}</option>)}</select></Field>
+              <Field id="sn-season" label="Period"><select id="sn-season" className={field} value={season} onChange={(e) => setSeason(e.target.value)}>{SEASONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
             </>)}
             {mode === "compare" && (<>
               <Field id="cmp-a" label="First place"><input id="cmp-a" className={field} value={place} onChange={(e) => setPlace(e.target.value)} placeholder="e.g. Chennai" /></Field>
@@ -249,11 +282,15 @@ export default function AskClient() {
               <Field id="cmp-from" label="From"><select id="cmp-from" className={field} value={fromYear} onChange={(e) => setFromYear(+e.target.value)}>{YEARS.map((y) => <option key={y}>{y}</option>)}</select></Field>
               <Field id="cmp-to" label="To"><select id="cmp-to" className={field} value={toYear} onChange={(e) => setToYear(+e.target.value)}>{YEARS.map((y) => <option key={y}>{y}</option>)}</select></Field>
             </>)}
-            {mode === "screen" && (<>
-              <Field id="fd-region" label="Within"><input id="fd-region" className={field} value={region} onChange={(e) => setRegion(e.target.value)} placeholder={`All ${info.name}, or a ${info.topLabel.toLowerCase()}`} /></Field>
-              <Field id="fd-hazard" label="Hazard"><select id="fd-hazard" className={field} value={hazard} onChange={(e) => setHazard(e.target.value)}>{hazards.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select></Field>
-              <Field id="fd-period" label="Period"><select id="fd-period" className={field} value={period} onChange={(e) => setPeriod(e.target.value)}>{PERIODS.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}</select></Field>
-              <Field id="fd-rank" label="Rank by"><select id="fd-rank" className={field} value={rankBy} onChange={(e) => setRankBy(e.target.value as typeof rankBy)}><option value="most_extreme">Most extreme</option><option value="fastest_worsening">Fastest worsening</option></select></Field>
+            {mode === "rank" && (<>
+              <Field id="rk-region" label="Within"><input id="rk-region" className={field} value={region} onChange={(e) => setRegion(e.target.value)} placeholder={`All ${info.name}, or a ${info.topLabel.toLowerCase()}`} /></Field>
+              <Field id="rk-hazard" label="Hazard"><select id="rk-hazard" className={field} value={hazard} onChange={(e) => setHazard(e.target.value)}>{hazards.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select></Field>
+              <Field id="rk-period" label="Period"><select id="rk-period" className={field} value={period} onChange={(e) => setPeriod(e.target.value)}>{RANK_PERIODS.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}</select></Field>
+              <Field id="rk-by" label="Rank by"><select id="rk-by" className={field} value={rankBy} onChange={(e) => setRankBy(e.target.value as typeof rankBy)}><option value="value">Most extreme</option><option value="worsening">Fastest worsening</option></select></Field>
+            </>)}
+            {mode === "trend" && (<>
+              <Field id="tr-place" label="Place"><input id="tr-place" className={field} value={place} onChange={(e) => setPlace(e.target.value)} placeholder={`e.g. ${info.example}`} /></Field>
+              <Field id="tr-hazard" label="Hazard"><select id="tr-hazard" className={field} value={hazard} onChange={(e) => setHazard(e.target.value)}>{hazards.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select></Field>
             </>)}
             {mode === "event" && (<>
               <Field id="ev-place" label="Place"><input id="ev-place" className={field} value={place} onChange={(e) => setPlace(e.target.value)} placeholder="e.g. Wayanad" /></Field>
@@ -261,16 +298,10 @@ export default function AskClient() {
               <Field id="ev-year" label="Year"><select id="ev-year" className={field} value={year} onChange={(e) => setYear(+e.target.value)}>{YEARS.map((y) => <option key={y}>{y}</option>)}</select></Field>
             </>)}
             <button type="submit" disabled={busy || !guidedReady} className="min-h-11 rounded-xl bg-accent px-5 text-[15px] font-semibold text-white disabled:opacity-50">
-              {mode === "year" ? "Generate report" : mode === "compare" ? "Compare" : mode === "screen" ? "Show ranking" : "Explain"}
+              {mode === "compare" ? "Compare" : mode === "rank" ? "Show ranking" : mode === "event" ? "Explain" : mode === "trend" ? "Show trend" : "Generate report"}
             </button>
           </div>
-          {mode === "event" && (
-            <label className="flex min-h-11 items-center gap-2 text-sm text-foreground/70">
-              <input type="checkbox" checked={news} onChange={(e) => setNews(e.target.checked)} className="h-[18px] w-[18px]" />
-              Include news coverage (shown separately from index values; switched off in this version)
-            </label>
-          )}
-          {!hasAccess && <p className="text-sm text-foreground/60">Answers need an API key (above). You can fill in the form now and run it once a key is connected.</p>}
+          {!hasKey && <p className="text-sm text-foreground/60">Answers need an API key. Use &ldquo;Set API key&rdquo; at the top of the page.</p>}
         </form>
       </section>
 
@@ -290,7 +321,7 @@ export default function AskClient() {
         <h2 id="how-h" className="mb-4 text-lg font-bold">How answers work</h2>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
-            ["Numbers come only from the index", "Every figure is read from the published values by our own code, never estimated by the AI. Each number in the text is checked against those results."],
+            ["Numbers come only from the index", "A small routing model picks the kind of answer, our code reads and calculates every figure, and your chosen model only writes the sentences. Each number in the text is checked."],
             ["You can see how it was worked out", "Each answer lists the places, hazards, periods and baseline it used, step by step."],
             ["Clear about limits", "Baseline 1991–2020 · monthly area averages · standardized anomalies. Context, not attribution."],
           ].map(([t, d]) => (

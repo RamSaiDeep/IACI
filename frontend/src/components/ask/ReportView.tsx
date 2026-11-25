@@ -6,6 +6,7 @@ import { shareUrl } from "../../lib/ask/client";
 import type { Cell, ReportCard, ReportSection } from "../../lib/ask/report-types";
 
 const SERIES_COLORS = ["#f26a21", "#103b7b", "#0d9488", "#b45309"];
+const EYEBROW: Record<string, string> = { snapshot: "Snapshot", compare: "Comparison", rank: "Ranking", trend: "Trend", event: "Event explainer", help: "About the index" };
 
 function CellView({ v, isValue }: { v: Cell; isValue: boolean }) {
   if (v == null) return <span className="text-foreground/40">—</span>;
@@ -150,7 +151,7 @@ export default function ReportView({
   return (
     <article className="report-card flex flex-col gap-6 rounded-2xl border border-foreground/10 bg-surface p-5 shadow-card sm:p-8" aria-label={report.title}>
       <header className="flex flex-col gap-1">
-        <span className="eyebrow">{report.feature === "year" ? "Year in review" : report.feature === "compare" ? "Comparison" : report.feature === "screen" ? "Ranking" : "Event explainer"}</span>
+        <span className="eyebrow">{EYEBROW[report.feature] ?? "Answer"}</span>
         <h2 className="text-2xl font-bold tracking-tight">{report.title}</h2>
         <p className="text-sm text-foreground/60">{report.subtitle}</p>
       </header>
@@ -179,9 +180,8 @@ export default function ReportView({
           ))}
         </ol>
         <p className="mt-3 text-xs text-foreground/60">
-          {u.provider === "mock" ? "Demo mode (no AI model used). " : `${u.model}: `}
-          {u.calls} model call{u.calls === 1 ? "" : "s"}, about {u.inputTokens.toLocaleString()} tokens in and {u.outputTokens.toLocaleString()} out
-          {u.costUsd != null && u.provider !== "mock" ? `, roughly $${u.costUsd < 0.01 ? u.costUsd.toFixed(4) : u.costUsd.toFixed(3)} (estimate from list prices)` : ""}.
+          {u.provider === "none" ? "Fixed text: no writing model used. " : `Writing (${u.model}, your key): ${u.calls} call${u.calls === 1 ? "" : "s"}, about ${u.inputTokens.toLocaleString()} tokens in and ${u.outputTokens.toLocaleString()} out. `}
+          {report.router && `Routing (${report.router.models.join(" + ")}, site key): ${report.router.calls} call${report.router.calls === 1 ? "" : "s"}, ${report.router.tokens.toLocaleString()} tokens, $${report.router.costUsd.toFixed(5)}.`}
         </p>
       </details>
 

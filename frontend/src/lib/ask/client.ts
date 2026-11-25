@@ -1,7 +1,18 @@
-/** Browser-side helpers for Ask the Index: key storage and the API call. */
+/** Browser-side helpers for Ask the Index: key storage and calls to the Python backend. */
 
 import type { AskRequest, AskResponse } from "./report-types";
-import { PROVIDER_LABELS, type ProviderId } from "./providers/types";
+
+/** The FastAPI service (backend/ask_api). Set NEXT_PUBLIC_ASK_API_URL for deployed environments. */
+export const ASK_API_URL = (process.env.NEXT_PUBLIC_ASK_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
+
+export type ProviderId = "anthropic" | "gemini" | "openrouter";
+export const PROVIDER_LABELS: Record<ProviderId, string> = { anthropic: "Anthropic", gemini: "Google Gemini", openrouter: "OpenRouter" };
+/** Suggested model names only; users may type any model their key can use. */
+export const DEFAULT_MODELS: Record<ProviderId, string> = {
+  anthropic: "claude-sonnet-5-5",
+  gemini: "gemini-2.5-flash",
+  openrouter: "google/gemini-2.5-flash",
+};
 
 const KEY_NAME = "aci-ask-llm-key";
 const MODEL_NAME = "aci-ask-model";
@@ -49,15 +60,15 @@ export class ApiError extends Error {
   constructor(public code: string, message: string) { super(message); }
 }
 
-async function post(body: unknown, key: string): Promise<Response> {
+async function post(path: string, body: unknown, key: string): Promise<Response> {
   try {
-    return await fetch("/api/ask", {
+    return await fetch(`${ASK_API_URL}${path}`, {
       method: "POST",
       headers: { "content-type": "application/json", ...(key ? { "x-llm-key": key } : {}) },
       body: JSON.stringify(body),
     });
   } catch {
-    throw new ApiError("network", "Could not reach the server. Check your connection and try again.");
+    throw new ApiError("network", "Could not reach the Ask the Index service. Check your connection and try again.");
   }
 }
 
@@ -71,9 +82,10 @@ async function parse<T>(res: Response): Promise<T> {
   return json as T;
 }
 
-export async function ask(request: AskRequest, key: string, mock: boolean, onProgress?: (text: string) => void): Promise<AskResponse> {
-  const res = await post({ request, mock, stream: true }, key);
-  if (!res.ok || !res.body) return parse<AskResponse>(res); // validation errors come back as plain JSON
+/** Streams progress lines to onProgress, then resolves with the answer. */
+export async function ask(request: AskRequest, key: string, onProgress?: (text: string) => void): Promise<AskResponse> {
+  const res = await post("/ask", request, key);
+  if (!res.ok || !res.body) return parse<AskResponse>(res);
   const reader = res.body.getReader();
   const dec = new TextDecoder();
   let buf = "";
@@ -98,11 +110,11 @@ export async function ask(request: AskRequest, key: string, mock: boolean, onPro
   return result;
 }
 
-export async function testKey(key: string, provider: string, model: string, mock: boolean): Promise<void> {
-  await parse(await post({ action: "test-key", provider, model, mock }, key));
+export async function testKey(key: string, provider: string, model: string): Promise<void> {
+  await parse(await post("/test-key", { provider, model }, key));
 }
 
-/** Share link: the request (never the key) in the URL hash. */
+/** Share link: the request (never the key or model) in the URL hash. */
 export function shareUrl(request: AskRequest): string {
   const clean = { ...request, model: undefined, provider: undefined };
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(clean))));

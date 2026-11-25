@@ -1,6 +1,7 @@
 import type { CountrySlug } from "./labels";
 
-export type Feature = "year" | "compare" | "screen" | "event";
+/** The six answer types the backend router sorts questions into. */
+export type Category = "snapshot" | "compare" | "rank" | "trend" | "event" | "help";
 
 export type Cell = string | number | null;
 
@@ -9,31 +10,34 @@ export type ReportSection =
   | {
       kind: "table"; title: string; columns: string[]; rows: Cell[][];
       /** Column indexes holding z-scores, coloured with the site's scale. */
-      valueCols?: number[]; note?: string; highlightRow?: number;
+      valueCols?: number[]; note?: string; highlightRow?: number | null;
     }
   | {
       kind: "lines"; title: string; xLabel: string; yLabel: string;
       series: { name: string; points: { x: number; y: number | null }[] }[];
-      /** Optional vertical marker (e.g. the year in review). */
       marker?: number; note?: string;
     }
-  | { kind: "bars"; title: string; unit: string; rows: { label: string; sub?: string; value: number; highlight?: boolean }[]; note?: string }
+  | { kind: "bars"; title: string; unit: string; rows: { label: string; sub?: string | null; value: number; highlight?: boolean }[]; note?: string }
   | { kind: "news"; title: string; body: string };
 
 export interface TraceEntry {
   name: string;
   args: Record<string, unknown>;
   ok: boolean;
-  /** One-line summary of the result for the "How this was worked out" panel. */
   summary: string;
 }
 
+export type Slots = Record<string, unknown>;
+
+export interface WriterUsage { provider: string; model: string; calls: number; inputTokens: number; outputTokens: number; costUsd: number | null }
+export interface RouterUsage { calls: number; tokens: number; costUsd: number; models: string[] }
+
 export interface ReportCard {
-  feature: Feature;
+  feature: Category;
   title: string;
   subtitle: string;
   country: CountrySlug;
-  /** Everything needed to re-run the report (copy link). */
+  /** Enough to re-run the report (copy link). Never holds a key. */
   request: AskRequest;
   headline: string;
   sections: ReportSection[];
@@ -41,47 +45,33 @@ export interface ReportCard {
   notes: string[];
   method: { baseline: string; version: string; source: string; index: string };
   trace: TraceEntry[];
-  grounding: { status: "verified" | "repaired" | "stripped" | "mock"; removed: string[] };
-  usage: { provider: string; model: string; calls: number; inputTokens: number; outputTokens: number; costUsd: number | null };
+  grounding: { status: "verified" | "repaired" | "stripped"; removed: string[] };
+  usage: WriterUsage;
+  router: RouterUsage;
   createdAt: string;
 }
 
-export interface GuidedParams {
-  place?: string;
-  placeB?: string;
-  year?: number;
-  month?: number;
-  fromYear?: number;
-  toYear?: number;
-  region?: string;
-  component?: string;
-  season?: string;
-  periodYear?: number;
-  lastYears?: number;
-  rankBy?: "most_extreme" | "fastest_worsening";
-  news?: boolean;
-}
-
 export interface AskRequest {
-  mode: "free" | Feature;
-  country: import("./labels").CountrySlug;
-  question?: string;
-  params?: GuidedParams;
-  /** Names the user disambiguated: query name (lower case) -> place id. */
+  country: CountrySlug;
+  question?: string | null;
+  /** Set by guided forms and clarification choices: skips the router. */
+  category?: Category | null;
+  slots?: Slots | null;
+  /** Names the user disambiguated: typed name (lower case) -> place id. */
   resolved?: Record<string, string>;
-  /** The report this follow-up refers to. */
-  previous?: { question?: string; feature: Feature; summary: string };
-  model?: string;
+  previous?: { question?: string | null; category: Category; slots?: Slots | null; summary: string };
   provider?: string;
+  model?: string;
 }
 
 export interface ClarifyResponse {
   kind: "clarify";
   question: string;
-  options: { label: string; name?: string; id?: string }[];
-  /** The ambiguous query text, so the client can pass `resolved`. */
-  query?: string;
-  usage: ReportCard["usage"];
+  /** id = pick a place; category = pick an answer type; question = ask this example instead. */
+  options: { label: string; id?: string; category?: Category; question?: string }[];
+  query?: string | null;
+  category?: Category | null;
+  slots?: Slots | null;
   trace: TraceEntry[];
 }
 
