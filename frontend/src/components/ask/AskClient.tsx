@@ -58,6 +58,8 @@ export default function AskClient() {
   const [mode, setMode] = useState<Mode>("year");
   const [keyState, setKeyState] = useState<KeyState>({ key: "", store: null, demo: false, provider: "anthropic", model: DEFAULT_MODELS.anthropic });
   const [busy, setBusy] = useState(false);
+  const [steps, setSteps] = useState<string[]>([]);
+  const [secs, setSecs] = useState(0);
   const [report, setReport] = useState<ReportCard | null>(null);
   const [clarify, setClarify] = useState<{ c: ClarifyResponse; req: AskRequest } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -98,14 +100,20 @@ export default function AskClient() {
       return;
     }
     setBusy(true);
+    setSteps([]);
+    setSecs(0);
+    const t0 = Date.now();
+    const timer = setInterval(() => setSecs(Math.floor((Date.now() - t0) / 1000)), 1000);
     try {
-      const out = await ask({ ...req, model: keyState.model, provider: keyState.provider }, keyState.key, keyState.demo);
+      const out = await ask({ ...req, model: keyState.model, provider: keyState.provider }, keyState.key, keyState.demo,
+        (t) => setSteps((s) => [...s, t]));
       if (out.kind === "report") setReport(out.report);
       else { setReport(null); setClarify({ c: out, req }); }
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "Something went wrong. Please try again.");
     } finally {
+      clearInterval(timer);
       setBusy(false);
     }
   }
@@ -177,7 +185,18 @@ export default function AskClient() {
 
       {/* Result area */}
       <div ref={resultRef} aria-live="polite" className="flex flex-col gap-4 scroll-mt-24">
-        {busy && <p className="rounded-xl bg-surface p-4 text-sm shadow-card" role="status">Looking up the index values and writing the answer…</p>}
+        {busy && (
+          <div className="w-full max-w-3xl rounded-xl bg-surface p-4 text-left text-sm shadow-card" role="status" aria-live="polite">
+            <p className="font-semibold">Working on it… {secs}s</p>
+            <ol className="mt-2 flex flex-col gap-1">
+              {steps.map((t, i) => (
+                <li key={i} className={i === steps.length - 1 ? "text-foreground" : "text-foreground/60"}>
+                  <span aria-hidden>{i === steps.length - 1 ? "⏳" : "✓"}</span> {t}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
         {error && <p role="alert" className="rounded-xl border border-rose-600/30 bg-rose-600/10 p-4 text-sm text-rose-800">{error}</p>}
         {clarify && (
           <div className="rounded-xl border border-accent/40 bg-surface p-5 shadow-card">

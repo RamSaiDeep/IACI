@@ -71,8 +71,31 @@ async function parse<T>(res: Response): Promise<T> {
   return json as T;
 }
 
-export async function ask(request: AskRequest, key: string, mock: boolean): Promise<AskResponse> {
-  return parse<AskResponse>(await post({ request, mock }, key));
+export async function ask(request: AskRequest, key: string, mock: boolean, onProgress?: (text: string) => void): Promise<AskResponse> {
+  const res = await post({ request, mock, stream: true }, key);
+  if (!res.ok || !res.body) return parse<AskResponse>(res); // validation errors come back as plain JSON
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = "";
+  let result: AskResponse | null = null;
+  const handle = (line: string) => {
+    if (!line.trim()) return;
+    const m = JSON.parse(line) as { progress?: string; result?: AskResponse; error?: { code?: string; message?: string } };
+    if (m.progress) onProgress?.(m.progress);
+    if (m.result) result = m.result;
+    if (m.error) throw new ApiError(m.error.code ?? "internal", m.error.message ?? "Something went wrong. Please try again.");
+  };
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const lines = buf.split("\n");
+    buf = lines.pop() ?? "";
+    lines.forEach(handle);
+  }
+  handle(buf);
+  if (!result) throw new ApiError("internal", "The answer was cut off. Please try again.");
+  return result;
 }
 
 export async function testKey(key: string, provider: string, model: string, mock: boolean): Promise<void> {

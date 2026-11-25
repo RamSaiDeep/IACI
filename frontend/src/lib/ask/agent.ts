@@ -217,8 +217,9 @@ function parseNarrative(block: ContentBlock | undefined, textFallback: string): 
   return { headline: headline.trim(), sections, followups };
 }
 
-export async function runAsk(req: AskRequest, provider: LLMProvider): Promise<AskResponse> {
-  const ctx: Ctx = { trace: [], results: [] };
+export async function runAsk(req: AskRequest, provider: LLMProvider, onProgress?: (text: string) => void): Promise<AskResponse> {
+  const emit = (t: string) => onProgress?.(t);
+  const ctx: Ctx = { trace: [], results: [], emit };
   const usage: Usage = { calls: 0, inputTokens: 0, outputTokens: 0 };
   const fail = (): TraceEntry[] => ctx.trace;
 
@@ -230,6 +231,7 @@ export async function runAsk(req: AskRequest, provider: LLMProvider): Promise<As
 
     if (req.mode !== "free") {
       // Guided: our code plans; the model only writes prose.
+      emit(`Looking up the index values for your ${req.mode} request`);
       const built = buildReport(ctx, guidedToBuildArgs(req), req);
       planned = built.planned; placeId = built.placeId;
       messages.push({ role: "user", content: userPrompt(req, planned) });
@@ -238,6 +240,7 @@ export async function runAsk(req: AskRequest, provider: LLMProvider): Promise<As
       messages.push({ role: "user", content: freePrompt(req) });
       let finalText = "";
       for (let turn = 0; turn < MAX_TURNS && !planned; turn++) {
+        emit(turn === 0 ? `Asking ${provider.model} to understand your question` : `${provider.model} is deciding what to look up next`);
         const res = await provider.complete({ system: SYSTEM + "\n\n" + FEATURE_GUIDE, messages, tools: [...dataTools(), ...CONTROL_TOOLS], maxTokens: 1500 });
         addUsage(usage, res);
         messages.push({ role: "assistant", content: res.content });
@@ -250,6 +253,7 @@ export async function runAsk(req: AskRequest, provider: LLMProvider): Promise<As
         for (const u of uses) {
           if (u.name === "ask_clarification") throw new Clarify(String(u.input.question ?? "Could you clarify your question?"), []);
           if (u.name === "build_report") {
+            emit(`Building the ${String((u.input as { feature?: string }).feature ?? "")} report from the data`);
             const built = buildReport(ctx, u.input as unknown as BuildArgs, req);
             planned = built.planned; placeId = built.placeId; news = !!(u.input as { news?: boolean }).news;
             results.push({ type: "tool_result", tool_use_id: u.id, content: JSON.stringify(planned.forModel) });
@@ -265,14 +269,17 @@ export async function runAsk(req: AskRequest, provider: LLMProvider): Promise<As
 
     // ---- narrative --------------------------------------------------------
     const allowed = allowedNumbers(ctx.results, planned.forModel, req.params, [new Date().getFullYear()]);
+    emit(`${provider.model} is writing the answer from the calculated figures`);
     let narrative = await getNarrative(provider, messages, planned, usage, req.mode === "free");
     let status: ReportCard["grounding"]["status"] = "verified";
     const removed: string[] = [];
 
     const texts = () => [narrative.headline, ...Object.values(narrative.sections)];
+    emit("Checking every number in the text against the data");
     let bad = texts().flatMap((t) => ungroundedNumbers(t, allowed));
     if (bad.length) {
       // One regeneration with feedback, then strip what is still ungrounded.
+      emit(`Some numbers in the text did not match the data (${[...new Set(bad)].join(", ")}); asking for a rewrite`);
       narrative = await getNarrative(provider, messages, planned, usage, req.mode === "free",
         `These numbers do not appear in the tool results: ${[...new Set(bad)].join(", ")}. Rewrite the prose using only numbers from the results (or none).`);
       bad = texts().flatMap((t) => ungroundedNumbers(t, allowed));
@@ -291,6 +298,7 @@ export async function runAsk(req: AskRequest, provider: LLMProvider): Promise<As
     narrative.followups = narrative.followups.filter((f) => !ungroundedNumbers(f, allowed).length);
     if (!narrative.headline) narrative.headline = "See the figures below.";
 
+    emit("Assembling the report");
     const { sections, notes } = assemble(planned, narrative, { placeId, news });
     const report: ReportCard = {
       feature: planned.feature, title: planned.title, subtitle: planned.subtitle, country: planned.country,

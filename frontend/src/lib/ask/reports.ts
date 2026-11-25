@@ -44,13 +44,17 @@ export interface Ctx {
   trace: TraceEntry[];
   /** Every full tool result, for grounding. */
   results: unknown[];
+  /** Live progress line for the UI (optional). */
+  emit?: (text: string) => void;
 }
 
 export function call(ctx: Ctx, name: string, args: Record<string, unknown>): Obj {
   const result = runTool(name, args) as Obj;
   const ok = !(result && typeof result === "object" && "error" in result);
   ctx.results.push(result);
-  ctx.trace.push({ name, args, ok, summary: summarise(name, result) });
+  const summary = summarise(name, result);
+  ctx.trace.push({ name, args, ok, summary });
+  ctx.emit?.(`Calculated ${name.replace(/_/g, " ")}: ${summary}`);
   return result;
 }
 

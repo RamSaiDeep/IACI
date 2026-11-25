@@ -19,7 +19,7 @@ const noStore = { "Cache-Control": "no-store" };
 export async function POST(req: Request) {
   const key = req.headers.get("x-llm-key");
   try {
-    const body = (await req.json()) as { action?: string; request?: AskRequest; model?: string; provider?: string; mock?: boolean };
+    const body = (await req.json()) as { action?: string; request?: AskRequest; model?: string; provider?: string; mock?: boolean; stream?: boolean };
 
     if (body.action === "test-key") {
       const provider = makeProvider({ key, provider: body.provider, model: body.model, mock: body.mock });
@@ -34,16 +34,33 @@ export async function POST(req: Request) {
     if (r.mode === "free" && !r.question?.trim()) throw new AskError("bad_request", "Type a question first.");
 
     const provider = makeProvider({ key, provider: r.provider ?? body.provider, model: r.model ?? body.model, mock: body.mock });
+    if (body.stream) {
+      // NDJSON: {progress} lines while working, then one {result} or {error} line.
+      const enc = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(ctl) {
+          const send = (o: unknown) => ctl.enqueue(enc.encode(JSON.stringify(o) + "\n"));
+          try {
+            send({ progress: "Request received" });
+            send({ result: await runAsk(r, provider, (text) => send({ progress: text })) });
+          } catch (e) {
+            send({ error: errorBody(e).body.error });
+          }
+          ctl.close();
+        },
+      });
+      return new Response(stream, { headers: { "Content-Type": "application/x-ndjson", ...noStore } });
+    }
     const out = await runAsk(r, provider);
     return NextResponse.json(out, { headers: noStore });
   } catch (e) {
-    if (e instanceof AskError) {
-      return NextResponse.json({ error: { code: e.code, message: e.message } }, { status: e.status, headers: noStore });
-    }
-    // Deliberately no logging of the error object: it could carry request data.
-    return NextResponse.json(
-      { error: { code: "internal", message: "Something went wrong while building the answer. Please try again." } },
-      { status: 500, headers: noStore }
-    );
+    const { body, status } = errorBody(e);
+    return NextResponse.json(body, { status, headers: noStore });
   }
+}
+
+function errorBody(e: unknown) {
+  if (e instanceof AskError) return { body: { error: { code: e.code, message: e.message } }, status: e.status };
+  // Deliberately no logging of the error object: it could carry request data.
+  return { body: { error: { code: "internal", message: "Something went wrong while building the answer. Please try again." } }, status: 500 };
 }
