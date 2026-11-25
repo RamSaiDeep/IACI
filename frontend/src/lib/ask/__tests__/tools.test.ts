@@ -130,3 +130,12 @@ describe("rank, trend, compare, neighbours", () => {
     expect(names.length).toBeGreaterThanOrEqual(3);
   });
 });
+
+describe("place matching inside long official names", () => {
+  it("nellore finds Sri Potti Sriramulu Nellore, not Vellore", async () => {
+    const { findPlaces } = await import("../data");
+    const m = findPlaces("Nellore", ["india"]);
+    expect(m.map((x) => x.place.name.toLowerCase())).toEqual(expect.arrayContaining([expect.stringContaining("nellore")]));
+    expect(m.every((x) => x.how !== "fuzzy")).toBe(true);
+  });
+});

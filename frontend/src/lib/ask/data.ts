@@ -191,7 +191,7 @@ function editDistance(a: string, b: string): number {
 export interface PlaceMatch {
   place: Place;
   /** exact | alias | prefix | fuzzy */
-  how: "exact" | "alias" | "prefix" | "fuzzy";
+  how: "exact" | "alias" | "prefix" | "word" | "fuzzy";
 }
 
 /** All candidate places for a free-text name, best first. */
@@ -206,6 +206,8 @@ export function findPlaces(query: string, countries: CountrySlug[]): PlaceMatch[
       const n = norm(p.name);
       if (n === q) out.push({ place: p, how: alias ? "alias" : "exact" });
       else if (q.length >= 4 && (n.startsWith(q + " ") || n.startsWith(q))) out.push({ place: p, how: "prefix" });
+      // Whole words inside a longer official name ("nellore" -> "Sri Potti Sriramulu Nellore").
+      else if (q.length >= 4 && ` ${n} `.includes(` ${q} `)) out.push({ place: p, how: "word" });
     }
   }
   if (out.length) return out;
