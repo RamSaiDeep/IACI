@@ -50,12 +50,29 @@ export class AskError extends Error {
   }
 }
 
-/** Approximate USD per million tokens (input, output) - Anthropic list prices, checked Nov 2026. */
-export const MODELS: { id: string; label: string; inPerM: number; outPerM: number }[] = [
-  { id: "claude-sonnet-5-5", label: "Claude Sonnet 5.5 (default)", inPerM: 2, outPerM: 10 },
-  { id: "claude-haiku-5-5", label: "Claude Haiku 5.5 (cheapest)", inPerM: 0.1, outPerM: 0.5 },
-  { id: "claude-opus-5-5", label: "Claude Opus 5.5", inPerM: 4, outPerM: 20 },
-  { id: "claude-fable-5-2", label: "Claude Fable 5.2 (most capable)", inPerM: 8, outPerM: 40 },
+export type ProviderId = "anthropic" | "gemini" | "openrouter";
+
+export const PROVIDER_LABELS: Record<ProviderId, string> = {
+  anthropic: "Anthropic",
+  gemini: "Google Gemini",
+  openrouter: "OpenRouter",
+};
+
+/**
+ * Approximate USD per million tokens (input, output). Anthropic list prices checked Nov 2026;
+ * Gemini / OpenRouter figures are approximate, so verify before relying on them. The model id decides the provider.
+ */
+export const MODELS: { id: string; provider: ProviderId; label: string; inPerM: number; outPerM: number }[] = [
+  { id: "claude-sonnet-5-5", provider: "anthropic", label: "Anthropic: Claude Sonnet 5.5 (default)", inPerM: 2, outPerM: 10 },
+  { id: "claude-haiku-5-5", provider: "anthropic", label: "Anthropic: Claude Haiku 5.5 (cheapest)", inPerM: 0.1, outPerM: 0.5 },
+  { id: "claude-opus-5-5", provider: "anthropic", label: "Anthropic: Claude Opus 5.5", inPerM: 4, outPerM: 20 },
+  { id: "claude-fable-5-2", provider: "anthropic", label: "Anthropic: Claude Fable 5.2 (most capable)", inPerM: 8, outPerM: 40 },
+  { id: "gemini-2.5-flash", provider: "gemini", label: "Google Gemini 2.5 Flash (free tier available)", inPerM: 0.3, outPerM: 2.5 },
+  { id: "gemini-2.5-flash-lite", provider: "gemini", label: "Google Gemini 2.5 Flash-Lite (cheapest)", inPerM: 0.1, outPerM: 0.4 },
+  { id: "gemini-2.5-pro", provider: "gemini", label: "Google Gemini 2.5 Pro", inPerM: 1.25, outPerM: 10 },
+  { id: "google/gemini-2.5-flash", provider: "openrouter", label: "OpenRouter: Gemini 2.5 Flash", inPerM: 0.3, outPerM: 2.5 },
+  { id: "openai/gpt-4o-mini", provider: "openrouter", label: "OpenRouter: GPT-4o mini", inPerM: 0.15, outPerM: 0.6 },
+  { id: "meta-llama/llama-3.3-70b-instruct:free", provider: "openrouter", label: "OpenRouter: Llama 3.3 70B (free)", inPerM: 0, outPerM: 0 },
 ];
 export const DEFAULT_MODEL = "claude-sonnet-5-5";
 

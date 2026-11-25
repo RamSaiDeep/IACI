@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { forgetKey, saveKey, saveModel, testKey, type KeyStore } from "../../lib/ask/client";
-import { MODELS } from "../../lib/ask/providers/types";
+import { MODELS, PROVIDER_LABELS } from "../../lib/ask/providers/types";
+
+const KEY_HELP = {
+  anthropic: { url: "https://console.anthropic.com/settings/keys", hint: "sk-ant-…" },
+  gemini: { url: "https://aistudio.google.com/apikey", hint: "AIza…" },
+  openrouter: { url: "https://openrouter.ai/keys", hint: "sk-or-…" },
+} as const;
 
 export interface KeyState { key: string; store: KeyStore; demo: boolean; model: string }
 
@@ -15,6 +21,8 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
   const [testing, setTesting] = useState(false);
 
   const connected = !!state.key || state.demo;
+  const prov = MODELS.find((m) => m.id === state.model)?.provider ?? "anthropic";
+  const help = KEY_HELP[prov];
 
   const test = async () => {
     const key = draft.trim() || state.key;
@@ -52,7 +60,7 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
         </span>
       </div>
       <p className="mt-1 text-sm text-foreground/70">
-        Answers are written by an AI model using <strong>your own</strong> Anthropic key, so we never pay for or hold your usage.
+        Answers are written by an AI model using <strong>your own</strong> {PROVIDER_LABELS[prov]} key (Anthropic, Google Gemini or OpenRouter: pick a model below), so we never pay for or hold your usage.
         Without a key you can still explore the starting points and forms below.
       </p>
 
@@ -60,7 +68,7 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
         <div className="flex flex-col gap-1">
           <label htmlFor="llm-key" className="text-sm font-medium">API key</label>
           <input id="llm-key" type="password" autoComplete="off" spellCheck={false} value={draft} onChange={(e) => setDraft(e.target.value)}
-            placeholder={state.key ? "Key saved. Paste a new one to replace it" : "sk-ant-…"}
+            placeholder={state.key ? "Key saved. Paste a new one to replace it" : help.hint}
             className="min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 font-mono text-sm" />
         </div>
         <div className="flex gap-2">
@@ -82,7 +90,7 @@ export default function KeyPanel({ state, onChange }: { state: KeyState; onChang
             className="min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 text-sm">
             {MODELS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
           </select>
-          <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-2">
+          <a href={help.url} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-2">
             How to get a key
           </a>
           {ALLOW_DEMO && (

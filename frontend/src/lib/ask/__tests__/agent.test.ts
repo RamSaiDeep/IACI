@@ -167,3 +167,16 @@ describe("API key hygiene", () => {
     }
   });
 });
+
+import { toOpenAIMessages } from "../providers/openai-compat";
+describe("toOpenAIMessages", () => {
+  it("maps tool_use / tool_result to OpenAI tool_calls / tool messages", () => {
+    const out = toOpenAIMessages("sys", [
+      { role: "user", content: "hi" },
+      { role: "assistant", content: [{ type: "text", text: "ok" }, { type: "tool_use", id: "a1", name: "t", input: { x: 1 } }] },
+      { role: "user", content: [{ type: "tool_result", tool_use_id: "a1", content: "done" }] },
+    ]);
+    expect(out[2]).toMatchObject({ role: "assistant", tool_calls: [{ id: "a1", function: { name: "t", arguments: '{"x":1}' } }] });
+    expect(out[3]).toEqual({ role: "tool", tool_call_id: "a1", content: "done" });
+  });
+});
