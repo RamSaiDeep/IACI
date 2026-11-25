@@ -17,7 +17,7 @@ from .categories.common import Clarify, Ctx, UserError
 from .errors import AskError
 from .grounding import allowed_numbers, strip_attribution, strip_ungrounded, ungrounded
 from .labels import BASELINE, COUNTRY_INFO, COUNTRY_SLUGS, DATA_SOURCE, STANDARD_CAVEATS
-from .router import Usage, classify, extract
+from .router import WAIT_NOTICE, Usage, classify, extract
 from .writer import Writer
 
 OUT_OF_SCOPE = ("I can only answer questions about climate extremes in the Actuaries Climate Index for India, the UK "
@@ -38,6 +38,7 @@ async def run_ask(body: dict, key: str | None, emit: Callable[[str], None]) -> d
     previous = body.get("previous") or None
     ctx = Ctx(country=country, resolved={k.lower(): v for k, v in (body.get("resolved") or {}).items()}, emit=emit)
     usage = Usage()
+    WAIT_NOTICE.set(emit)
     writer: Writer | None = None
     topic = None
     if category and category not in CATEGORIES:

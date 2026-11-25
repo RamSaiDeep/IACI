@@ -8,6 +8,8 @@ from __future__ import annotations
 import asyncio
 import datetime as dt
 import json
+from contextvars import ContextVar
+from typing import Callable
 
 import httpx
 
@@ -44,23 +46,28 @@ class Usage:
                 "models": [config.ROUTER_MODEL, config.EXTRACT_MODEL]}
 
 
+# Progress callback for the current request (set by the pipeline), so a rate-limit wait is visible to the visitor.
+WAIT_NOTICE: ContextVar[Callable[[str], None]] = ContextVar("WAIT_NOTICE", default=lambda _t: None)
+
+
 async def _post(client: httpx.AsyncClient, path: str, body: dict, model: str) -> dict:
     key = config.gateway_key()
     if not key:
         raise AskError("internal", "The site's AI Gateway key is not configured on the server.", 500)
-    for attempt in range(2):
+    for attempt in range(3):
         try:
             r = await client.post(f"{config.GATEWAY_URL}{path}", json=body, timeout=60,
                                   headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
         except httpx.HTTPError:
             raise AskError("model_error", "Could not reach the AI Gateway. Try again shortly.", 502)
-        if r.status_code != 429 or attempt:
+        if r.status_code != 429 or attempt == 2:
             break
-        # shortcut: one retry after Retry-After (max 5 s); add a queue if traffic grows
+        # shortcut: wait out the limit (Mammoth-1 allows 5 requests/minute per team); swap for a fallback model later
         try:
-            wait = min(float(r.headers.get("retry-after", "2")), 5.0)
+            wait = min(float(r.headers.get("retry-after", "10")), 65.0)
         except ValueError:
-            wait = 2.0
+            wait = 10.0
+        WAIT_NOTICE.get()(f"The question router is busy (limit of 5 questions a minute); waiting about {round(wait)} s, then retrying")
         await asyncio.sleep(wait)
     if r.status_code >= 400:
         try:

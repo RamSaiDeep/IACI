@@ -111,3 +111,28 @@ def test_parse_narrative_tolerates_prose_around_json():
     n = parse_narrative('Sure! {"headline": "H", "sections": {"a": "A", "zz": "drop"}, "followups": ["q"]} thanks',
                         {"a": "hint"})
     assert n == {"headline": "H", "sections": {"a": "A"}, "followups": ["q"]}
+
+
+def test_rate_limit_is_waited_out_with_a_notice(monkeypatch):
+    import httpx
+    from ask_api import router
+
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        if len(calls) == 1:
+            return httpx.Response(429, headers={"retry-after": "0"}, json={"error": {"message": "limit"}})
+        return httpx.Response(200, json={"answers": [{"name": "unrelated", "probability": 0.01},
+                                                     {"name": "category", "choice": "trend", "confidence": 0.9}]})
+
+    async def go():
+        notes = []
+        router.WAIT_NOTICE.set(notes.append)
+        monkeypatch.setattr(router.config, "gateway_key", lambda: "test")
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as c:
+            out = await router.classify(c, "Is heat rising in Guntur?", "india", None, router.Usage())
+        return out, notes
+
+    out, notes = asyncio.run(go())
+    assert out["category"] == "trend" and len(calls) == 2 and "busy" in notes[0]

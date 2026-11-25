@@ -54,6 +54,6 @@ Then `npm run dev` in `frontend` and open /ask. Set `NEXT_PUBLIC_ASK_API_URL` if
 ## Open points
 
 - **Mammoth-1 is limited to 5 requests per minute for the whole team** (gateway header `X-Ratelimit-Limit-Requests: 5`).
-  The backend retries once (max 5 s) and then shows "rate-limiting". Needs a decision before public launch.
+  For now the backend waits out the limit (up to 65 s, twice) and tells the visitor it is waiting. Fallback model or higher limit still to decide before public launch.
 - Hosting the FastAPI service (not deployed; no hosting changes made).
 - The old TypeScript `/api/ask` route and its tools were removed; the browser now talks only to the Python service.
