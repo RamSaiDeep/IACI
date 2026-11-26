@@ -88,6 +88,9 @@ PLACE_ALIASES: dict[str, list[str]] = {
     "chikmagalur": ["chikkamagaluru"], "bijapur": ["vijayapura", "bijapur"], "mohali": ["sas nagar sahibzada ajit singh nagar"],
     "nawanshahr": ["shahid bhagat singh nagar"], "ropar": ["rupnagar"], "muktsar": ["sri muktsar sahib"],
     "mewat": ["nuh"], "noida": ["gautam buddha nagar"], "greater noida": ["gautam buddha nagar"],
+    # Official (LGD) spellings that differ from ours
+    "south salmara mancachar": ["south salmara"], "dinajpur uttar": ["uttar dinajpur"],
+    "dinajpur dakshin": ["dakshin dinajpur"], "east nimar": ["khandwa"], "karimganj": ["sribhumi"],
     "cooch behar": ["koch bihar"], "coochbehar": ["koch bihar"], "purnea": ["purnia"],
     "kanchipuram": ["kancheepuram"], "bhadohi": ["bhadohi"], "sant ravidas nagar": ["bhadohi"],
     "lakhimpur kheri": ["kheri"], "kadapa": ["y s r"], "cuddapah": ["y s r"], "ysr": ["y s r"],

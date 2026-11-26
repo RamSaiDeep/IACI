@@ -459,9 +459,13 @@ The loop itself is plain Python with no framework: roughly 80–100 lines.
 | File | Change |
 |---|---|
 | `ask_api/agent.py` (new) | The loop: messages, tool dispatch, step limits, finishing tools |
-| `ask_api/tools.py` (new) | Tool definitions (name, description, JSON schema) and their Python functions |
-| `ask_api/places.py` (new) | `find_place`: alternative names, Bharatlas lookup, LGD code table, cache |
-| `ask_api/data/lgd_districts.csv` (new) | LGD district code → our district id |
+| `ask_api/tools/` (new) | One module per tool group; tool definitions (name, description, JSON schema) sit next to their functions |
+| `ask_api/tools/places.py` (built) | `find_place`: our names and aliases, then Bharatlas, then "not found" |
+| `ask_api/tools/resolve.py` (built) | `resolve_hazard`, `resolve_period`, `data_coverage` |
+| `ask_api/bharatlas.py` (built) | Bharatlas REST client with cache and timeout |
+| `ask_api/geo.py` (built) | Our district boundaries: which district contains a point |
+| `ask_api/reference/lgd_districts.csv` (built) | LGD and Census 2011 district codes → our district id, built by `backend/build_lgd_crosswalk.py` |
+| `backend/README.md` (built) | Map of every backend file |
 | `ask_api/providers.py` (new) | The two tool-calling adapters; key handling and errors shared with `writer.py` |
 | `ask_api/pipeline.py` | Free-text questions go gate → agent; the four forms keep their fast direct path |
 | `ask_api/categories/*` | `run()` logic moves into tools; `assemble()` reused to build tables and charts |

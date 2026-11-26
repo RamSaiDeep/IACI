@@ -1,0 +1,787 @@
+# Bharatlas LGD districts -> IACI district ids. Source: bharatlas.com lgd_districts (CC0-1.0 / CC-BY-4.0), release bharatlas-cw-2026.11. Built by backend/build_lgd_crosswalk.py.
+dist_lgd,dtcode11,lgd_name,lgd_state,place_id,match
+0,992,Muzaffarabad,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/MUZAFFARABAD,name
+0,991,Mirpur,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/MIRPUR,name
+1,014,Anantnag,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/ANANTNAG,name
+2,002,Budgam,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/BADGAM,inside
+3,008,Baramulla,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/BARAMULA,inside
+4,016,Doda,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/DODA,name
+5,021,Jammu,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/JAMMU,name
+6,004,Kargil,LADAKH,india/district/LADAKH/KARGIL,name
+7,007,Kathua,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/KATHUA,name
+8,001,Kupwara,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/KUPWARA,name
+9,003,Leh Ladakh,LADAKH,india/district/LADAKH/LEH,inside
+10,005,Poonch,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/PUNCH,inside
+11,012,Pulwama,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/PULWAMA,name
+12,006,Rajouri,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/RAJAURI,inside
+13,010,Srinagar,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/SRINAGAR,name
+14,019,Udhampur,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/UDHAMPUR,name
+15,030,Bilaspur,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/BIL>SPUR,name
+16,023,Chamba,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/CHAMBA,name
+17,028,Hamirpur,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/HAM|RPUR,name
+18,024,Kangra,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/K>NGRA,name
+19,034,Kinnaur,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/KINNAUR,name
+20,026,Kullu,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/KULLU,name
+21,025,Lahul And Spiti,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/LAHUL & SPITI,name
+22,027,Mandi,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/MANDI,name
+23,033,Shimla,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/SHIMLA,name
+24,032,Sirmaur,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/SIRMAUR,name
+25,031,Solan,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/SOLAN,name
+26,029,Una,HIMACHAL PRADESH,india/district/HIMACHAL PRADESH/UNA,name
+27,049,Amritsar,PUNJAB,india/district/PUNJAB/AMRITSAR,name
+28,046,Bathinda,PUNJAB,india/district/PUNJAB/BATHINDA,name
+29,045,Faridkot,PUNJAB,india/district/PUNJAB/FARIDKOT,name
+30,040,Fatehgarh Sahib,PUNJAB,india/district/PUNJAB/FATEHGARH SAHIB,name
+31,043,Ferozepur,PUNJAB,india/district/PUNJAB/FIROZPUR,inside
+32,035,Gurdaspur,PUNJAB,india/district/PUNJAB/GURDASPUR,name
+33,038,Hoshiarpur,PUNJAB,india/district/PUNJAB/HOSHIARPUR,name
+34,037,Jalandhar,PUNJAB,india/district/PUNJAB/JALANDHAR,name
+35,036,Kapurthala,PUNJAB,india/district/PUNJAB/KAPURTHALA,name
+36,041,Ludhiana,PUNJAB,india/district/PUNJAB/LUDHIANA,name
+37,047,Mansa,PUNJAB,india/district/PUNJAB/MANSA,name
+38,042,Moga,PUNJAB,india/district/PUNJAB/MOGA,name
+39,044,Sri Muktsar Sahib,PUNJAB,india/district/PUNJAB/SRI MUKTSAR SAHIB,name
+40,039,Shahid Bhagat Singh Nagar,PUNJAB,india/district/PUNJAB/SHAHID BHAGAT SINGH NAGAR,name
+41,048,Patiala,PUNJAB,india/district/PUNJAB/PATIALA,name
+42,051,Rupnagar,PUNJAB,india/district/PUNJAB/RUPNAGAR,name
+43,053,Sangrur,PUNJAB,india/district/PUNJAB/SANGRUR,name
+44,055,Chandigarh,CHANDIGARH,india/district/CHANDIGARH/CHANDIGARH,name
+45,064,Almora,UTTARAKHAND,india/district/UTTARAKHAND/ALMORA,name
+46,063,Bageshwar,UTTARAKHAND,india/district/UTTARAKHAND/B>GESHWAR,name
+47,057,Chamoli,UTTARAKHAND,india/district/UTTARAKHAND/CHAMOLI,name
+48,065,Champawat,UTTARAKHAND,india/district/UTTARAKHAND/CHAMP>WAT,name
+49,060,Dehradun,UTTARAKHAND,india/district/UTTARAKHAND/DEHRAD@N,name
+50,068,Haridwar,UTTARAKHAND,india/district/UTTARAKHAND/HARIDW>R,name
+51,066,Nainital,UTTARAKHAND,india/district/UTTARAKHAND/NAINIT>L,name
+52,061,Pauri Garhwal,UTTARAKHAND,india/district/UTTARAKHAND/PAURI GARHW>L,name
+53,062,Pithoragarh,UTTARAKHAND,india/district/UTTARAKHAND/PITHOR>GARH,name
+54,058,Rudra Prayag,UTTARAKHAND,india/district/UTTARAKHAND/RUDRAPRAY>G,inside
+55,059,Tehri Garhwal,UTTARAKHAND,india/district/UTTARAKHAND/TEHRI GARHW>L,name
+56,067,Udam Singh Nagar,UTTARAKHAND,india/district/UTTARAKHAND/UDHAM SINGH NAGAR,inside
+57,056,Uttar Kashi,UTTARAKHAND,india/district/UTTARAKHAND/UTTARK>SHI,inside
+58,070,Ambala,HARYANA,india/district/HARYANA/AMBALA,name
+59,081,Bhiwani,HARYANA,india/district/HARYANA/BHIWANI,name
+60,088,Faridabad,HARYANA,india/district/HARYANA/FARIDABAD,name
+61,078,Fatehabad,HARYANA,india/district/HARYANA/FATEHABAD,name
+62,086,Gurugram,HARYANA,india/district/HARYANA/GURUGRAM,name
+63,080,Hisar,HARYANA,india/district/HARYANA/HISAR,name
+64,083,Jhajjar,HARYANA,india/district/HARYANA/JHAJJAR,name
+65,077,Jind,HARYANA,india/district/HARYANA/JIND,name
+66,073,Kaithal,HARYANA,india/district/HARYANA/KAITHAL,name
+67,074,Karnal,HARYANA,india/district/HARYANA/KARNAL,name
+68,072,Kurukshetra,HARYANA,india/district/HARYANA/KURUKSHETRA,name
+69,084,Mahendragarh,HARYANA,india/district/HARYANA/MAHENDRAGARH,name
+70,069,Panchkula,HARYANA,india/district/HARYANA/PANCHKULA,name
+71,075,Panipat,HARYANA,india/district/HARYANA/PANIPAT,name
+72,085,Rewari,HARYANA,india/district/HARYANA/REWARI,name
+73,082,Rohtak,HARYANA,india/district/HARYANA/ROHTAK,name
+74,079,Sirsa,HARYANA,india/district/HARYANA/SIRSA,name
+75,076,Sonipat,HARYANA,india/district/HARYANA/SONIPAT,name
+76,071,Yamunanagar,HARYANA,india/district/HARYANA/YAMUNANAGAR,name
+77,095,Central,DELHI,india/district/DELHI/CENTRAL,name
+78,093,East,DELHI,india/district/DELHI/EAST,name
+79,094,New Delhi,DELHI,india/district/DELHI/NEW DELHI,name
+80,091,North,DELHI,india/district/DELHI/NORTH,name
+81,092,North East,DELHI,india/district/DELHI/NORTH EAST,name
+82,090,North West,DELHI,india/district/DELHI/NORTH WEST,name
+83,098,South,DELHI,india/district/DELHI/SOUTH,name
+84,097,South West,DELHI,india/district/DELHI/SOUTH WEST,name
+85,096,West,DELHI,india/district/DELHI/WEST,name
+86,119,Ajmer,RAJASTHAN,india/district/RAJASTHAN/AJMER,name
+87,104,Alwar,RAJASTHAN,india/district/RAJASTHAN/ALWAR,name
+88,125,Banswara,RAJASTHAN,india/district/RAJASTHAN/BANSWARA,name
+89,128,Baran,RAJASTHAN,india/district/RAJASTHAN/BARAN,name
+90,115,Barmer,RAJASTHAN,india/district/RAJASTHAN/BARMER,name
+91,105,Bharatpur,RAJASTHAN,india/district/RAJASTHAN/BHARATPUR,name
+92,122,Bhilwara,RAJASTHAN,india/district/RAJASTHAN/BHILWARA,name
+93,101,Bikaner,RAJASTHAN,india/district/RAJASTHAN/BIKANER,name
+94,121,Bundi,RAJASTHAN,india/district/RAJASTHAN/BUNDI,name
+95,126,Chittorgarh,RAJASTHAN,india/district/RAJASTHAN/CHITTAURGARH,inside
+96,102,Churu,RAJASTHAN,india/district/RAJASTHAN/CHURU,name
+97,109,Dausa,RAJASTHAN,india/district/RAJASTHAN/DAUSA,name
+98,106,Dholpur,RAJASTHAN,india/district/RAJASTHAN/DHAULPUR,inside
+99,124,Dungarpur,RAJASTHAN,india/district/RAJASTHAN/DUNGARPUR,name
+100,099,Ganganagar,RAJASTHAN,india/district/RAJASTHAN/GANGANAGAR,name
+101,100,Hanumangarh,RAJASTHAN,india/district/RAJASTHAN/HANUMANGARH,name
+102,110,Jaipur,RAJASTHAN,india/district/RAJASTHAN/JAIPUR,name
+103,114,Jaisalmer,RAJASTHAN,india/district/RAJASTHAN/JAISALMER,name
+104,116,Jalore,RAJASTHAN,india/district/RAJASTHAN/JALOR,inside
+105,129,Jhalawar,RAJASTHAN,india/district/RAJASTHAN/JHALAWAR,name
+106,103,Jhunjhunu,RAJASTHAN,india/district/RAJASTHAN/JHUNJHUNUN,name
+107,113,Jodhpur,RAJASTHAN,india/district/RAJASTHAN/JODHPUR,name
+108,107,Karauli,RAJASTHAN,india/district/RAJASTHAN/KARAULI,name
+109,127,Kota,RAJASTHAN,india/district/RAJASTHAN/KOTA,name
+110,112,Nagaur,RAJASTHAN,india/district/RAJASTHAN/NAGAUR,name
+111,118,Pali,RAJASTHAN,india/district/RAJASTHAN/PALI,name
+112,123,Rajsamand,RAJASTHAN,india/district/RAJASTHAN/RAJSAMAND,name
+113,108,Sawai Madhopur,RAJASTHAN,india/district/RAJASTHAN/SAWAI MADHOPUR,name
+114,111,Sikar,RAJASTHAN,india/district/RAJASTHAN/SIKAR,name
+115,117,Sirohi,RAJASTHAN,india/district/RAJASTHAN/SIROHI,name
+116,120,Tonk,RAJASTHAN,india/district/RAJASTHAN/TONK,name
+117,130,Udaipur,RAJASTHAN,india/district/RAJASTHAN/UDAIPUR,name
+118,146,Agra,UTTAR PRADESH,india/district/UTTAR PRADESH/AGRA,name
+119,143,Aligarh,UTTAR PRADESH,india/district/UTTAR PRADESH/ALIGARH,name
+120,175,Prayagraj,UTTAR PRADESH,india/district/UTTAR PRADESH/PRAYAGRAJ,name
+121,178,Ambedkar Nagar,UTTAR PRADESH,india/district/UTTAR PRADESH/AMBEDKAR NAGAR,name
+122,162,Auraiya,UTTAR PRADESH,india/district/UTTAR PRADESH/AURAIYA,name
+123,191,Azamgarh,UTTAR PRADESH,india/district/UTTAR PRADESH/AZAMGARH,name
+124,139,Baghpat,UTTAR PRADESH,india/district/UTTAR PRADESH/BAGHPAT,name
+125,180,Bahraich,UTTAR PRADESH,india/district/UTTAR PRADESH/BAHRAICH,name
+126,193,Ballia,UTTAR PRADESH,india/district/UTTAR PRADESH/BALLIA,name
+127,182,Balrampur,UTTAR PRADESH,india/district/UTTAR PRADESH/BALRAMPUR,name
+128,170,Banda,UTTAR PRADESH,india/district/UTTAR PRADESH/BANDA,name
+129,176,Barabanki,UTTAR PRADESH,india/district/UTTAR PRADESH/BARA BANKI,inside
+130,150,Bareilly,UTTAR PRADESH,india/district/UTTAR PRADESH/BAREILLY,name
+131,185,Basti,UTTAR PRADESH,india/district/UTTAR PRADESH/BASTI,name
+132,134,Bijnor,UTTAR PRADESH,india/district/UTTAR PRADESH/BIJNOR,name
+133,149,Budaun,UTTAR PRADESH,india/district/UTTAR PRADESH/BUDAUN,name
+134,142,Bulandshahr,UTTAR PRADESH,india/district/UTTAR PRADESH/BULANDSHAHR,name
+135,196,Chandauli,UTTAR PRADESH,india/district/UTTAR PRADESH/CHANDAULI,name
+136,171,Chitrakoot,UTTAR PRADESH,india/district/UTTAR PRADESH/CHITRAKOOT,name
+137,190,Deoria,UTTAR PRADESH,india/district/UTTAR PRADESH/DEORIA,name
+138,201,Etah,UTTAR PRADESH,india/district/UTTAR PRADESH/ETAH,name
+139,161,Etawah,UTTAR PRADESH,india/district/UTTAR PRADESH/ETAWAH,name
+140,177,Ayodhya,UTTAR PRADESH,india/district/UTTAR PRADESH/AYODHYA,name
+141,159,Farrukhabad,UTTAR PRADESH,india/district/UTTAR PRADESH/FARRUKHABAD,name
+142,172,Fatehpur,UTTAR PRADESH,india/district/UTTAR PRADESH/FATEHPUR,name
+143,147,Firozabad,UTTAR PRADESH,india/district/UTTAR PRADESH/FIROZABAD,name
+144,141,Gautam Buddha Nagar,UTTAR PRADESH,india/district/UTTAR PRADESH/GAUTAM BUDDHA NAGAR,name
+145,140,Ghaziabad,UTTAR PRADESH,india/district/UTTAR PRADESH/GHAZIABAD,name
+146,195,Ghazipur,UTTAR PRADESH,india/district/UTTAR PRADESH/GHAZIPUR,name
+147,183,Gonda,UTTAR PRADESH,india/district/UTTAR PRADESH/GONDA,name
+148,188,Gorakhpur,UTTAR PRADESH,india/district/UTTAR PRADESH/GORAKHPUR,name
+149,168,Hamirpur,UTTAR PRADESH,india/district/UTTAR PRADESH/HAMIRPUR,name
+150,155,Hardoi,UTTAR PRADESH,india/district/UTTAR PRADESH/HARDOI,name
+151,165,Jalaun,UTTAR PRADESH,india/district/UTTAR PRADESH/JALAUN,name
+152,194,Jaunpur,UTTAR PRADESH,india/district/UTTAR PRADESH/JAUNPUR,name
+153,166,Jhansi,UTTAR PRADESH,india/district/UTTAR PRADESH/JHANSI,name
+154,137,Amroha,UTTAR PRADESH,india/district/UTTAR PRADESH/AMROHA,name
+155,160,Kannauj,UTTAR PRADESH,india/district/UTTAR PRADESH/KANNAUJ,name
+156,163,Kanpur Dehat,UTTAR PRADESH,india/district/UTTAR PRADESH/KANPUR DEHAT,name
+157,164,Kanpur Nagar,UTTAR PRADESH,india/district/UTTAR PRADESH/KANPUR NAGAR,name
+158,174,Kaushambi,UTTAR PRADESH,india/district/UTTAR PRADESH/KAUSHAMBI,name
+159,153,Kheri,UTTAR PRADESH,india/district/UTTAR PRADESH/KHERI,name
+160,189,Kushi Nagar,UTTAR PRADESH,india/district/UTTAR PRADESH/KUSHINAGAR,inside
+161,167,Lalitpur,UTTAR PRADESH,india/district/UTTAR PRADESH/LALITPUR,name
+162,157,Lucknow,UTTAR PRADESH,india/district/UTTAR PRADESH/LUCKNOW,name
+163,144,Hathras,UTTAR PRADESH,india/district/UTTAR PRADESH/HATHRAS,name
+164,187,Maharajganj,UTTAR PRADESH,india/district/UTTAR PRADESH/MAHRAJGANJ,inside
+165,169,Mahoba,UTTAR PRADESH,india/district/UTTAR PRADESH/MAHOBA,name
+166,148,Mainpuri,UTTAR PRADESH,india/district/UTTAR PRADESH/MAINPURI,name
+167,145,Mathura,UTTAR PRADESH,india/district/UTTAR PRADESH/MATHURA,name
+168,192,Mau,UTTAR PRADESH,india/district/UTTAR PRADESH/MAU,name
+169,138,Meerut,UTTAR PRADESH,india/district/UTTAR PRADESH/MEERUT,name
+170,199,Mirzapur,UTTAR PRADESH,india/district/UTTAR PRADESH/MIRZAPUR,name
+171,135,Moradabad,UTTAR PRADESH,india/district/UTTAR PRADESH/MORADABAD,name
+172,133,Muzaffarnagar,UTTAR PRADESH,india/district/UTTAR PRADESH/MUZAFFARNAGAR,name
+173,151,Pilibhit,UTTAR PRADESH,india/district/UTTAR PRADESH/PILIBHIT,name
+174,173,Pratapgarh,UTTAR PRADESH,india/district/UTTAR PRADESH/PRATAPGARH,name
+175,158,Rae Bareli,UTTAR PRADESH,india/district/UTTAR PRADESH/RAE BARELI,name
+176,136,Rampur,UTTAR PRADESH,india/district/UTTAR PRADESH/RAMPUR,name
+177,132,Saharanpur,UTTAR PRADESH,india/district/UTTAR PRADESH/SAHARANPUR,name
+178,186,Sant Kabeer Nagar,UTTAR PRADESH,india/district/UTTAR PRADESH/SANT KABIR NAGAR,inside
+179,198,Bhadohi,UTTAR PRADESH,india/district/UTTAR PRADESH/BHADOHI,name
+180,152,Shahjahanpur,UTTAR PRADESH,india/district/UTTAR PRADESH/SHAHJAHANPUR,name
+181,181,Shravasti,UTTAR PRADESH,india/district/UTTAR PRADESH/SHRAWASTI,inside
+182,184,Siddharth Nagar,UTTAR PRADESH,india/district/UTTAR PRADESH/SIDDHARTHNAGAR,inside
+183,154,Sitapur,UTTAR PRADESH,india/district/UTTAR PRADESH/SITAPUR,name
+184,200,Sonbhadra,UTTAR PRADESH,india/district/UTTAR PRADESH/SONBHADRA,name
+185,179,Sultanpur,UTTAR PRADESH,india/district/UTTAR PRADESH/SULTANPUR,name
+186,156,Unnao,UTTAR PRADESH,india/district/UTTAR PRADESH/UNNAO,name
+187,197,Varanasi,UTTAR PRADESH,india/district/UTTAR PRADESH/VARANASI,name
+188,209,Araria,BIHAR,india/district/BIHAR/ARARIA,name
+189,235,Aurangabad,BIHAR,india/district/BIHAR/AURANGABAD,name
+190,225,Banka,BIHAR,india/district/BIHAR/BANKA,name
+191,222,Begusarai,BIHAR,india/district/BIHAR/BEGUSARAI,name
+192,224,Bhagalpur,BIHAR,india/district/BIHAR/BHAGALPUR,name
+193,231,Bhojpur,BIHAR,india/district/BIHAR/BHOJPUR,name
+194,232,Buxar,BIHAR,india/district/BIHAR/BUXAR,name
+195,215,Darbhanga,BIHAR,india/district/BIHAR/DARBHANGA,name
+196,236,Gaya,BIHAR,india/district/BIHAR/GAYA,name
+197,217,Gopalganj,BIHAR,india/district/BIHAR/GOPALGANJ,name
+198,238,Jamui,BIHAR,india/district/BIHAR/JAMUI,name
+199,239,Jehanabad,BIHAR,india/district/BIHAR/JEHANABAD,name
+200,233,Kaimur (Bhabua),BIHAR,india/district/BIHAR/KAIMUR (BHABUA),name
+201,212,Katihar,BIHAR,india/district/BIHAR/KATIHAR,name
+202,223,Khagaria,BIHAR,india/district/BIHAR/KHAGARIA,name
+203,210,Kishanganj,BIHAR,india/district/BIHAR/KISHANGANJ,name
+204,227,Lakhisarai,BIHAR,india/district/BIHAR/LAKHISARAI,name
+205,213,Madhepura,BIHAR,india/district/BIHAR/MADHEPURA,name
+206,207,Madhubani,BIHAR,india/district/BIHAR/MADHUBANI,name
+207,226,Munger,BIHAR,india/district/BIHAR/MUNGER,name
+208,216,Muzaffarpur,BIHAR,india/district/BIHAR/MUZAFFARPUR,name
+209,229,Nalanda,BIHAR,india/district/BIHAR/NALANDA,name
+210,237,Nawada,BIHAR,india/district/BIHAR/NAWADA,name
+211,203,Pashchim Champaran,BIHAR,india/district/BIHAR/PASHCHIM CHAMPARAN,name
+212,230,Patna,BIHAR,india/district/BIHAR/PATNA,name
+213,204,Purbi Champaran,BIHAR,india/district/BIHAR/PURBA CHAMPARAN,inside
+214,211,Purnia,BIHAR,india/district/BIHAR/PURNIA,name
+215,234,Rohtas,BIHAR,india/district/BIHAR/ROHTAS,name
+216,214,Saharsa,BIHAR,india/district/BIHAR/SAHARSA,name
+217,221,Samastipur,BIHAR,india/district/BIHAR/SAMASTIPUR,name
+218,219,Saran,BIHAR,india/district/BIHAR/SARAN,name
+219,228,Sheikhpura,BIHAR,india/district/BIHAR/SHEIKHPURA,name
+220,205,Sheohar,BIHAR,india/district/BIHAR/SHEOHAR,name
+221,206,Sitamarhi,BIHAR,india/district/BIHAR/SITAMARHI,name
+222,218,Siwan,BIHAR,india/district/BIHAR/SIWAN,name
+223,208,Supaul,BIHAR,india/district/BIHAR/SUPAUL,name
+224,220,Vaishali,BIHAR,india/district/BIHAR/VAISHALI,name
+225,244,Gangtok,SIKKIM,india/district/SIKKIM/GANGTOK,name
+226,241,Mangan,SIKKIM,india/district/SIKKIM/MANGAN,name
+227,243,Namchi,SIKKIM,india/district/SIKKIM/NAMCHI,name
+228,242,Gyalshing,SIKKIM,india/district/SIKKIM/GYALSHING,name
+229,253,Changlang,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/CH>NGL>NG,name
+230,257,Dibang Valley,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/DIB>NG VALLEY,name
+231,247,East Kameng,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/EAST KAMENG,name
+232,251,East Siang,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/EAST SIANG,name
+233,256,Kurung Kumey,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/KURUNG KUMEY,name
+234,259,Lohit,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/LOHIT,name
+235,258,Lower Dibang Valley,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/LOWER DIB>NG VALLEY,name
+236,255,Lower Subansiri,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/LOWER SUBANSIRI,name
+237,248,Papum Pare,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/PAPUMPARE,inside
+238,245,Tawang,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/TAWANG,name
+239,254,Tirap,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/TIR>P,name
+240,252,Upper Siang,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/UPPER SIANG,name
+241,249,Upper Subansiri,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/UPPER SUBANSIRI,name
+242,246,West Kameng,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/WEST KAMENG,name
+243,250,West Siang,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/WEST SIANG,name
+244,265,Dimapur,NAGALAND,india/district/NAGALAND/DIMAPUR,name
+245,270,Kohima,NAGALAND,india/district/NAGALAND/KOHIMA,name
+246,262,Mokokchung,NAGALAND,india/district/NAGALAND/MOKOKCHUNG,name
+247,261,Mon,NAGALAND,india/district/NAGALAND/MON,name
+248,266,Phek,NAGALAND,india/district/NAGALAND/PHEK,name
+249,267,Tuensang,NAGALAND,india/district/NAGALAND/TUENSANG,name
+250,264,Wokha,NAGALAND,india/district/NAGALAND/WOKHA,name
+251,263,Zunheboto,NAGALAND,india/district/NAGALAND/ZUNHEBOTO,name
+252,275,Bishnupur,MANIPUR,india/district/MANIPUR/BISHNUPUR,name
+253,280,Chandel,MANIPUR,india/district/MANIPUR/CHANDEL,name
+254,274,Churachandpur,MANIPUR,india/district/MANIPUR/CHURACHANDPUR,name
+255,278,Imphal East,MANIPUR,india/district/MANIPUR/IMPHAL EAST,name
+256,277,Imphal West,MANIPUR,india/district/MANIPUR/IMPHAL WEST,name
+257,272,Senapati,MANIPUR,india/district/MANIPUR/SENAPATI,name
+258,273,Tamenglong,MANIPUR,india/district/MANIPUR/TAMENGLONG,name
+259,276,Thoubal,MANIPUR,india/district/MANIPUR/THOUBAL,name
+260,279,Ukhrul,MANIPUR,india/district/MANIPUR/UKHRUL,name
+261,283,Aizawl,MIZORAM,india/district/MIZORAM/AIZAWL,name
+262,284,Champhai,MIZORAM,india/district/MIZORAM/CHAMPHAI,name
+263,282,Kolasib,MIZORAM,india/district/MIZORAM/KOLASIB,name
+264,287,Lawngtlai,MIZORAM,india/district/MIZORAM/LAWNGTLAI,name
+265,286,Lunglei,MIZORAM,india/district/MIZORAM/LUNGLEI,name
+266,281,Mamit,MIZORAM,india/district/MIZORAM/MAMIT,name
+267,288,Saiha,MIZORAM,india/district/MIZORAM/SAIHA,name
+268,285,Serchhip,MIZORAM,india/district/MIZORAM/SERCHHIP,name
+269,291,Dhalai,TRIPURA,india/district/TRIPURA/DHALAI,name
+270,292,North Tripura,TRIPURA,india/district/TRIPURA/NORTH TRIPURA,name
+271,290,South Tripura,TRIPURA,india/district/TRIPURA/SOUTH TRIPURA,name
+272,289,West Tripura,TRIPURA,india/district/TRIPURA/WEST TRIPURA,name
+273,294,East Garo Hills,MEGHALAYA,india/district/MEGHALAYA/EAST G>RO HILLS,name
+274,298,East Khasi Hills,MEGHALAYA,india/district/MEGHALAYA/EAST KH>SI HILLS,name
+275,299,West Jaintia Hills,MEGHALAYA,india/district/MEGHALAYA/WEST JAINTIA HILLS,name
+276,297,Ri Bhoi,MEGHALAYA,india/district/MEGHALAYA/RI-BHOI,name
+277,295,South Garo Hills,MEGHALAYA,india/district/MEGHALAYA/SOUTH G>RO HILLS,name
+278,293,West Garo Hills,MEGHALAYA,india/district/MEGHALAYA/WEST G>RO HILLS,name
+279,296,West Khasi Hills,MEGHALAYA,india/district/MEGHALAYA/WEST KHASI HILLS,name
+280,303,Barpeta,ASSAM,india/district/ASSAM/BARPETA,name
+281,319,Bongaigaon,ASSAM,india/district/ASSAM/BONGAIGAON,name
+282,316,Cachar,ASSAM,india/district/ASSAM/CACHAR,name
+283,325,Darrang,ASSAM,india/district/ASSAM/DARANG,inside
+284,308,Dhemaji,ASSAM,india/district/ASSAM/DHEMAJI,name
+285,301,Dhubri,ASSAM,india/district/ASSAM/DHUBRI,name
+286,310,Dibrugarh,ASSAM,india/district/ASSAM/DIBRUGARH,name
+287,302,Goalpara,ASSAM,india/district/ASSAM/GOALPARA,name
+288,313,Golaghat,ASSAM,india/district/ASSAM/GOLAGHAT,name
+289,318,Hailakandi,ASSAM,india/district/ASSAM/HAILAKANDI,name
+290,312,Jorhat,ASSAM,india/district/ASSAM/JORHAT,name
+291,321,Kamrup,ASSAM,india/district/ASSAM/KAMRUP RURAL,inside
+292,314,Karbi Anglong,ASSAM,india/district/ASSAM/KARBI ANGLONG,name
+293,317,Karimganj,ASSAM,india/district/ASSAM/SRIBHUMI,name
+294,300,Kokrajhar,ASSAM,india/district/ASSAM/KOKRAJHAR,name
+295,307,Lakhimpur,ASSAM,india/district/ASSAM/LAKHIMPUR,name
+296,304,Marigaon,ASSAM,india/district/ASSAM/MARIGAON,name
+297,305,Nagaon,ASSAM,india/district/ASSAM/NAGAON,name
+298,323,Nalbari,ASSAM,india/district/ASSAM/NALBARI,name
+299,315,Dima Hasao,ASSAM,india/district/ASSAM/DIMA HASAO,name
+300,311,Sivasagar,ASSAM,india/district/ASSAM/SIBSAGAR,inside
+301,306,Sonitpur,ASSAM,india/district/ASSAM/SONITPUR,name
+302,309,Tinsukia,ASSAM,india/district/ASSAM/TINSUKIA,name
+303,337,24 Paraganas North,WEST BENGAL,india/district/WEST BENGAL/NORTH TWENTY-FOUR PARGANAS,inside
+304,343,24 Paraganas South,WEST BENGAL,india/district/WEST BENGAL/SOUTH 24PARGANAS,inside
+305,339,Bankura,WEST BENGAL,india/district/WEST BENGAL/B>NKURA,name
+306,335,Purba Bardhaman,WEST BENGAL,india/district/WEST BENGAL/PURBA BARDDHAM>N,inside
+307,334,Birbhum,WEST BENGAL,india/district/WEST BENGAL/B|RBH@M,name
+308,329,Coochbehar,WEST BENGAL,india/district/WEST BENGAL/KOCH BIH>R,name
+309,327,Darjeeling,WEST BENGAL,india/district/WEST BENGAL/D>RJILING,name
+310,331,Dinajpur Dakshin,WEST BENGAL,india/district/WEST BENGAL/DAKSHIN DIN>JPUR,name
+311,330,Dinajpur Uttar,WEST BENGAL,india/district/WEST BENGAL/UTTAR DIN>JPUR,name
+312,338,Hooghly,WEST BENGAL,india/district/WEST BENGAL/HUGLI,name
+313,341,Howrah,WEST BENGAL,india/district/WEST BENGAL/H>ORA,name
+314,328,Jalpaiguri,WEST BENGAL,india/district/WEST BENGAL/JALP>IGURI,name
+315,342,Kolkata,WEST BENGAL,india/district/WEST BENGAL/KOLKATA,name
+316,332,Maldah,WEST BENGAL,india/district/WEST BENGAL/M>LDAH,name
+317,345,Medinipur East,WEST BENGAL,india/district/WEST BENGAL/PURBA MEDIN|PUR,inside
+318,344,Medinipur West,WEST BENGAL,india/district/WEST BENGAL/PASCHIM MEDIN|PUR,inside
+319,333,Murshidabad,WEST BENGAL,india/district/WEST BENGAL/MURSHID>B>D,name
+320,336,Nadia,WEST BENGAL,india/district/WEST BENGAL/NADIA,name
+321,340,Purulia,WEST BENGAL,india/district/WEST BENGAL/PURULIYA,name
+322,355,Bokaro,JHARKHAND,india/district/JHARKHAND/BOKARO,name
+323,347,Chatra,JHARKHAND,india/district/JHARKHAND/CHATRA,name
+324,350,Deoghar,JHARKHAND,india/district/JHARKHAND/DEOGHAR,name
+325,354,Dhanbad,JHARKHAND,india/district/JHARKHAND/DHANBAD,name
+326,362,Dumka,JHARKHAND,india/district/JHARKHAND/DUMKA,name
+327,357,East Singhbum,JHARKHAND,india/district/JHARKHAND/EAST SINGHBHUM,inside
+328,346,Garhwa,JHARKHAND,india/district/JHARKHAND/GARHWA,name
+329,349,Giridih,JHARKHAND,india/district/JHARKHAND/GIRIDIH,name
+330,351,Godda,JHARKHAND,india/district/JHARKHAND/GODDA,name
+331,366,Gumla,JHARKHAND,india/district/JHARKHAND/GUMLA,name
+332,360,Hazaribagh,JHARKHAND,india/district/JHARKHAND/HAZARIBAGH,name
+333,363,Jamtara,JHARKHAND,india/district/JHARKHAND/JAMTARA,name
+334,348,Koderma,JHARKHAND,india/district/JHARKHAND/KODERMA,name
+335,359,Latehar,JHARKHAND,india/district/JHARKHAND/LATEHAR,name
+336,356,Lohardaga,JHARKHAND,india/district/JHARKHAND/LOHARDAGA,name
+337,353,Pakur,JHARKHAND,india/district/JHARKHAND/PAKUR,name
+338,358,Palamu,JHARKHAND,india/district/JHARKHAND/PALAMU,name
+339,364,Ranchi,JHARKHAND,india/district/JHARKHAND/RANCHI,name
+340,352,Sahebganj,JHARKHAND,india/district/JHARKHAND/SAHIBGANJ,inside
+341,369,Saraikela Kharsawan,JHARKHAND,india/district/JHARKHAND/SARAIKELA-KHARSAWAN,name
+342,367,Simdega,JHARKHAND,india/district/JHARKHAND/SIMDEGA,name
+343,368,West Singhbhum,JHARKHAND,india/district/JHARKHAND/WEST SINGHBHUM,name
+344,384,Anugul,ODISHA,india/district/ODISHA/ANUGUL,name
+345,393,Balangir,ODISHA,india/district/ODISHA/BALANGIR,name
+346,377,Baleshwar,ODISHA,india/district/ODISHA/BALASORE,inside
+347,370,Bargarh,ODISHA,india/district/ODISHA/BARGARH,name
+348,378,Bhadrak,ODISHA,india/district/ODISHA/BHADRAK,name
+349,391,Boudh,ODISHA,india/district/ODISHA/BOUDH,name
+350,381,Cuttack,ODISHA,india/district/ODISHA/CUTTACK,name
+351,373,Deogarh,ODISHA,india/district/ODISHA/DEOGARH,name
+352,383,Dhenkanal,ODISHA,india/district/ODISHA/DHENKANAL,name
+353,389,Gajapati,ODISHA,india/district/ODISHA/GAJAPATI,name
+354,388,Ganjam,ODISHA,india/district/ODISHA/GANJAM,name
+355,380,Jagatsinghapur,ODISHA,india/district/ODISHA/JAGATSINGHPUR,inside
+356,382,Jajapur,ODISHA,india/district/ODISHA/JAJAPUR,name
+357,371,Jharsuguda,ODISHA,india/district/ODISHA/JHARSUGUDA,name
+358,395,Kalahandi,ODISHA,india/district/ODISHA/KALAHANDI,name
+359,390,Kandhamal,ODISHA,india/district/ODISHA/KANDHAMAL,name
+360,379,Kendrapara,ODISHA,india/district/ODISHA/KENDRAPARA,name
+361,375,Kendujhar,ODISHA,india/district/ODISHA/KEONJHAR (KENDUJHAR),name
+362,386,Khordha,ODISHA,india/district/ODISHA/KHORDHA,name
+363,398,Koraput,ODISHA,india/district/ODISHA/KORAPUT,name
+364,399,Malkangiri,ODISHA,india/district/ODISHA/MALKANGIRI,name
+365,376,Mayurbhanj,ODISHA,india/district/ODISHA/MAYURBHANJ,name
+366,397,Nabarangpur,ODISHA,india/district/ODISHA/NABARANGAPUR,inside
+367,385,Nayagarh,ODISHA,india/district/ODISHA/NAYAGARH,name
+368,394,Nuapada,ODISHA,india/district/ODISHA/NUAPARHA,inside
+369,387,Puri,ODISHA,india/district/ODISHA/PURI,name
+370,396,Rayagada,ODISHA,india/district/ODISHA/RAYAGARHA,inside
+371,372,Sambalpur,ODISHA,india/district/ODISHA/SAMBALPUR,name
+372,392,Sonepur,ODISHA,india/district/ODISHA/SUBARNAPUR,inside
+373,374,Sundargarh,ODISHA,india/district/ODISHA/SUNDARGARH,name
+374,414,Bastar,CHHATTISGARH,india/district/CHHATTISGARH/BASTAR,name
+375,406,Bilaspur,CHHATTISGARH,india/district/CHHATTISGARH/BILASPUR,name
+376,416,Dantewada,CHHATTISGARH,india/district/CHHATTISGARH/DAKSHIN BASTAR DANTEWARA,name
+377,412,Dhamtari,CHHATTISGARH,india/district/CHHATTISGARH/DHAMTARI,name
+378,409,Durg,CHHATTISGARH,india/district/CHHATTISGARH/DURG,name
+379,405,Janjgir-Champa,CHHATTISGARH,india/district/CHHATTISGARH/JANJGIR - CHAMPA,name
+380,402,Jashpur,CHHATTISGARH,india/district/CHHATTISGARH/JASHPUR,name
+381,413,Kanker,CHHATTISGARH,india/district/CHHATTISGARH/UTTAR BASTAR KANKER,name
+382,407,Kabirdham,CHHATTISGARH,india/district/CHHATTISGARH/KAWARDHA (KABIRDHAM),name
+383,404,Korba,CHHATTISGARH,india/district/CHHATTISGARH/KORBA,name
+384,400,Korea,CHHATTISGARH,india/district/CHHATTISGARH/KOREA,name
+385,411,Mahasamund,CHHATTISGARH,india/district/CHHATTISGARH/MAHASAMUND,name
+386,403,Raigarh,CHHATTISGARH,india/district/CHHATTISGARH/RAIGARH,name
+387,410,Raipur,CHHATTISGARH,india/district/CHHATTISGARH/RAIPUR,name
+388,408,Rajnandgaon,CHHATTISGARH,india/district/CHHATTISGARH/RAJNANDGAON,name
+389,401,Surguja,CHHATTISGARH,india/district/CHHATTISGARH/SURGUJA,name
+390,461,Anuppur,MADHYA PRADESH,india/district/MADHYA PRADESH/ANUPPUR,name
+391,459,Ashoknagar,MADHYA PRADESH,india/district/MADHYA PRADESH/ASHOKNAGAR,name
+392,457,Balaghat,MADHYA PRADESH,india/district/MADHYA PRADESH/BALAGHAT,name
+393,441,Barwani,MADHYA PRADESH,india/district/MADHYA PRADESH/BARWANI,name
+394,447,Betul,MADHYA PRADESH,india/district/MADHYA PRADESH/BETUL,name
+395,420,Bhind,MADHYA PRADESH,india/district/MADHYA PRADESH/BHIND,name
+396,444,Bhopal,MADHYA PRADESH,india/district/MADHYA PRADESH/BHOPAL,name
+397,467,Burhanpur,MADHYA PRADESH,india/district/MADHYA PRADESH/BURHANPUR,name
+398,425,Chhatarpur,MADHYA PRADESH,india/district/MADHYA PRADESH/CHHATARPUR,name
+399,455,Chhindwara,MADHYA PRADESH,india/district/MADHYA PRADESH/CHHINDWARA,name
+400,428,Damoh,MADHYA PRADESH,india/district/MADHYA PRADESH/DAMOH,name
+401,422,Datia,MADHYA PRADESH,india/district/MADHYA PRADESH/DATIA,name
+402,437,Dewas,MADHYA PRADESH,india/district/MADHYA PRADESH/DEWAS,name
+403,438,Dhar,MADHYA PRADESH,india/district/MADHYA PRADESH/DHAR,name
+404,453,Dindori,MADHYA PRADESH,india/district/MADHYA PRADESH/DINDORI,name
+405,466,East Nimar,MADHYA PRADESH,india/district/MADHYA PRADESH/KHANDWA,name
+406,458,Guna,MADHYA PRADESH,india/district/MADHYA PRADESH/GUNA,name
+407,421,Gwalior,MADHYA PRADESH,india/district/MADHYA PRADESH/GWALIOR,name
+408,448,Harda,MADHYA PRADESH,india/district/MADHYA PRADESH/HARDA,name
+409,449,Narmadapuram,MADHYA PRADESH,india/district/MADHYA PRADESH/NARMADAPURAM,name
+410,439,Indore,MADHYA PRADESH,india/district/MADHYA PRADESH/INDORE,name
+411,451,Jabalpur,MADHYA PRADESH,india/district/MADHYA PRADESH/JABALPUR,name
+412,464,Jhabua,MADHYA PRADESH,india/district/MADHYA PRADESH/JHABUA,name
+413,450,Katni,MADHYA PRADESH,india/district/MADHYA PRADESH/KATNI,name
+414,440,Khargone,MADHYA PRADESH,india/district/MADHYA PRADESH/KHARGONE,name
+415,454,Mandla,MADHYA PRADESH,india/district/MADHYA PRADESH/MANDLA,name
+416,433,Mandsaur,MADHYA PRADESH,india/district/MADHYA PRADESH/MANDSAUR,name
+417,419,Morena,MADHYA PRADESH,india/district/MADHYA PRADESH/MORENA,name
+418,452,Narsinghpur,MADHYA PRADESH,india/district/MADHYA PRADESH/NARSIMHAPUR,inside
+419,432,Neemuch,MADHYA PRADESH,india/district/MADHYA PRADESH/NEEMUCH,name
+420,426,Panna,MADHYA PRADESH,india/district/MADHYA PRADESH/PANNA,name
+421,446,Raisen,MADHYA PRADESH,india/district/MADHYA PRADESH/RAISEN,name
+422,442,Rajgarh,MADHYA PRADESH,india/district/MADHYA PRADESH/RAJGARH,name
+423,434,Ratlam,MADHYA PRADESH,india/district/MADHYA PRADESH/RATLAM,name
+424,430,Rewa,MADHYA PRADESH,india/district/MADHYA PRADESH/REWA,name
+425,427,Sagar,MADHYA PRADESH,india/district/MADHYA PRADESH/SAGAR,name
+426,429,Satna,MADHYA PRADESH,india/district/MADHYA PRADESH/SATNA,name
+427,445,Sehore,MADHYA PRADESH,india/district/MADHYA PRADESH/SEHORE,name
+428,456,Seoni,MADHYA PRADESH,india/district/MADHYA PRADESH/SEONI,name
+429,460,Shahdol,MADHYA PRADESH,india/district/MADHYA PRADESH/SHAHDOL,name
+430,436,Shajapur,MADHYA PRADESH,india/district/MADHYA PRADESH/SHAJAPUR,name
+431,418,Sheopur,MADHYA PRADESH,india/district/MADHYA PRADESH/SHEOPUR,name
+432,423,Shivpuri,MADHYA PRADESH,india/district/MADHYA PRADESH/SHIVPURI,name
+433,462,Sidhi,MADHYA PRADESH,india/district/MADHYA PRADESH/SIDHI,name
+434,424,Tikamgarh,MADHYA PRADESH,india/district/MADHYA PRADESH/TIKAMGARH,name
+435,435,Ujjain,MADHYA PRADESH,india/district/MADHYA PRADESH/UJJAIN,name
+436,431,Umaria,MADHYA PRADESH,india/district/MADHYA PRADESH/UMARIA,name
+437,443,Vidisha,MADHYA PRADESH,india/district/MADHYA PRADESH/VIDISHA,name
+438,474,Ahmadabad,GUJARAT,india/district/GUJARAT/AHMADABAD,name
+439,480,Amreli,GUJARAT,india/district/GUJARAT/AMRELI,name
+440,482,Anand,GUJARAT,india/district/GUJARAT/ANAND,name
+441,469,Banas Kantha,GUJARAT,india/district/GUJARAT/BANAS KANTHA,name
+442,488,Bharuch,GUJARAT,india/district/GUJARAT/BHARUCH,name
+443,481,Bhavnagar,GUJARAT,india/district/GUJARAT/BHAVNAGAR,name
+444,489,Dang,GUJARAT,india/district/GUJARAT/DANGS,name
+445,485,Dohad,GUJARAT,india/district/GUJARAT/DAHOD,inside
+446,473,Gandhinagar,GUJARAT,india/district/GUJARAT/GANDHINAGAR,name
+447,477,Jamnagar,GUJARAT,india/district/GUJARAT/JAMNAGAR,name
+448,479,Junagadh,GUJARAT,india/district/GUJARAT/JUNAGADH,name
+449,468,Kachchh,GUJARAT,india/district/GUJARAT/KACHCHH,name
+450,483,Kheda,GUJARAT,india/district/GUJARAT/KHEDA,name
+451,471,Mahesana,GUJARAT,india/district/GUJARAT/MAHESANA,name
+452,487,Narmada,GUJARAT,india/district/GUJARAT/NARMADA,name
+453,490,Navsari,GUJARAT,india/district/GUJARAT/NAVSARI,name
+454,484,Panch Mahals,GUJARAT,india/district/GUJARAT/PANCH MAHALS,name
+455,470,Patan,GUJARAT,india/district/GUJARAT/PATAN,name
+456,478,Porbandar,GUJARAT,india/district/GUJARAT/PORBANDAR,name
+457,476,Rajkot,GUJARAT,india/district/GUJARAT/RAJKOT,name
+458,472,Sabar Kantha,GUJARAT,india/district/GUJARAT/SABAR KANTHA,name
+459,492,Surat,GUJARAT,india/district/GUJARAT/SURAT,name
+460,475,Surendranagar,GUJARAT,india/district/GUJARAT/SURENDRANAGAR,name
+461,486,Vadodara,GUJARAT,india/district/GUJARAT/VADODARA,name
+462,491,Valsad,GUJARAT,india/district/GUJARAT/VALSAD,name
+463,495,Daman,"DADRA,NAGAR HAVELI,DAMAN & DIU",india/district/DADRA & NAGAR HAVELI & DAMAN & DIU/DAMAN,name
+464,494,Diu,"DADRA,NAGAR HAVELI,DAMAN & DIU",india/district/DADRA & NAGAR HAVELI & DAMAN & DIU/DIU,name
+465,496,Dadra And Nagar Haveli,"DADRA,NAGAR HAVELI,DAMAN & DIU",india/district/DADRA & NAGAR HAVELI & DAMAN & DIU/DADRA AND NAGAR HAVELI,name
+466,522,Ahmednagar,MAHARASHTRA,india/district/MAHARASHTRA/AHILYANAGAR,name
+467,501,Akola,MAHARASHTRA,india/district/MAHARASHTRA/AKOLA,name
+468,503,Amravati,MAHARASHTRA,india/district/MAHARASHTRA/AMRAVATI,name
+469,515,Aurangabad,MAHARASHTRA,india/district/MAHARASHTRA/CHHATRAPATI SAMBHAJI NAGAR,name
+470,523,Beed,MAHARASHTRA,india/district/MAHARASHTRA/BEED,name
+471,506,Bhandara,MAHARASHTRA,india/district/MAHARASHTRA/BHANDARA,name
+472,500,Buldhana,MAHARASHTRA,india/district/MAHARASHTRA/BULDHANA,name
+473,509,Chandrapur,MAHARASHTRA,india/district/MAHARASHTRA/CHANDRAPUR,name
+474,498,Dhule,MAHARASHTRA,india/district/MAHARASHTRA/DHULE,name
+475,508,Gadchiroli,MAHARASHTRA,india/district/MAHARASHTRA/GADCHIROLI,name
+476,507,Gondia,MAHARASHTRA,india/district/MAHARASHTRA/GONDIA,name
+477,512,Hingoli,MAHARASHTRA,india/district/MAHARASHTRA/HINGOLI,name
+478,499,Jalgaon,MAHARASHTRA,india/district/MAHARASHTRA/JALGAON,name
+479,514,Jalna,MAHARASHTRA,india/district/MAHARASHTRA/JALNA,name
+480,530,Kolhapur,MAHARASHTRA,india/district/MAHARASHTRA/KOLHAPUR,name
+481,524,Latur,MAHARASHTRA,india/district/MAHARASHTRA/LATUR,name
+482,519,Mumbai,MAHARASHTRA,india/district/MAHARASHTRA/MUMBAI,name
+483,518,Mumbai Suburban,MAHARASHTRA,india/district/MAHARASHTRA/MUMBAI SUBURBAN,name
+484,505,Nagpur,MAHARASHTRA,india/district/MAHARASHTRA/NAGPUR,name
+485,511,Nanded,MAHARASHTRA,india/district/MAHARASHTRA/NANDED,name
+486,497,Nandurbar,MAHARASHTRA,india/district/MAHARASHTRA/NANDURBAR,name
+487,516,Nashik,MAHARASHTRA,india/district/MAHARASHTRA/NASHIK,name
+488,525,Osmanabad,MAHARASHTRA,india/district/MAHARASHTRA/DHARASHIV,name
+489,513,Parbhani,MAHARASHTRA,india/district/MAHARASHTRA/PARBHANI,name
+490,521,Pune,MAHARASHTRA,india/district/MAHARASHTRA/PUNE,name
+491,520,Raigad,MAHARASHTRA,india/district/MAHARASHTRA/RAIGAD,name
+492,528,Ratnagiri,MAHARASHTRA,india/district/MAHARASHTRA/RATNAGIRI,name
+493,531,Sangli,MAHARASHTRA,india/district/MAHARASHTRA/SANGLI,name
+494,527,Satara,MAHARASHTRA,india/district/MAHARASHTRA/SATARA,name
+495,529,Sindhudurg,MAHARASHTRA,india/district/MAHARASHTRA/SINDHUDURG,name
+496,526,Solapur,MAHARASHTRA,india/district/MAHARASHTRA/SOLAPUR,name
+497,517,Thane,MAHARASHTRA,india/district/MAHARASHTRA/THANE,name
+498,504,Wardha,MAHARASHTRA,india/district/MAHARASHTRA/WARDHA,name
+499,502,Washim,MAHARASHTRA,india/district/MAHARASHTRA/WASHIM,name
+500,510,Yavatmal,MAHARASHTRA,india/district/MAHARASHTRA/YAVATMAL,name
+501,532,Adilabad,TELANGANA,india/district/TELANGANA/ADILABAD,name
+502,553,Anantapur,ANDHRA PRADESH,india/district/ANDHRA PRADESH/ANANTHAPURAMU,inside
+503,554,Chittoor,ANDHRA PRADESH,india/district/ANDHRA PRADESH/CHITTOOR,name
+504,551,Y.S.R.,ANDHRA PRADESH,india/district/ANDHRA PRADESH/Y.S.R.,name
+505,545,East Godavari,ANDHRA PRADESH,india/district/ANDHRA PRADESH/EAST GODAVARI,name
+506,548,Guntur,ANDHRA PRADESH,india/district/ANDHRA PRADESH/GUNTUR,name
+507,536,Hyderabad,TELANGANA,india/district/TELANGANA/HYDERABAD,name
+508,534,Karimnagar,TELANGANA,india/district/TELANGANA/KARIMNAGAR,name
+509,541,Khammam,TELANGANA,india/district/TELANGANA/KHAMMAM,name
+510,547,Krishna,ANDHRA PRADESH,india/district/ANDHRA PRADESH/KRISHNA,name
+511,552,Kurnool,ANDHRA PRADESH,india/district/ANDHRA PRADESH/KURNOOL,name
+512,538,Mahabubnagar,TELANGANA,india/district/TELANGANA/MAHBUBNAGAR,inside
+513,535,Medak,TELANGANA,india/district/TELANGANA/MEDAK,name
+514,539,Nalgonda,TELANGANA,india/district/TELANGANA/NALGONDA,name
+515,550,Spsr Nellore,ANDHRA PRADESH,india/district/ANDHRA PRADESH/SRI POTTI SRIRAMULU NELLORE,inside
+516,533,Nizamabad,TELANGANA,india/district/TELANGANA/NIZAMABAD,name
+517,549,Prakasam,ANDHRA PRADESH,india/district/ANDHRA PRADESH/PRAKASAM,name
+518,537,Ranga Reddy,TELANGANA,india/district/TELANGANA/RANGA REDDY,name
+519,542,Srikakulam,ANDHRA PRADESH,india/district/ANDHRA PRADESH/SRIKAKULAM,name
+520,544,Visakhapatanam,ANDHRA PRADESH,india/district/ANDHRA PRADESH/VISAKHAPATNAM,inside
+521,543,Vizianagaram,ANDHRA PRADESH,india/district/ANDHRA PRADESH/VIZIANAGARAM,name
+522,540,Warangal,TELANGANA,india/district/TELANGANA/WARANGAL,name
+523,546,West Godavari,ANDHRA PRADESH,india/district/ANDHRA PRADESH/WEST GODAVARI,name
+524,556,Bagalkote,KARNATAKA,india/district/KARNATAKA/B<GALKOT,inside
+525,572,Bengaluru Urban,KARNATAKA,india/district/KARNATAKA/BENGAL#RU (URBAN),name
+526,583,Bengaluru Rural,KARNATAKA,india/district/KARNATAKA/BENGAL#RU (RURAL),name
+527,555,Belagavi,KARNATAKA,india/district/KARNATAKA/BELAG<VI,name
+528,565,Ballari,KARNATAKA,india/district/KARNATAKA/BALL<RI,name
+529,558,Bidar,KARNATAKA,india/district/KARNATAKA/B\DAR,name
+530,557,Vijayapura,KARNATAKA,india/district/KARNATAKA/VIJAYAPURA,name
+531,578,Chamarajanagara,KARNATAKA,india/district/KARNATAKA/CH<MAR<JANAGARA,name
+532,570,Chikkamagaluru,KARNATAKA,india/district/KARNATAKA/CHIKKAMAGAL#RU,name
+533,566,Chitradurga,KARNATAKA,india/district/KARNATAKA/CHITRADURGA,name
+534,575,Dakshina Kannada,KARNATAKA,india/district/KARNATAKA/DAKSHINA KANNADA,name
+535,567,Davangere,KARNATAKA,india/district/KARNATAKA/D<VANAGERE,inside
+536,562,Dharwad,KARNATAKA,india/district/KARNATAKA/DH<RW<D,name
+537,561,Gadag,KARNATAKA,india/district/KARNATAKA/GADAG,name
+538,579,Kalaburagi,KARNATAKA,india/district/KARNATAKA/KALABURAGI,name
+539,574,Hassan,KARNATAKA,india/district/KARNATAKA/H<SSAN,name
+540,564,Haveri,KARNATAKA,india/district/KARNATAKA/H<VERI,name
+541,576,Kodagu,KARNATAKA,india/district/KARNATAKA/KODAGU,name
+542,581,Kolar,KARNATAKA,india/district/KARNATAKA/KOL<RA,name
+543,560,Koppal,KARNATAKA,india/district/KARNATAKA/KOPPAL,name
+544,573,Mandya,KARNATAKA,india/district/KARNATAKA/MANDYA,name
+545,577,Mysuru,KARNATAKA,india/district/KARNATAKA/MYS#RU,name
+546,559,Raichur,KARNATAKA,india/district/KARNATAKA/RAICH#R,name
+547,568,Shivamogga,KARNATAKA,india/district/KARNATAKA/SHIVAMOGGA,name
+548,571,Tumakuru,KARNATAKA,india/district/KARNATAKA/TUMAK#RU,name
+549,569,Udupi,KARNATAKA,india/district/KARNATAKA/UDUPI,name
+550,563,Uttara Kannada,KARNATAKA,india/district/KARNATAKA/UTTARA KANNADA,name
+551,585,North Goa,GOA,india/district/GOA/NORTH GOA,name
+552,586,South Goa,GOA,india/district/GOA/SOUTH GOA,name
+553,587,Lakshadweep District,LAKSHADWEEP,india/district/LAKSHADWEEP/LAKSHADWEEP,name
+554,598,Alappuzha,KERALA,india/district/KERALA/ALAPPUZHA,name
+555,595,Ernakulam,KERALA,india/district/KERALA/ERNAKULAM,name
+556,596,Idukki,KERALA,india/district/KERALA/IDUKKI,name
+557,589,Kannur,KERALA,india/district/KERALA/KANNUR,name
+558,588,Kasaragod,KERALA,india/district/KERALA/KASARAGOD,name
+559,600,Kollam,KERALA,india/district/KERALA/KOLLAM,name
+560,597,Kottayam,KERALA,india/district/KERALA/KOTTAYAM,name
+561,591,Kozhikode,KERALA,india/district/KERALA/KOZHIKODE,name
+562,592,Malappuram,KERALA,india/district/KERALA/MALAPPURAM,name
+563,593,Palakkad,KERALA,india/district/KERALA/PALAKKAD,name
+564,599,Pathanamthitta,KERALA,india/district/KERALA/PATHANAMTHITTA,name
+565,601,Thiruvananthapuram,KERALA,india/district/KERALA/THIRUVANANTHAPURAM,name
+566,594,Thrissur,KERALA,india/district/KERALA/THRISSUR,name
+567,590,Wayanad,KERALA,india/district/KERALA/WAYANAD,name
+568,603,Chennai,TAMIL NADU,india/district/TAMIL NADU/CHENNAI,name
+569,632,Coimbatore,TAMIL NADU,india/district/TAMIL NADU/COIMBATORE,name
+570,617,Cuddalore,TAMIL NADU,india/district/TAMIL NADU/CUDDALORE,name
+571,630,Dharmapuri,TAMIL NADU,india/district/TAMIL NADU/DHARMAPURI,name
+572,612,Dindigul,TAMIL NADU,india/district/TAMIL NADU/DINDIGUL,name
+573,610,Erode,TAMIL NADU,india/district/TAMIL NADU/ERODE,name
+574,604,Kanchipuram,TAMIL NADU,india/district/TAMIL NADU/KANCHEEPURAM,name
+575,629,Kanniyakumari,TAMIL NADU,india/district/TAMIL NADU/KANNIYAKUMARI,name
+576,613,Karur,TAMIL NADU,india/district/TAMIL NADU/KARUR,name
+577,631,Krishnagiri,TAMIL NADU,india/district/TAMIL NADU/KRISHNAGIRI,name
+578,623,Madurai,TAMIL NADU,india/district/TAMIL NADU/MADURAI,name
+579,618,Nagapattinam,TAMIL NADU,india/district/TAMIL NADU/NAGAPATTINAM,name
+580,609,Namakkal,TAMIL NADU,india/district/TAMIL NADU/NAMAKKAL,name
+581,615,Perambalur,TAMIL NADU,india/district/TAMIL NADU/PERAMBALUR,name
+582,621,Pudukkottai,TAMIL NADU,india/district/TAMIL NADU/PUDUKKOTTAI,name
+583,626,Ramanathapuram,TAMIL NADU,india/district/TAMIL NADU/RAMANATHAPURAM,name
+584,608,Salem,TAMIL NADU,india/district/TAMIL NADU/SALEM,name
+585,622,Sivaganga,TAMIL NADU,india/district/TAMIL NADU/SIVAGANGA,name
+586,620,Thanjavur,TAMIL NADU,india/district/TAMIL NADU/THANJAVUR,name
+587,611,The Nilgiris,TAMIL NADU,india/district/TAMIL NADU/THE NILGIRIS,name
+588,624,Theni,TAMIL NADU,india/district/TAMIL NADU/THENI,name
+589,602,Thiruvallur,TAMIL NADU,india/district/TAMIL NADU/TIRUVALLUR,inside
+590,619,Thiruvarur,TAMIL NADU,india/district/TAMIL NADU/THIRUVARUR,name
+591,614,Tiruchirappalli,TAMIL NADU,india/district/TAMIL NADU/TIRUCHIRAPPALLI,name
+592,628,Tirunelveli,TAMIL NADU,india/district/TAMIL NADU/TIRUNELVELI,name
+593,606,Tiruvannamalai,TAMIL NADU,india/district/TAMIL NADU/TIRUVANNAMALAI,name
+594,627,Tuticorin,TAMIL NADU,india/district/TAMIL NADU/THOOTHUKUDI,name
+595,605,Vellore,TAMIL NADU,india/district/TAMIL NADU/VELLORE,name
+596,607,Villupuram,TAMIL NADU,india/district/TAMIL NADU/VILUPPURAM,inside
+597,625,Virudhunagar,TAMIL NADU,india/district/TAMIL NADU/VIRUDHUNAGAR,name
+598,637,Karaikal,PUDUCHERRY,india/district/PUDUCHERRY/KARAIKAL,name
+599,636,Mahe,PUDUCHERRY,india/district/PUDUCHERRY/PUDUCHERRY,manual
+600,635,Pondicherry,PUDUCHERRY,india/district/PUDUCHERRY/PUDUCHERRY,name
+601,634,Yanam,PUDUCHERRY,india/district/PUDUCHERRY/PUDUCHERRY,manual
+602,640,South Andamans,ANDAMAN & NICOBAR,india/district/ANDAMAN & NICOBAR/SOUTH ANDAMANS,name
+603,638,Nicobars,ANDAMAN & NICOBAR,india/district/ANDAMAN & NICOBAR/NICOBARS,name
+604,087,Nuh,HARYANA,india/district/HARYANA/NUH,name
+605,054,Barnala,PUNJAB,india/district/PUNJAB/BARNALA,name
+606,365,Khunti,JHARKHAND,india/district/JHARKHAND/KHUNTI,name
+607,361,Ramgarh,JHARKHAND,india/district/JHARKHAND/RAMGARH,name
+608,052,S.A.S Nagar,PUNJAB,india/district/PUNJAB/SAS NAGAR (SAHIBZADA AJIT SINGH NAGAR),inside
+609,050,Tarn Taran,PUNJAB,india/district/PUNJAB/TARN TARAN,name
+610,616,Ariyalur,TAMIL NADU,india/district/TAMIL NADU/ARIYALUR,name
+611,240,Arwal,BIHAR,india/district/BIHAR/ARWAL,name
+612,320,Chirang,ASSAM,india/district/ASSAM/CHIRANG,name
+613,271,Peren,NAGALAND,india/district/NAGALAND/PEREN,name
+614,269,Kiphire,NAGALAND,india/district/NAGALAND/KIPHIRE,name
+615,268,Longleng,NAGALAND,india/district/NAGALAND/LONGLENG,name
+616,324,Baksa,ASSAM,india/district/ASSAM/BAKSA,name
+617,326,Udalguri,ASSAM,india/district/ASSAM/UDALGURI,name
+618,322,Kamrup Metro,ASSAM,india/district/ASSAM/KAMRUP METRO,name
+619,089,Palwal,HARYANA,india/district/HARYANA/PALWAL,name
+620,018,Kishtwar,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/KISHTWAR,name
+621,017,Ramban,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/RAMBAN,name
+622,015,Kulgam,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/KULGAM,name
+623,009,Bandipora,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/BANDIPURA,inside
+624,022,Samba,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/SAMBA,name
+625,013,Shopian,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/SHUPIYAN,inside
+626,011,Ganderbal,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/GANDERBAL,name
+627,020,Reasi,JAMMU & KASHMIR,india/district/JAMMU AND KASHMIR/RIASI,inside
+628,260,Anjaw,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/>NJ>W,name
+629,131,Pratapgarh,RAJASTHAN,india/district/RAJASTHAN/PRATAPGARH,name
+630,582,Chikkaballapura,KARNATAKA,india/district/KARNATAKA/CHIKKABALL<PURA,name
+631,584,Ramanagara,KARNATAKA,india/district/KARNATAKA/R<MANAGARA,name
+632,639,North And Middle Andaman,ANDAMAN & NICOBAR,india/district/ANDAMAN & NICOBAR/NORTH AND MIDDLE ANDAMAN,name
+633,202,Kasganj,UTTAR PRADESH,india/district/UTTAR PRADESH/KASGANJ,name
+634,633,Tiruppur,TAMIL NADU,india/district/TAMIL NADU/TIRUPPUR,name
+635,580,Yadgir,KARNATAKA,india/district/KARNATAKA/Y<DGIR,name
+636,417,Bijapur,CHHATTISGARH,india/district/CHHATTISGARH/BIJAPUR,name
+637,415,Narayanpur,CHHATTISGARH,india/district/CHHATTISGARH/NARAYANPUR,name
+638,463,Singrauli,MADHYA PRADESH,india/district/MADHYA PRADESH/SINGRAULI,name
+639,465,Alirajpur,MADHYA PRADESH,india/district/MADHYA PRADESH/ALIRAJPUR,name
+640,706,Amethi,UTTAR PRADESH,india/district/UTTAR PRADESH/AMETHI,name
+641,493,Tapi,GUJARAT,india/district/GUJARAT/TAPI,name
+642,723,Sukma,CHHATTISGARH,india/district/CHHATTISGARH/SUKMA,name
+643,722,Kondagaon,CHHATTISGARH,india/district/CHHATTISGARH/KONDAGAON,name
+644,721,Baloda Bazar,CHHATTISGARH,india/district/CHHATTISGARH/BALODA BAZAR,name
+645,720,Gariyaband,CHHATTISGARH,india/district/CHHATTISGARH/GARIYABAND,name
+646,719,Balod,CHHATTISGARH,india/district/CHHATTISGARH/BALOD,name
+647,717,Mungeli,CHHATTISGARH,india/district/CHHATTISGARH/MUNGELI,name
+648,715,Surajpur,CHHATTISGARH,india/district/CHHATTISGARH/SURAJPUR,name
+649,716,Balrampur,CHHATTISGARH,india/district/CHHATTISGARH/BALRAMPUR,name
+650,718,Bemetara,CHHATTISGARH,india/district/CHHATTISGARH/BEMETARA,name
+651,701,Fazilka,PUNJAB,india/district/PUNJAB/FAZILKA,name
+652,708,Khowai,TRIPURA,india/district/TRIPURA/KHOWAI,name
+653,707,Sepahijala,TRIPURA,india/district/TRIPURA/SEPAHIJALA,name
+654,709,Gomati,TRIPURA,india/district/TRIPURA/GOMTI,inside
+655,710,Unakoti,TRIPURA,india/district/TRIPURA/UNAKOTI,name
+656,712,North Garo Hills,MEGHALAYA,india/district/MEGHALAYA/NORTH G>RO HILLS,name
+657,714,East Jaintia Hills,MEGHALAYA,india/district/MEGHALAYA/EAST JAINTIA HILLS,name
+658,713,South West Khasi Hills,MEGHALAYA,india/district/MEGHALAYA/SOUTH WEST KH>SI HILLS,name
+659,754,Sambhal,UTTAR PRADESH,india/district/UTTAR PRADESH/SAMBHAL,name
+660,704,Shamli,UTTAR PRADESH,india/district/UTTAR PRADESH/SHAMLI,name
+661,705,Hapur,UTTAR PRADESH,india/district/UTTAR PRADESH/HAPUR,name
+662,773,Pathankot,PUNJAB,india/district/PUNJAB/PATHANKOT,name
+663,711,South West Garo Hills,MEGHALAYA,india/district/MEGHALAYA/SOUTH WEST G>RO HILLS,name
+664,774,Alipurduar,WEST BENGAL,india/district/WEST BENGAL/>L|PUR DU>R,name
+665,732,Palghar,MAHARASHTRA,india/district/MAHARASHTRA/PALGHAR,name
+666,761,Longding,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/LONGDING,name
+667,724,Agar Malwa,MADHYA PRADESH,india/district/MADHYA PRADESH/AGAR MALWA,name
+668,731,Chhotaudepur,GUJARAT,india/district/GUJARAT/CHHOTAUDEPUR,name
+669,730,Mahisagar,GUJARAT,india/district/GUJARAT/MAHISAGAR,name
+670,703,South East,DELHI,india/district/DELHI/SOUTH EAST,name
+671,702,Shahdara,DELHI,india/district/DELHI/SHAHDARA,name
+672,725,Arvalli,GUJARAT,india/district/GUJARAT/ARVALLI,name
+673,727,Morbi,GUJARAT,india/district/GUJARAT/MORBI,name
+674,728,Devbhumi Dwarka,GUJARAT,india/district/GUJARAT/DEVBHUMI DWARKA,name
+675,729,Gir Somnath,GUJARAT,india/district/GUJARAT/GIR SOMNATH,name
+676,726,Botad,GUJARAT,india/district/GUJARAT/BOTAD,name
+677,763,Kra Daadi,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/KRA DAADI,name
+678,762,Namsai,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/NAMSAI,name
+679,764,Siang,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/SIANG,name
+680,734,Nirmal,TELANGANA,india/district/TELANGANA/NIRMAL,name
+681,737,Jagitial,TELANGANA,india/district/TELANGANA/JAGTIAL,inside
+682,738,Peddapalli,TELANGANA,india/district/TELANGANA/PEDDAPALLI,name
+683,739,Rajanna Sircilla,TELANGANA,india/district/TELANGANA/RAJANNA SIRCILLA,name
+684,735,Mancherial,TELANGANA,india/district/TELANGANA/MANCHERIAL,name
+685,736,Kamareddy,TELANGANA,india/district/TELANGANA/KAMAREDDY,name
+686,749,Hanumakonda,TELANGANA,india/district/TELANGANA/HANUMAKONDA,name
+687,750,Jayashankar Bhupalapally,TELANGANA,india/district/TELANGANA/JAYASHANKAR BHUPALPALLI,inside
+688,751,Mahabubabad,TELANGANA,india/district/TELANGANA/MAHABUBABAD,name
+689,752,Jangoan,TELANGANA,india/district/TELANGANA/JANGAON,inside
+690,753,Bhadradri Kothagudem,TELANGANA,india/district/TELANGANA/BHADRADRI KOTHAGUDEM,name
+691,740,Sangareddy,TELANGANA,india/district/TELANGANA/SANGAREDDY,name
+692,741,Siddipet,TELANGANA,india/district/TELANGANA/SIDDIPET,name
+693,745,Wanaparthy,TELANGANA,india/district/TELANGANA/WANAPARTHY,name
+694,746,Nagarkurnool,TELANGANA,india/district/TELANGANA/NAGARKURNOOL,name
+695,744,Jogulamba Gadwal,TELANGANA,india/district/TELANGANA/JOGULAMBA GADWAL,name
+696,748,Suryapet,TELANGANA,india/district/TELANGANA/SURYAPET,name
+697,747,Yadadri Bhuvanagiri,TELANGANA,india/district/TELANGANA/YADADRI BHUVANAGIRI,name
+698,743,Vikarabad,TELANGANA,india/district/TELANGANA/VIKARABAD,name
+699,733,Kumuram Bheem Asifabad,TELANGANA,india/district/TELANGANA/KUMURAM BHEEM,inside
+700,742,Medchal Malkajgiri,TELANGANA,india/district/TELANGANA/MEDCHAL-MALKAJGIRI,name
+701,765,Charki Dadri,HARYANA,india/district/HARYANA/CHARKI DADRI,name
+702,775,Kalimpong,WEST BENGAL,india/district/WEST BENGAL/K>LIMPONG,name
+703,776,Jhargram,WEST BENGAL,india/district/WEST BENGAL/JHARGRAM,name
+704,777,Paschim Bardhaman,WEST BENGAL,india/district/WEST BENGAL/PASCHIM BARDDHAM>N,inside
+705,756,Biswanath,ASSAM,india/district/ASSAM/BISWANATH,name
+706,760,Majuli,ASSAM,india/district/ASSAM/MAJULI,name
+707,758,South Salmara Mancachar,ASSAM,india/district/ASSAM/SOUTH SALMARA,name
+708,755,Charaideo,ASSAM,india/district/ASSAM/CHARAIDEO,name
+709,757,Hojai,ASSAM,india/district/ASSAM/HOJAI,name
+710,759,West Karbi Anglong,ASSAM,india/district/ASSAM/WEST KARBI ANAGLONG,inside
+711,768,Kakching,MANIPUR,india/district/MANIPUR/KAKCHING,name
+712,767,Kangpokpi,MANIPUR,india/district/MANIPUR/KANGPOKPI,name
+713,766,Jiribam,MANIPUR,india/district/MANIPUR/JIRIBAM,name
+714,771,Noney,MANIPUR,india/district/MANIPUR/NONEY,name
+715,772,Pherzawl,MANIPUR,india/district/MANIPUR/PHERZAWL,name
+716,769,Tengnoupal,MANIPUR,india/district/MANIPUR/TENGNOUPAL,name
+717,770,Kamjong,MANIPUR,india/district/MANIPUR/KAMJANG,inside
+718,778,Kamle,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/KAMLE,name
+719,779,Lower Siang,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/LOWER SIANG,name
+720,780,Mulugu,TELANGANA,india/district/TELANGANA/MULUGU,name
+721,781,Narayanpet,TELANGANA,india/district/TELANGANA/NARAYANPET,name
+722,782,Niwari,MADHYA PRADESH,india/district/MADHYA PRADESH/NIWARI,name
+723,783,Pakke Kessang,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/PAKKE KESSANG,name
+724,784,Leparada,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/LEPA RADA,inside
+725,785,Shi Yomi,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/SHI YOMI,name
+726,793,Hnahthial,MIZORAM,india/district/MIZORAM/HNAHTHIAL,name
+727,794,Saitual,MIZORAM,india/district/MIZORAM/SAITUAL,name
+728,795,Khawzawl,MIZORAM,india/district/MIZORAM/KHAWZAWL,name
+729,789,Kallakurichi,TAMIL NADU,india/district/TAMIL NADU/KALLAKURICHI,name
+730,787,Chengalpattu,TAMIL NADU,india/district/TAMIL NADU/CHENGALPATTU,name
+731,786,Ranipet,TAMIL NADU,india/district/TAMIL NADU/RANIPET,name
+732,788,Tirupathur,TAMIL NADU,india/district/TAMIL NADU/TIRUPATHUR,name
+733,790,Tenkasi,TAMIL NADU,india/district/TAMIL NADU/TENKASI,name
+734,791,Gaurella Pendra Marwahi,CHHATTISGARH,india/district/CHHATTISGARH/GAURELA-PENDRA-MARWAHI,inside
+735,796,Mayiladuthurai,TAMIL NADU,india/district/TAMIL NADU/MAYILADUTHURAI,name
+736,792,Noklak,NAGALAND,india/district/NAGALAND/NOKLAK,name
+737,797,Malerkotla,PUNJAB,india/district/PUNJAB/MALER KOTLA,inside
+738,798,Vijayanagar,KARNATAKA,india/district/KARNATAKA/VIJAYANAGARA,name
+739,799,Bajali,ASSAM,india/district/ASSAM/BAJALI,name
+740,800,Eastern West Khasi Hills,MEGHALAYA,india/district/MEGHALAYA/EASTERN WEST KHASI HILLS,name
+741,801,Pakyong,SIKKIM,india/district/SIKKIM/PAKYONG,name
+742,802,Soreng,SIKKIM,india/district/SIKKIM/SORENG,name
+743,803,Parvathipuram Manyam,ANDHRA PRADESH,india/district/ANDHRA PRADESH/PARVATHIPURAM MANYAM,name
+744,804,Anakapalli,ANDHRA PRADESH,india/district/ANDHRA PRADESH/ANAKAPALLI,name
+745,805,Alluri Sitharama Raju,ANDHRA PRADESH,india/district/ANDHRA PRADESH/ALLURI SITARAMA RAJU,inside
+746,806,Kakinada,ANDHRA PRADESH,india/district/ANDHRA PRADESH/KAKINADA,name
+747,807,Konaseema,ANDHRA PRADESH,india/district/ANDHRA PRADESH/DR. B.R. AMBEDKAR KONASEEMA,name
+748,808,Eluru,ANDHRA PRADESH,india/district/ANDHRA PRADESH/ELURU,name
+749,809,Ntr,ANDHRA PRADESH,india/district/ANDHRA PRADESH/NTR,name
+750,810,Bapatla,ANDHRA PRADESH,india/district/ANDHRA PRADESH/BAPATLA,name
+751,811,Palnadu,ANDHRA PRADESH,india/district/ANDHRA PRADESH/PALNADU,name
+752,812,Tirupati,ANDHRA PRADESH,india/district/ANDHRA PRADESH/TIRUPATI,name
+753,813,Annamayya,ANDHRA PRADESH,india/district/ANDHRA PRADESH/ANNAMAYYA,name
+754,814,Sri Sathya Sai,ANDHRA PRADESH,india/district/ANDHRA PRADESH/SRI SATHYA SAI,name
+755,815,Nandyal,ANDHRA PRADESH,india/district/ANDHRA PRADESH/NANDYAL,name
+756,816,Tamulpur,ASSAM,india/district/ASSAM/TAMULPUR,name
+757,817,Tseminyu,NAGALAND,india/district/NAGALAND/TSEMINYU,name
+758,818,Chumoukedima,NAGALAND,india/district/NAGALAND/CHUMOUKEDIMA,name
+759,821,Khairgarh Chhuikhadan Gandai,CHHATTISGARH,india/district/CHHATTISGARH/KHAIRGARH-CHHUIKHADAN-GANDAI,name
+760,822,Manendragarh Chirimiri Bharatpur,CHHATTISGARH,india/district/CHHATTISGARH/MANENDRAGARH-CHIRMIRI-BHARATPUR,inside
+761,823,Mohla Manpur Ambagarh Chouki,CHHATTISGARH,india/district/CHHATTISGARH/MOHLA-MANPUR-AMBAGARH CHOWKI,inside
+762,824,Sakti,CHHATTISGARH,india/district/CHHATTISGARH/SAKTI,name
+763,825,Sarangarh Bilaigarh,CHHATTISGARH,india/district/CHHATTISGARH/SARANGARH-BILAIGARH,name
+764,819,Niuland,NAGALAND,india/district/NAGALAND/NIULAND,name
+765,820,Shamator,NAGALAND,india/district/NAGALAND/SHAMATOR,name
+766,826,Itanagar capital complex,ARUNACHAL PRADESH,india/district/ARUNACHAL PRADESH/PAPUMPARE,inside
+767,827,Deeg,RAJASTHAN,india/district/RAJASTHAN/DEEG,name
+768,828,Didwana Kuchaman,RAJASTHAN,india/district/RAJASTHAN/DIDWANA-KUCHAMAN,name
+769,829,Dudu,RAJASTHAN,india/district/RAJASTHAN/JAIPUR,inside
+770,830,Khairthal-Tijara,RAJASTHAN,india/district/RAJASTHAN/KHAIRTHAL-TIJARA,name
+771,831,Gangapurcity,RAJASTHAN,india/district/RAJASTHAN/KARAULI,inside
+772,832,Phalodi,RAJASTHAN,india/district/RAJASTHAN/PHALODI,name
+773,833,Neem Ka Thana,RAJASTHAN,india/district/RAJASTHAN/SIKAR,inside
+774,834,Beawar,RAJASTHAN,india/district/RAJASTHAN/BEAWAR,name
+775,835,Balotra,RAJASTHAN,india/district/RAJASTHAN/BALOTRA,name
+776,836,Anoopgarh,RAJASTHAN,india/district/RAJASTHAN/GANGANAGAR,inside
+777,837,Salumbar,RAJASTHAN,india/district/RAJASTHAN/SALUMBAR,name
+778,838,Jodhpur Gramin,RAJASTHAN,india/district/RAJASTHAN/JODHPUR,inside
+779,839,Sanchor,RAJASTHAN,india/district/RAJASTHAN/JALOR,inside
+780,840,Shahpura,RAJASTHAN,india/district/RAJASTHAN/BHILWARA,inside
+781,841,Kekri,RAJASTHAN,india/district/RAJASTHAN/AJMER,inside
+782,842,Kotputli-Behror,RAJASTHAN,india/district/RAJASTHAN/KOTPUTLI-BEHROR,name
+783,843,Jaipur Gramin,RAJASTHAN,india/district/RAJASTHAN/JAIPUR,inside
