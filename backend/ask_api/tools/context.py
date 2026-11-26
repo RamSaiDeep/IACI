@@ -26,6 +26,7 @@ class ToolError(Exception):
 class ToolContext:
     country: str  # the country selected on the page; the default when a question names none
     client: httpx.AsyncClient | None = None  # for find_place's Bharatlas lookups
+    resolved: dict[str, str] = field(default_factory=dict)  # typed name (lower case) -> place id the visitor picked
     results: dict[str, dict] = field(default_factory=dict)  # result_id -> report section
     trace: list[dict] = field(default_factory=list)  # one entry per tool call, shown under the answer
 

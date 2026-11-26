@@ -15,7 +15,7 @@ from typing import Callable
 from ..labels import HAZARD_CHOICES, SEASONS
 from . import comparing, explain, many_places, one_place, over_time
 from .context import ToolContext, ToolError
-from .places import find_place
+from .places import chosen, find_place
 from .resolve import data_coverage, resolve_hazard, resolve_period
 
 # ---------------------------------------------------------------- shared input shapes
@@ -64,7 +64,9 @@ TOOLS: list[Tool] = [
                             "description": "Only if the visitor said 'state', 'district' etc."},
                 within={"type": "string", "description": "A state the visitor named, to narrow the search."},
                 country={"type": "string", "enum": ["india", "uk", "nepal"], "description": "Only if the visitor named a country."}),
-         lambda ctx, country=None, **a: find_place(ctx.client, country=country or ctx.country, **a)),
+         lambda ctx, name, country=None, **a: (chosen(ctx.resolved[name.strip().lower()])
+                                               if name.strip().lower() in ctx.resolved
+                                               else find_place(ctx.client, name, country=country or ctx.country, **a))),
     Tool("resolve_hazard", "Map an everyday hazard word (flood, heatwave, cyclone, frost...) to the index's hazards. "
          "Says when the index doesn't measure it (earthquake, landslide).",
          schema(["word"], word={"type": "string"}),

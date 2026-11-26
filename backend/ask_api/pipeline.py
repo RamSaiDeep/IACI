@@ -16,7 +16,7 @@ from .categories import CATEGORIES, LABELS
 from .categories.common import Clarify, Ctx, UserError
 from .errors import AskError
 from .grounding import allowed_numbers, strip_attribution, strip_ungrounded, ungrounded
-from .labels import BASELINE, COUNTRY_INFO, COUNTRY_SLUGS, DATA_SOURCE, STANDARD_CAVEATS
+from .labels import BASELINE, COUNTRY_INFO, COUNTRY_SLUGS, DATA_SOURCE, EXAMPLE_QUESTIONS, STANDARD_CAVEATS
 from .router import WAIT_NOTICE, Usage, classify, extract
 from .writer import Writer
 
@@ -25,8 +25,7 @@ CHAT_SCOPE = ("snapshot", "compare", "rank", "trend")
 OUT_OF_SCOPE = ("I can look into four kinds of questions about the Actuaries Climate Index for India, the UK and Nepal: "
                 "a snapshot of one place in a year or season, a comparison of two places, a ranking of districts, "
                 "and a trend at one place.")
-EXAMPLES = ["How was 2024 for Mumbai?", "Chennai vs Kolkata, 2015–2025",
-            "Worst drought districts in Rajasthan", "Is heat increasing in Delhi?"]
+EXAMPLES = EXAMPLE_QUESTIONS
 
 
 def method(country: str) -> dict:

@@ -45,6 +45,11 @@ COMPOSITE_FORMULA = {
     "inland": "(T90S − T10S + PS + W + DS) / 5",
 }
 
+# One example per starting point on the Ask page (Snapshot, Compare, Ranking, Trend); shown when a
+# question is out of scope. Keep in step with CARDS in frontend/src/components/ask/AskClient.tsx.
+EXAMPLE_QUESTIONS = ["How was 2024 for Mumbai?", "Chennai vs Kolkata, 2015–2025",
+                     "Worst drought districts in Rajasthan", "Is heat increasing in Delhi?"]
+
 STANDARD_CAVEATS = [
     "Values are standardized anomalies (z-scores) against the 1991–2020 baseline, not raw weather measurements.",
     "Figures are monthly averages over each district's area, so very local or short-lived events are smoothed out.",

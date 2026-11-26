@@ -94,6 +94,12 @@ async def find_place(client: httpx.AsyncClient, name: str, country: str | None =
     return _not_found(name, near_misses)
 
 
+def chosen(place_id: str) -> dict | None:
+    """The visitor already picked this place from a list of options: return it as found."""
+    p = get_place(place_id)
+    return _result("found", place=p, how="chosen") if p else None
+
+
 # ---------------------------------------------------------------- helpers
 
 def _result(status: str, place: Place | None = None, how: str | None = None, note: str | None = None,

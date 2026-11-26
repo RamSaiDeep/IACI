@@ -59,6 +59,10 @@ The design and the plan for the agent version are in `docs/ask-the-index/`
 
 | File | Role |
 |---|---|
+| `agent/` | The loop. Start with `agent/__init__.py` |
+| `agent/model.py` | The neutral message format and the `Model.turn` method each provider adapter implements |
+| `agent/prompt.py` | The system prompt (what the model knows, its rules) and the loop-control tools: `triage`, `final_answer`, `ask_user`, `out_of_scope` |
+| `agent/loop.py` | `run_agent`: forced triage → tool calls (max 8 turns, 12 calls) → final answer → number check (one rewrite, then strip) → answer, clarify or out-of-scope |
 | `tools/` | The 21 functions the agent can call. Start with `tools/__init__.py` (map) and `tools/registry.py` (the list the model sees) |
 | `tools/context.py` | What every tool shares: the visitor's country, the store of tables/charts (`result_id`s), `ToolError`, period checking |
 | `tools/places.py` | `find_place`: name → one place. Our names first, then Bharatlas, then "not found" |
