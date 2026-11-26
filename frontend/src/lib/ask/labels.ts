@@ -4,7 +4,7 @@ export type CountrySlug = "india" | "uk" | "nepal";
 export const COUNTRY_SLUGS: CountrySlug[] = ["india", "uk", "nepal"];
 
 export const COUNTRY_INFO: Record<CountrySlug, { name: string; topLabel: string; childLabel: string; example: string }> = {
-  india: { name: "India", topLabel: "State", childLabel: "District", example: "Guntur" },
+  india: { name: "India", topLabel: "State", childLabel: "District", example: "Mumbai" },
   uk: { name: "United Kingdom", topLabel: "Nation", childLabel: "County", example: "Kent" },
   nepal: { name: "Nepal", topLabel: "Province", childLabel: "District", example: "Kathmandu" },
 };

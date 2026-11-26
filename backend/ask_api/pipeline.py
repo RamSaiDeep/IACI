@@ -25,8 +25,8 @@ CHAT_SCOPE = ("snapshot", "compare", "rank", "trend")
 OUT_OF_SCOPE = ("I can look into four kinds of questions about the Actuaries Climate Index for India, the UK and Nepal: "
                 "a snapshot of one place in a year or season, a comparison of two places, a ranking of districts, "
                 "and a trend at one place.")
-EXAMPLES = ["How was 2024 for Guntur district?", "Chennai vs Hyderabad, 2015–2025",
-            "Which Odisha districts had the worst rainfall in monsoon 2024?", "Is extreme heat increasing in Chennai?"]
+EXAMPLES = ["How was 2024 for Mumbai?", "Chennai vs Kolkata, 2015–2025",
+            "Worst drought districts in Rajasthan", "Is heat increasing in Delhi?"]
 
 
 def method(country: str) -> dict:

@@ -11,10 +11,10 @@ import ReportView from "./ReportView";
 type Mode = Exclude<Category, "help" | "event">;
 
 const CARDS: { mode: Mode; title: string; blurb: string; example: string; icon: string }[] = [
-  { mode: "snapshot", title: "Snapshot", blurb: "How one place did in a year, season or month, ranked against every year since 1991.", example: "“How was 2024 for Nellore?”", icon: "M3 4h18v18H3zM16 2v4M8 2v4M3 10h18" },
-  { mode: "compare", title: "Compare", blurb: "Two places side by side over a period, hazard by hazard.", example: "“Chennai vs Hyderabad, 2015–2025”", icon: "M3 4h7v16H3zM14 4h7v16h-7z" },
-  { mode: "rank", title: "Ranking", blurb: "A ranked list of districts for any hazard and period.", example: "“Worst drought districts in Maharashtra”", icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
-  { mode: "trend", title: "Trend", blurb: "Is a hazard rising or falling at a place, and how sure is that?", example: "“Is heat increasing in Guntur?”", icon: "M3 17l6-6 4 4 8-8M14 7h7v7" },
+  { mode: "snapshot", title: "Snapshot", blurb: "How one place did in a year, season or month, ranked against every year since 1991.", example: "“How was 2024 for Mumbai?”", icon: "M3 4h18v18H3zM16 2v4M8 2v4M3 10h18" },
+  { mode: "compare", title: "Compare", blurb: "Two places side by side over a period, hazard by hazard.", example: "“Chennai vs Kolkata, 2015–2025”", icon: "M3 4h7v16H3zM14 4h7v16h-7z" },
+  { mode: "rank", title: "Ranking", blurb: "A ranked list of districts for any hazard and period.", example: "“Worst drought districts in Rajasthan”", icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
+  { mode: "trend", title: "Trend", blurb: "Is a hazard rising or falling at a place, and how sure is that?", example: "“Is heat increasing in Delhi?”", icon: "M3 17l6-6 4 4 8-8M14 7h7v7" },
 ];
 
 const HAZARDS: [string, string][] = [
