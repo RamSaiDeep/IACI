@@ -29,6 +29,13 @@ const RANK_PERIODS: { id: string; label: string; slots: Slots }[] = [
   { id: "last10", label: "Last 10 years", slots: { last_years: 10 } },
   { id: "all", label: "Whole record (1991 onwards)", slots: { from_year: 1991 } },
 ];
+/** One turn in the chat thread. */
+type Msg =
+  | { role: "user"; text: string }
+  | { role: "report"; report: ReportCard }
+  | { role: "clarify"; c: ClarifyResponse; req: AskRequest }
+  | { role: "error"; text: string };
+
 const YEARS = Array.from({ length: 2026 - 1991 + 1 }, (_, i) => 2026 - i);
 const field = "min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 text-[15px]";
 
@@ -56,11 +63,10 @@ export default function AskClient() {
   const [busy, setBusy] = useState(false);
   const [steps, setSteps] = useState<string[]>([]);
   const [secs, setSecs] = useState(0);
-  const [report, setReport] = useState<ReportCard | null>(null);
-  const [clarify, setClarify] = useState<{ c: ClarifyResponse; req: AskRequest } | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [thread, setThread] = useState<Msg[]>([]);
+  const [question, setQuestion] = useState("");
   const [shared, setShared] = useState<AskRequest | null>(null);
-  const resultRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLLIElement>(null);
 
   // guided form state
   const [place, setPlace] = useState("");
@@ -93,37 +99,46 @@ export default function AskClient() {
     setTimeout(() => document.getElementById("key-panel")?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
   };
 
-  async function run(req: AskRequest) {
-    setError(null);
-    setClarify(null);
+  const push = (m: Msg) => setThread((t) => [...t, m]);
+  const scrollToEnd = () => setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+
+  async function run(req: AskRequest, label: string) {
     if (!hasKey) {
       openPanel("Set an API key to get answers.");
       return;
     }
+    push({ role: "user", text: label });
     setBusy(true);
     setSteps([]);
     setSecs(0);
+    scrollToEnd();
     const timer = startTimer(setSecs);
     try {
       const out = await ask({ ...req, model: keyState.model, provider: keyState.provider }, keyState.key, (t) => setSteps((s) => [...s, t]));
-      if (out.kind === "report") setReport(out.report);
-      else { setReport(null); setClarify({ c: out, req }); }
-      setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+      push(out.kind === "report" ? { role: "report", report: out.report } : { role: "clarify", c: out, req });
     } catch (e) {
       if (e instanceof ApiError && (e.code === "missing_key" || e.code === "invalid_key")) openPanel(e.message);
-      else setError(e instanceof ApiError ? e.message : "Something went wrong. Please try again.");
+      push({ role: "error", text: e instanceof ApiError ? e.message : "Something went wrong. Please try again." });
     } finally {
       clearInterval(timer);
       setBusy(false);
+      scrollToEnd();
     }
   }
 
-  const pick = (o: ClarifyResponse["options"][number]) => {
-    if (!clarify) return;
-    const { c, req } = clarify;
-    if (o.category) { void run({ ...req, category: o.category, slots: null }); return; }
+  // A typed question; the last report in the thread is sent as context so follow-ups work.
+  const askFree = (q: string) => {
+    const last = [...thread].reverse().find((m): m is Extract<Msg, { role: "report" }> => m.role === "report")?.report;
+    const previous = last ? { question: last.request.question, category: last.feature, slots: last.request.slots, summary: `${last.title}. ${last.headline}` } : undefined;
+    void run({ country, question: q, previous }, q);
+  };
+
+  const pick = (m: Extract<Msg, { role: "clarify" }>, o: ClarifyResponse["options"][number]) => {
+    const { c, req } = m;
+    if (o.question) { askFree(o.question); return; }
+    if (o.category) { void run({ ...req, category: o.category, slots: null }, o.label); return; }
     void run({ ...req, category: c.category ?? req.category, slots: c.slots ?? req.slots,
-      resolved: { ...req.resolved, [(c.query ?? "").toLowerCase()]: o.id ?? "" } });
+      resolved: { ...req.resolved, [(c.query ?? "").toLowerCase()]: o.id ?? "" } }, o.label);
   };
 
   const submitGuided = () => {
@@ -134,7 +149,13 @@ export default function AskClient() {
           year: null, season: null, month: null, from_year: null, to_year: null, last_years: null,
           ...RANK_PERIODS.find((p) => p.id === period)!.slots }
       : { place, hazard, season: null, from_year: null, to_year: null };
-    void run({ country, category: mode, slots });
+    const hz = HAZARDS.find(([id]) => id === hazard)![1];
+    const label =
+      mode === "snapshot" ? `Snapshot: ${place}, ${year}${season ? `, ${SEASONS.find(([v]) => v === season)![1]}` : ""}`
+      : mode === "compare" ? `Compare: ${place} vs ${placeB}, ${fromYear}–${toYear}`
+      : mode === "rank" ? `Ranking: ${hz} ${region ? `in ${region}` : `across ${info.name}`}, ${RANK_PERIODS.find((p) => p.id === period)!.label}`
+      : `Trend: ${hz} in ${place}`;
+    void run({ country, category: mode, slots }, label);
   };
 
   const guidedReady = mode === "compare" ? !!place.trim() && !!placeB.trim() : mode === "rank" ? true : !!place.trim();
@@ -160,10 +181,10 @@ export default function AskClient() {
         {panelOpen && <KeyPanel state={keyState} onChange={setKeyState} onClose={() => setPanelOpen(false)} notice={notice} />}
       </div>
 
-      {shared && !report && (
+      {shared && (
         <div className="no-print flex flex-wrap items-center gap-3 rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm" role="status">
           <span>A shared question was loaded: <strong>{shared.question ?? `${shared.category} report`}</strong>.</span>
-          <button type="button" className="min-h-11 rounded-xl bg-accent px-4 font-semibold text-white" onClick={() => { setCountry(shared.country); void run(shared); setShared(null); }}>Run it</button>
+          <button type="button" className="min-h-11 rounded-xl bg-accent px-4 font-semibold text-white" onClick={() => { setCountry(shared.country); void run(shared, shared.question ?? `${shared.category} report`); setShared(null); }}>Run it</button>
         </div>
       )}
 
@@ -172,7 +193,7 @@ export default function AskClient() {
         <span className="eyebrow">Ask the Index</span>
         <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-5xl">Get to know your climate</h1>
         <p className="max-w-2xl text-base text-foreground/70 sm:text-lg">
-          Pick what you want to find out, fill in a place and a period, and get a written answer with a chart and a table, built from the index&apos;s own monthly values.
+          Ask in your own words, or fill in a short form. Every answer comes with a chart and a table, built from the index&apos;s own monthly values.
         </p>
         <div role="group" aria-label="Country" className="flex flex-wrap items-center justify-center gap-2">
           <span className="mr-1 text-sm text-foreground/60">Country</span>
@@ -185,11 +206,95 @@ export default function AskClient() {
         </div>
       </section>
 
+      {/* Chat */}
+      <section aria-labelledby="chat-h" className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-surface p-4 shadow-card sm:p-6">
+        <h2 id="chat-h" className="sr-only">Chat with the index</h2>
+        <div className="no-print flex flex-col gap-3 rounded-xl bg-surface-muted p-4 text-sm">
+          <p><strong>I can look into four kinds of questions.</strong> Try one, or ask your own:</p>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {CARDS.map((c) => {
+              const q = c.example.replace(/[“”]/g, "");
+              return (
+                <li key={c.mode}>
+                  <button type="button" disabled={busy} onClick={() => askFree(q)}
+                    className="flex min-h-11 w-full flex-col items-start rounded-xl bg-surface px-3 py-2 text-left ring-1 ring-foreground/15 hover:ring-accent disabled:opacity-50">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-accent">{c.title}</span>
+                    <span>{q}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <ol aria-live="polite" className="flex flex-col gap-4">
+          {thread.map((m, i) => (
+            <li key={i} ref={i === thread.length - 1 ? endRef : undefined} className="scroll-mt-24">
+              {m.role === "user" && (
+                <p className="no-print ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-sm bg-accent px-4 py-2.5 text-[15px] text-white">{m.text}</p>
+              )}
+              {m.role === "error" && <p role="alert" className="no-print rounded-xl border border-rose-600/30 bg-rose-600/10 p-4 text-sm text-rose-800">{m.text}</p>}
+              {m.role === "clarify" && (
+                <div className="no-print max-w-[85%] rounded-2xl rounded-bl-sm border border-accent/40 bg-surface p-4">
+                  <p className="font-semibold">{m.c.question}</p>
+                  {m.c.options.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {m.c.options.map((o) => (
+                        <button key={o.id ?? o.category ?? o.label} type="button" disabled={busy} onClick={() => pick(m, o)}
+                          className="min-h-11 rounded-full border border-foreground/20 px-4 text-sm hover:border-accent disabled:opacity-50">{o.label}</button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              {m.role === "report" && (
+                <div className="flex flex-col gap-3">
+                  <ReportView report={m.report} />
+                  {m.report.followups.length > 0 && (
+                    <div className="no-print flex flex-wrap gap-2">
+                      {m.report.followups.map((f) => (
+                        <button key={f} type="button" disabled={busy} onClick={() => askFree(f)}
+                          className="min-h-11 rounded-full border border-foreground/20 bg-surface px-4 text-left text-sm hover:border-accent disabled:opacity-50">{f}</button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </li>
+          ))}
+        </ol>
+
+        {busy && (
+          <div className="no-print max-w-[85%] rounded-2xl rounded-bl-sm bg-surface-muted p-4 text-sm" role="status" aria-live="polite">
+            <p className="font-semibold">Working on it… {secs}s</p>
+            <ol className="mt-2 flex flex-col gap-1">
+              {steps.map((t, i) => (
+                <li key={i} className={i === steps.length - 1 ? "text-foreground" : "text-foreground/60"}>
+                  <span aria-hidden>{i === steps.length - 1 ? "⏳" : "✓"}</span> {t}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        <form className="no-print flex gap-2 border-t border-foreground/10 pt-4"
+          onSubmit={(e) => { e.preventDefault(); const q = question.trim(); if (q) { askFree(q); setQuestion(""); } }}>
+          <label htmlFor="ask" className="sr-only">Your question</label>
+          <input id="ask" type="text" value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={500}
+            placeholder={thread.length ? "Ask a follow-up, e.g. now just the monsoon months" : `e.g. How was 2024 for ${info.example}?`}
+            className="min-h-12 min-w-0 flex-1 rounded-xl border border-foreground/20 bg-surface px-4 text-[15px]" />
+          <button type="submit" disabled={busy || !question.trim()} className="min-h-12 rounded-xl bg-accent px-6 font-semibold text-white disabled:opacity-50">
+            {busy ? "Working…" : "Ask"}
+          </button>
+        </form>
+        {!hasKey && <p className="no-print text-sm text-foreground/60">Answers need an API key. Use &ldquo;Set API key&rdquo; at the top of the page.</p>}
+      </section>
+
       {/* Starting points */}
       <section aria-labelledby="start-h" className="no-print flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="start-h" className="text-xl font-bold">What would you like to know?</h2>
-          <span className="text-sm text-foreground/60">Choose one, then fill in the short form below it</span>
+          <h2 id="start-h" className="text-xl font-bold">Or fill in a short form</h2>
+          <span className="text-sm text-foreground/60">Choose one; the answer appears in the chat above</span>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CARDS.map((c) => (
@@ -236,38 +341,6 @@ export default function AskClient() {
           {!hasKey && <p className="text-sm text-foreground/60">Answers need an API key. Use &ldquo;Set API key&rdquo; at the top of the page.</p>}
         </form>
       </section>
-
-      {/* Result area */}
-      <div ref={resultRef} aria-live="polite" className="flex flex-col gap-4 scroll-mt-24">
-        {busy && (
-          <div className="w-full max-w-3xl rounded-xl bg-surface p-4 text-left text-sm shadow-card" role="status" aria-live="polite">
-            <p className="font-semibold">Working on it… {secs}s</p>
-            <ol className="mt-2 flex flex-col gap-1">
-              {steps.map((t, i) => (
-                <li key={i} className={i === steps.length - 1 ? "text-foreground" : "text-foreground/60"}>
-                  <span aria-hidden>{i === steps.length - 1 ? "⏳" : "✓"}</span> {t}
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
-        {error && <p role="alert" className="rounded-xl border border-rose-600/30 bg-rose-600/10 p-4 text-sm text-rose-800">{error}</p>}
-        {clarify && (
-          <div className="rounded-xl border border-accent/40 bg-surface p-5 shadow-card">
-            <p className="font-semibold">{clarify.c.question}</p>
-            {clarify.c.options.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {clarify.c.options.map((o) => (
-                  <button key={o.id ?? o.category ?? o.label} type="button" disabled={busy} onClick={() => pick(o)}
-                    className="min-h-11 rounded-full border border-foreground/20 px-4 text-sm hover:border-accent">{o.label}</button>
-                ))}
-              </div>
-            )}
-            {clarify.c.options.length === 0 && <p className="mt-1 text-sm text-foreground/60">Change the form above and try again.</p>}
-          </div>
-        )}
-        {report && <ReportView report={report} />}
-      </div>
 
       {/* How answers work */}
       <section aria-labelledby="how-h" className="no-print rounded-2xl border border-foreground/10 bg-surface p-6">

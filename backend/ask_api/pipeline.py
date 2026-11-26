@@ -20,10 +20,13 @@ from .labels import BASELINE, COUNTRY_INFO, COUNTRY_SLUGS, DATA_SOURCE, STANDARD
 from .router import WAIT_NOTICE, Usage, classify, extract
 from .writer import Writer
 
-OUT_OF_SCOPE = ("I can only answer questions about climate extremes in the Actuaries Climate Index for India, the UK "
-                "and Nepal: how a place or period compares with normal, rankings, trends and comparisons.")
-EXAMPLES = ["How was 2024 for Guntur district?", "Which Odisha districts had the worst rainfall in monsoon 2024?",
-            "Is extreme heat increasing in Chennai?"]
+# The chat answers these four kinds of question only (event and help stay reachable by category, not by free text).
+CHAT_SCOPE = ("snapshot", "compare", "rank", "trend")
+OUT_OF_SCOPE = ("I can look into four kinds of questions about the Actuaries Climate Index for India, the UK and Nepal: "
+                "a snapshot of one place in a year or season, a comparison of two places, a ranking of districts, "
+                "and a trend at one place.")
+EXAMPLES = ["How was 2024 for Guntur district?", "Chennai vs Hyderabad, 2015–2025",
+            "Which Odisha districts had the worst rainfall in monsoon 2024?", "Is extreme heat increasing in Chennai?"]
 
 
 def method(country: str) -> dict:
@@ -53,12 +56,12 @@ async def run_ask(body: dict, key: str | None, emit: Callable[[str], None]) -> d
                 c = await classify(client, question, country, previous, usage)
                 ctx.step("classify", {"model": config.ROUTER_MODEL},
                          f"in scope {c['related']:.0%}; {c['category']} ({c['confidence']:.0%} sure)")
-                if c["related"] < config.RELATED_MIN or not c["category"]:
+                if c["related"] < config.RELATED_MIN or c["category"] not in CHAT_SCOPE:
                     raise Clarify(OUT_OF_SCOPE + " Try one of these:", [{"label": q, "question": q} for q in EXAMPLES])
                 if c["confidence"] < config.CATEGORY_MIN:
                     top = [p["value"] for p in c["probabilities"][:2]]
                     raise Clarify("What kind of answer would help most?",
-                                  [{"label": LABELS[t], "category": t} for t in top if t in LABELS])
+                                  [{"label": LABELS[t], "category": t} for t in top if t in CHAT_SCOPE])
                 category, topic = c["category"], c.get("topic")
             mod = CATEGORIES[category]
 

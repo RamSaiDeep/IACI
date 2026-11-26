@@ -91,11 +91,18 @@ def test_missing_key_is_refused_before_writing(fake):
     assert e.value.code == "missing_key"
 
 
-def test_help_needs_no_key(fake, monkeypatch):
-    fake["cls"] = {"related": 0.9, "category": "help", "confidence": 0.9, "probabilities": [], "topic": "drought"}
+@pytest.mark.parametrize("cat", ["help", "event"])
+def test_chat_outside_four_types_lists_them(fake, cat):
+    fake["cls"] = {"related": 0.9, "category": cat, "confidence": 0.9, "probabilities": [], "topic": "drought"}
     out, _ = run({"country": "india", "question": "What does drought mean?"}, key=None)
+    assert out["kind"] == "clarify" and "four kinds" in out["question"] and len(out["options"]) == 4
+
+
+def test_help_needs_no_key(fake, monkeypatch):
+    fake["cls"] = None  # chosen by category, so the router is never asked
+    out, _ = run({"country": "india", "category": "help", "slots": {"topic": "drought"}}, key=None)
     r = out["report"]
-    assert r["feature"] == "help" and r["usage"]["provider"] == "none" and r["router"]["calls"] == 1
+    assert r["feature"] == "help" and r["usage"]["provider"] == "none" and r["router"]["calls"] == 0
     assert "dry days" in r["sections"][0]["body"]
 
 
