@@ -20,7 +20,8 @@ from .pipeline import run_ask
 from .writer import Writer
 
 app = FastAPI(title="Ask the Index", docs_url=None, redoc_url=None)
-app.add_middleware(CORSMiddleware, allow_origins=config.ALLOWED_ORIGINS, allow_methods=["POST", "GET"],
+app.add_middleware(CORSMiddleware, allow_origins=config.ALLOWED_ORIGINS,
+                   allow_origin_regex=config.ALLOWED_ORIGIN_REGEX, allow_methods=["POST", "GET"],
                    allow_headers=["content-type", "x-llm-key"], max_age=600)
 NO_STORE = {"Cache-Control": "no-store"}
 

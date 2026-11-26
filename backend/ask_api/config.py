@@ -44,3 +44,5 @@ CATEGORY_MIN = float(os.environ.get("ASK_CATEGORY_MIN", "0.6"))
 ALLOWED_ORIGINS = [o.strip() for o in os.environ.get(
     "ASK_ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
 ).split(",") if o.strip()]
+# Optional regex for origins that change per deploy (Vercel preview URLs), e.g. https://iaci(-.+-ramsaideeps-projects)?\.vercel\.app
+ALLOWED_ORIGIN_REGEX = os.environ.get("ASK_ALLOWED_ORIGIN_REGEX") or None
