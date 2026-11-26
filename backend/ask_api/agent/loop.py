@@ -85,23 +85,27 @@ async def run_agent(question: str, ctx: ToolContext, model: Model, emit: Callabl
     ctx.trace.append({"name": "triage", "args": verdict, "ok": True,
                       "summary": ("in scope: " + ", ".join(verdict.get("kinds") or ["question"])) if verdict.get("in_scope")
                       else f"out of scope: {verdict.get('reason', '')}"})
-    if verdict.get("in_scope") is False:
-        return _out_of_scope(verdict.get("reason"), ctx, usage)
+    if verdict.get("in_scope") is False:  # the triage reason is for the trace; the visitor gets the standard reply
+        return _out_of_scope(None, ctx, usage)
     if tri:
         messages += [{"role": "assistant", "text": r.text, "calls": [asdict(tri)]},
                      {"role": "tool", "id": tri.id, "name": "triage", "result": {"ok": True}}]
 
     # 2. Loop
     facts: list[dict] = [{"question": question}, {"earlier": (previous or {}).get("summary", "")}]
-    calls_made, nudged, repaired = 0, False, False
+    calls_made, nudged, repaired, force = 0, False, False, None
     for _ in range(MAX_STEPS):
-        r = usage.add(await model.turn(system, messages, TOOL_SPECS))
+        r = usage.add(await model.turn(system, messages, TOOL_SPECS if not force else [FINISHERS[force]], force=force))
+        force = None
         if not r.calls:
             if nudged:
                 raise AskError("model_error", f"{model.name} answered without using the tools. Try again, or pick another model.", 502)
             nudged = True
+            # Data already gathered: make the next turn finish. Otherwise remind it to use the tools.
+            force = "final_answer" if calls_made else None
             messages += [{"role": "assistant", "text": r.text, "calls": []},
-                         {"role": "user", "text": "Use the tools, then finish with final_answer, ask_user or out_of_scope."}]
+                         {"role": "user", "text": "Finish now with final_answer, using the tool results above." if force
+                          else "Use the tools, then finish with final_answer, ask_user or out_of_scope."}]
             continue
         messages.append({"role": "assistant", "text": r.text, "calls": [asdict(c) for c in r.calls]})
         finisher = None
@@ -168,6 +172,8 @@ def _answer(args: dict, facts: list[dict], ctx: ToolContext, usage: Usage, statu
         show = list(ctx.results)[:4]
     sections += [ctx.results[rid] for rid in show]
     followups = [f for f in (args.get("followups") or [])[:3] if isinstance(f, str) and not ungrounded(f, allowed)]
+    if not headline and sections and sections[0]["kind"] == "text":  # no headline: promote the first paragraph
+        headline = sections.pop(0)["body"]
     if not headline:
         headline = "Here is what the index shows." if show else "I couldn't find an answer in the index."
     return {"kind": "answer", "headline": headline, "sections": sections, "followups": followups,

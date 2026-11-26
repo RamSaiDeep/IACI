@@ -91,8 +91,9 @@ def test_triage_is_forced_and_prompt_has_context():
 def test_off_topic_stops_after_triage():
     out, _, model = run(ScriptedModel(call("triage", in_scope=False, kinds=[], reason="That's about cricket.")),
                         question="Who won the cricket?")
-    assert out["kind"] == "out_of_scope" and len(out["options"]) == 4 and "cricket" in out["message"]
-    assert len(model.seen) == 1
+    assert out["kind"] == "out_of_scope" and len(out["options"]) == 4
+    assert "cricket" not in out["message"] and "Try one of these" in out["message"]  # triage reason stays in the trace
+    assert "cricket" in out["trace"][0]["summary"] and len(model.seen) == 1
 
 
 def test_model_can_decline_later_in_the_loop():
@@ -151,6 +152,19 @@ def test_claims_of_cause_are_removed():
                     show=s["show"], followups=[])
     out, _, _ = run(ScriptedModel(*snapshot_steps(final)))
     assert out["headline"] == "It was a hot year." and out["grounding"]["removed"]
+
+
+def test_missing_headline_uses_first_paragraph():
+    out, _, _ = run(ScriptedModel(*snapshot_steps(lambda m: call(
+        "final_answer", headline="", sections=[{"title": "", "body": "Mumbai had a warm year."}], show=[], followups=[]))))
+    assert out["headline"] == "Mumbai had a warm year." and out["sections"][0]["kind"] == "table"
+
+
+def test_empty_turn_after_data_forces_final_answer():
+    model = ScriptedModel(in_scope("snapshot"), call("find_place", name="Mumbai"), Reply(),
+                          lambda m: call("final_answer", headline="Mumbai is a district.", sections=[], show=[], followups=[]))
+    out, _, model = run(model)
+    assert out["kind"] == "answer" and model.seen[-1]["force"] == "final_answer" and model.seen[-1]["tools"] == ["final_answer"]
 
 
 def test_unknown_result_ids_are_ignored_and_empty_show_falls_back():

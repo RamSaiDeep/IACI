@@ -62,6 +62,7 @@ The design and the plan for the agent version are in `docs/ask-the-index/`
 | `agent/` | The loop. Start with `agent/__init__.py` |
 | `agent/model.py` | The neutral message format and the `Model.turn` method each provider adapter implements |
 | `agent/prompt.py` | The system prompt (what the model knows, its rules) and the loop-control tools: `triage`, `final_answer`, `ask_user`, `out_of_scope` |
+| `agent/providers.py` | Connections to the visitor's model: `AnthropicModel` (native tool use) and `OpenAIStyleModel` (Gemini and OpenRouter; OpenRouter defaults to free Gemma 4 31B with Nemotron 3.5 Lightning as an automatic fallback). `make_model` picks one |
 | `agent/loop.py` | `run_agent`: forced triage → tool calls (max 8 turns, 12 calls) → final answer → number check (one rewrite, then strip) → answer, clarify or out-of-scope |
 | `tools/` | The 21 functions the agent can call. Start with `tools/__init__.py` (map) and `tools/registry.py` (the list the model sees) |
 | `tools/context.py` | What every tool shares: the visitor's country, the store of tables/charts (`result_id`s), `ToolError`, period checking |
