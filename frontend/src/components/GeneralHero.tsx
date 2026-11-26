@@ -38,6 +38,19 @@ export default function GeneralHero() {
               Select Country ↓
             </a>
           </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/ask"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-xs sm:text-sm font-bold tracking-widest uppercase text-header-fg bg-header-bg hover:opacity-90 rounded-lg transition-all duration-300 hover:-translate-y-0.5 shadow-card hover:shadow-card-lg"
+            >
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+              </svg>
+              ClimateIQ Agent →
+            </Link>
+            <span className="text-sm text-foreground/60">Ask questions about the index in plain language</span>
+          </div>
         </div>
 
         {/* Brand & Initiative Seals */}

@@ -69,7 +69,7 @@ async function post(path: string, body: unknown, key: string): Promise<Response>
       body: JSON.stringify(body),
     });
   } catch {
-    throw new ApiError("network", "Could not reach the Ask the Index service. Check your connection and try again.");
+    throw new ApiError("network", "Could not reach the ClimateIQ Agent service. Check your connection and try again.");
   }
 }
 

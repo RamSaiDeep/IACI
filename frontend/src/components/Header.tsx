@@ -68,7 +68,6 @@ const GLOBAL: Portal = {
   nav: [
     { href: "/", label: "Home" },
     { href: "/about", label: "About the Index" },
-    { href: "/ask", label: "Ask the Index" },
   ],
 };
 

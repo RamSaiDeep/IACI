@@ -3,7 +3,7 @@ import Header from "../../components/Header";
 import AskClient from "../../components/ask/AskClient";
 
 export const metadata: Metadata = {
-  title: "Ask the Index — Actuaries Climate Index",
+  title: "ClimateIQ Agent — Actuaries Climate Index",
   description:
     "Ask plain-language questions about climate extremes and get a cited report built only from the index's own values.",
 };

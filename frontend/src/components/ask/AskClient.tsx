@@ -190,7 +190,7 @@ export default function AskClient() {
 
       {/* Heading + country */}
       <section className="no-print flex flex-col items-center gap-5 text-center">
-        <span className="eyebrow">Ask the Index</span>
+        <span className="eyebrow">ClimateIQ Agent</span>
         <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-5xl">Get to know your climate</h1>
         <p className="max-w-2xl text-base text-foreground/70 sm:text-lg">
           Ask in your own words, or fill in a short form. Every answer comes with a chart and a table, built from the index&apos;s own monthly values.
