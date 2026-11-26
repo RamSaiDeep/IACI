@@ -2,8 +2,9 @@
 
 import type { AskRequest, AskResponse } from "./report-types";
 
-/** The FastAPI service (backend/ask_api). Set NEXT_PUBLIC_ASK_API_URL for deployed environments. */
-export const ASK_API_URL = (process.env.NEXT_PUBLIC_ASK_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
+/** The FastAPI service (backend/ask_api): local in `next dev`, the Render service in deployed builds. NEXT_PUBLIC_ASK_API_URL overrides both. */
+export const ASK_API_URL = (process.env.NEXT_PUBLIC_ASK_API_URL
+  ?? (process.env.NODE_ENV === "production" ? "https://iaci-ask-api.onrender.com" : "http://localhost:8000")).replace(/\/$/, "");
 
 export type ProviderId = "anthropic" | "gemini" | "openrouter";
 export const PROVIDER_LABELS: Record<ProviderId, string> = { anthropic: "Anthropic", gemini: "Google Gemini", openrouter: "OpenRouter" };
