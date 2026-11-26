@@ -1,7 +1,11 @@
-"""The agentic workflow for one question:
+"""One /ask request, end to end. Three paths:
 
-  question -> Mammoth-1 (in scope? which category?) -> GPT-5 nano (category slots as JSON)
-           -> category function (all numbers, in code) -> writer (visitor's key) -> number check -> report
+  Form (category + slots given)   -> category function (all numbers, in code) -> writer -> number check -> report
+  Typed question, ASK_AGENT=1     -> run_agent_request: the visitor's model calls our tools (agent/loop.py)
+  Typed question, agent off (v2)  -> Mammoth-1 (in scope? which category?) -> GPT-5 nano (slots as JSON)
+                                     -> category function -> writer -> number check -> report
+
+All three return the same shapes ({"kind": "report", ...} or {"kind": "clarify", ...}), so the page is the same.
 """
 
 from __future__ import annotations
@@ -12,6 +16,9 @@ from typing import Callable
 import httpx
 
 from . import config
+from .agent.loop import run_agent
+from .agent.providers import make_model
+from .tools.context import ToolContext
 from .categories import CATEGORIES, LABELS
 from .categories.common import Clarify, Ctx, UserError
 from .errors import AskError
@@ -38,6 +45,8 @@ async def run_ask(body: dict, key: str | None, emit: Callable[[str], None]) -> d
     question = (body.get("question") or "").strip()[:600] or None
     category, slots = body.get("category"), body.get("slots")
     previous = body.get("previous") or None
+    if config.AGENT_ENABLED and question and not category:
+        return await run_agent_request(body, country, question, previous, key, emit)
     ctx = Ctx(country=country, resolved={k.lower(): v for k, v in (body.get("resolved") or {}).items()}, emit=emit)
     usage = Usage()
     WAIT_NOTICE.set(emit)
@@ -100,6 +109,35 @@ async def run_ask(body: dict, key: str | None, emit: Callable[[str], None]) -> d
         "usage": writer.usage() if writer else {"provider": "none", "model": "fixed text", "calls": 0,
                                                 "inputTokens": 0, "outputTokens": 0, "costUsd": 0},
         "router": usage.card(), "createdAt": dt.datetime.now(dt.timezone.utc).isoformat(),
+    }
+    return {"kind": "report", "report": report}
+
+
+# ---------------------------------------------------------------- v3: typed questions answered by the agent
+
+async def run_agent_request(body: dict, country: str, question: str, previous: dict | None, key: str | None,
+                            emit: Callable[[str], None]) -> dict:
+    """Run the agent and shape its result like the v2 responses, so the page renders it unchanged."""
+    async with httpx.AsyncClient() as client:
+        model = make_model(body.get("provider") or "openrouter", body.get("model"), key, client)  # fails fast without a key
+        ctx = ToolContext(country, client=client, resolved={k.lower(): v for k, v in (body.get("resolved") or {}).items()})
+        out = await run_agent(question, ctx, model, emit, previous)
+    request = {"country": country, "question": question, "category": None, "slots": None}
+    if out["kind"] in ("clarify", "out_of_scope"):
+        return {"kind": "clarify", "question": out.get("question") or out["message"], "options": out["options"],
+                "query": out.get("query"), "category": None, "slots": None, "trace": out["trace"]}
+    emit("Assembling the report")
+    info = COUNTRY_INFO[country]
+    u = out["usage"]
+    report = {
+        "feature": "answer", "title": question if len(question) <= 90 else question[:87] + "…",
+        "subtitle": f"{info['index_name']} · {info['version']}", "country": country, "request": request,
+        "headline": out["headline"], "sections": out["sections"], "followups": out["followups"],
+        "notes": list(STANDARD_CAVEATS) + out["notes"], "method": method(country), "trace": out["trace"],
+        "grounding": out["grounding"],
+        "usage": {"provider": body.get("provider") or "openrouter", "model": u["model"], "calls": u["calls"],
+                  "inputTokens": u["inputTokens"], "outputTokens": u["outputTokens"], "costUsd": None},
+        "router": None, "createdAt": dt.datetime.now(dt.timezone.utc).isoformat(),
     }
     return {"kind": "report", "report": report}
 

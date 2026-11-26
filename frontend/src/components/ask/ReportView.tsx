@@ -6,7 +6,7 @@ import { shareUrl } from "../../lib/ask/client";
 import type { Cell, ReportCard, ReportSection } from "../../lib/ask/report-types";
 
 const SERIES_COLORS = ["#f26a21", "#103b7b", "#0d9488", "#b45309"];
-const EYEBROW: Record<string, string> = { snapshot: "Snapshot", compare: "Comparison", rank: "Ranking", trend: "Trend", event: "Event explainer", help: "About the index" };
+const EYEBROW: Record<string, string> = { snapshot: "Snapshot", compare: "Comparison", rank: "Ranking", trend: "Trend", event: "Event explainer", help: "About the index", answer: "Answer" };
 
 function CellView({ v, isValue }: { v: Cell; isValue: boolean }) {
   if (v == null) return <span className="text-foreground/40">—</span>;
@@ -179,7 +179,7 @@ export default function ReportView({
           ))}
         </ol>
         <p className="mt-3 text-xs text-foreground/60">
-          {u.provider === "none" ? "Fixed text: no writing model used. " : `Writing (${u.model}, your key): ${u.calls} call${u.calls === 1 ? "" : "s"}, about ${u.inputTokens.toLocaleString()} tokens in and ${u.outputTokens.toLocaleString()} out. `}
+          {u.provider === "none" ? "Fixed text: no writing model used. " : `${report.feature === "answer" ? "Your model chose the tools and wrote the answer" : "Writing"} (${u.model}, your key): ${u.calls} call${u.calls === 1 ? "" : "s"}, about ${u.inputTokens.toLocaleString()} tokens in and ${u.outputTokens.toLocaleString()} out. `}
           {report.router && `Routing (${report.router.models.join(" + ")}, site key): ${report.router.calls} call${report.router.calls === 1 ? "" : "s"}, ${report.router.tokens.toLocaleString()} tokens, $${report.router.costUsd.toFixed(5)}.`}
         </p>
       </details>

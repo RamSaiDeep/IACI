@@ -143,3 +143,71 @@ def test_rate_limit_is_waited_out_with_a_notice(monkeypatch):
 
     out, notes = asyncio.run(go())
     assert out["category"] == "trend" and len(calls) == 2 and "busy" in notes[0]
+
+
+# ---------------------------------------------------------------- v3: typed questions go to the agent (ASK_AGENT=1)
+
+@pytest.fixture
+def agent_on(monkeypatch, fake):
+    """Agent switched on, with run_agent replaced by a canned result (the loop has its own tests)."""
+    seen = {}
+
+    async def fake_agent(question, ctx, model, emit, previous=None):
+        seen.update(question=question, resolved=ctx.resolved, model=model.name, previous=previous)
+        return seen.pop("reply")
+
+    monkeypatch.setattr(pipeline.config, "AGENT_ENABLED", True)
+    monkeypatch.setattr(pipeline, "run_agent", fake_agent)
+    return seen
+
+
+def test_typed_question_becomes_an_agent_report(agent_on):
+    agent_on["reply"] = {"kind": "answer", "headline": "Heat is rising.", "sections": [{"kind": "text", "title": "", "body": "x"}],
+                         "followups": ["And rain?"], "notes": ["2026 so far."], "grounding": {"status": "verified", "removed": []},
+                         "trace": [{"name": "triage", "args": {}, "ok": True, "summary": "in scope"}],
+                         "usage": {"model": "m", "calls": 3, "inputTokens": 10, "outputTokens": 5}}
+    out, _ = run({"country": "india", "question": "Is heat rising in Delhi?", "provider": "openrouter",
+                  "resolved": {"Delhi": "india/state/DELHI"}})
+    r = out["report"]
+    assert out["kind"] == "report" and r["feature"] == "answer" and r["router"] is None
+    assert r["headline"] == "Heat is rising." and r["notes"][-1] == "2026 so far." and len(r["notes"]) > 1
+    assert r["request"] == {"country": "india", "question": "Is heat rising in Delhi?", "category": None, "slots": None}
+    assert agent_on["resolved"] == {"delhi": "india/state/DELHI"} and agent_on["model"] == "google/gemma-4-31b-it:free"
+
+
+def test_agent_clarify_and_out_of_scope_use_the_clarify_shape(agent_on):
+    agent_on["reply"] = {"kind": "clarify", "question": "Which one?", "options": [{"label": "A", "id": "india/state/DELHI"}],
+                         "query": "Aurangabad", "trace": []}
+    out, _ = run({"country": "india", "question": "Aurangabad 2024"})
+    assert out == {"kind": "clarify", "question": "Which one?", "options": [{"label": "A", "id": "india/state/DELHI"}],
+                   "query": "Aurangabad", "category": None, "slots": None, "trace": []}
+    agent_on["reply"] = {"kind": "out_of_scope", "message": "Try one of these:", "options": [{"label": "q", "question": "q"}], "trace": []}
+    out, _ = run({"country": "india", "question": "cricket?"})
+    assert out["kind"] == "clarify" and out["question"] == "Try one of these:" and out["options"][0]["question"] == "q"
+
+
+def test_forms_skip_the_agent_even_when_it_is_on(agent_on, fake):
+    fake["cls"] = None
+    fake["replies"] = [json.dumps({"headline": "Fine.", "sections": {}, "followups": []})]
+    out, _ = run({"country": "india", "category": "trend", "slots": {"place": "Guntur", "hazard": None, "season": None,
+                                                                      "from_year": None, "to_year": None}})
+    assert out["report"]["feature"] == "trend" and "question" not in agent_on
+
+
+def test_agent_needs_a_key(agent_on):
+    with pytest.raises(AskError) as e:
+        run({"country": "india", "question": "How was 2024 for Mumbai?"}, key=None)
+    assert e.value.code == "missing_key"
+
+
+def test_models_free_endpoint(monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from ask_api import main
+
+    async def fake_free(client):
+        return ["google/gemma-4-31b-it:free", "nvidia/nemotron-3.5-lightning:free"]
+
+    monkeypatch.setattr(main, "free_tool_models", fake_free)
+    r = TestClient(main.app).get("/models/free")
+    assert r.status_code == 200 and r.json()["default"] == "google/gemma-4-31b-it:free"

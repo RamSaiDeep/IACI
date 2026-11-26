@@ -12,7 +12,7 @@ export const PROVIDER_LABELS: Record<ProviderId, string> = { anthropic: "Anthrop
 export const DEFAULT_MODELS: Record<ProviderId, string> = {
   anthropic: "claude-sonnet-5-5",
   gemini: "gemini-2.5-flash",
-  openrouter: "google/gemini-2.5-flash",
+  openrouter: "google/gemma-4-31b-it:free",
 };
 
 const KEY_NAME = "aci-ask-llm-key";
@@ -113,6 +113,16 @@ export async function ask(request: AskRequest, key: string, onProgress?: (text: 
 
 export async function testKey(key: string, provider: string, model: string): Promise<void> {
   await parse(await post("/test-key", { provider, model }, key));
+}
+
+/** Free OpenRouter models that can use tools (default first). [] if the service can't be reached. */
+export async function freeModels(): Promise<string[]> {
+  try {
+    const res = await fetch(`${ASK_API_URL}/models/free`);
+    return res.ok ? ((await res.json()) as { models?: string[] }).models ?? [] : [];
+  } catch {
+    return [];
+  }
 }
 
 /** Share link: the request (never the key or model) in the URL hash. */

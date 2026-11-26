@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 
 import httpx
 
@@ -27,6 +28,18 @@ DEFAULT_MODELS = {"anthropic": "claude-sonnet-5-5", "gemini": "gemini-2.5-flash"
                   "openrouter": "google/gemma-4-31b-it:free"}
 # OpenRouter tries these in order within one request when the first is rate-limited or down (both free).
 OPENROUTER_FALLBACK = "nvidia/nemotron-3.5-lightning:free"
+
+# Free OpenRouter models with tool calling (26 Nov 2026); used when the live list can't be fetched.
+FREE_TOOL_MODELS = [
+    "google/gemma-4-31b-it:free", "nvidia/nemotron-3.5-lightning:free", "google/gemma-4-26b-a4b-it:free",
+    "nvidia/nemotron-3-ultra-550b-a55b:free", "nvidia/nemotron-3.5-super-vl:free",
+    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "inclusionai/ling-3.2-flash:free",
+    "baidu/ernie-5.5-flash-preview:free", "particle-ai/particle-1:free", "recursive/flint-v1.0:free",
+    "liquid/lfm-3-1.7b:free",
+]
+CATALOG_URL = "https://openrouter.ai/api/v1/models"
+CATALOG_TTL = 24 * 3600
+_catalog: dict = {"at": 0.0, "models": []}
 
 MAX_TOKENS = 4096  # reasoning models spend part of this thinking; too low and they return nothing
 TIMEOUT = 110.0
@@ -46,6 +59,45 @@ def make_model(provider: str, model: str | None, key: str | None, client: httpx.
         return OpenAIStyleModel(name, key, client, GEMINI_URL, "Google Gemini", strip_additional_properties=True)
     return OpenAIStyleModel(name, key, client, OPENROUTER_URL, "OpenRouter",
                             fallbacks=[OPENROUTER_FALLBACK] if name != OPENROUTER_FALLBACK else [])
+
+
+# ---------------------------------------------------------------- OpenRouter's public model list
+
+async def openrouter_catalog(client: httpx.AsyncClient) -> list[dict]:
+    """OpenRouter's public model list (no key needed), cached for a day. [] if it can't be fetched."""
+    if _catalog["models"] and time.time() - _catalog["at"] < CATALOG_TTL:
+        return _catalog["models"]
+    try:
+        r = await client.get(CATALOG_URL, headers={"User-Agent": "iaci-ask/1.0"}, timeout=15)
+        models = r.json()["data"] if r.status_code == 200 else []
+    except (httpx.HTTPError, ValueError, KeyError):
+        models = []
+    if models:
+        _catalog.update(at=time.time(), models=models)
+    return models or _catalog["models"]
+
+
+def _is_free(m: dict) -> bool:
+    p = m.get("pricing") or {}
+    try:
+        return float(p.get("prompt", 1)) == 0 and float(p.get("completion", 1)) == 0
+    except (TypeError, ValueError):
+        return False
+
+
+async def free_tool_models(client: httpx.AsyncClient) -> list[str]:
+    """Free OpenRouter models that support tool calling: the default first, then its fallback, then the rest."""
+    live = [m["id"] for m in await openrouter_catalog(client)
+            if _is_free(m) and "tools" in (m.get("supported_parameters") or []) and m["id"] != "openrouter/free"]
+    ids = live or FREE_TOOL_MODELS
+    first = [i for i in (DEFAULT_MODELS["openrouter"], OPENROUTER_FALLBACK) if i in ids]
+    return first + sorted(i for i in ids if i not in first)
+
+
+async def supports_tools(client: httpx.AsyncClient, model: str) -> bool | None:
+    """For an OpenRouter model id: True/False from its listing, or None if it isn't listed (can't tell)."""
+    m = next((m for m in await openrouter_catalog(client) if m.get("id") == model), None)
+    return None if m is None else "tools" in (m.get("supported_parameters") or [])
 
 
 # ---------------------------------------------------------------- shared

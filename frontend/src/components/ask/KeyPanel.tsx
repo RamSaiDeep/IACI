@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { DEFAULT_MODELS, PROVIDER_LABELS, forgetKey, saveChoice, saveKey, testKey, type KeyStore, type ProviderId } from "../../lib/ask/client";
+import { useEffect, useState } from "react";
+import { DEFAULT_MODELS, PROVIDER_LABELS, forgetKey, freeModels, saveChoice, saveKey, testKey, type KeyStore, type ProviderId } from "../../lib/ask/client";
 
 const KEY_HELP = {
   anthropic: { url: "https://console.anthropic.com/settings/keys", hint: "sk-ant-…" },
@@ -19,8 +19,17 @@ export default function KeyPanel({ state, onChange, onClose, notice }: {
   const [remember, setRemember] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [testing, setTesting] = useState(false);
+  const [free, setFree] = useState<string[]>([]);
   const prov = state.provider;
   const help = KEY_HELP[prov];
+
+  // Suggestions for OpenRouter: free models that can use tools (fetched once, when OpenRouter is picked).
+  useEffect(() => {
+    if (prov !== "openrouter" || free.length) return;
+    let live = true;
+    void freeModels().then((m) => { if (live) setFree(m); });
+    return () => { live = false; };
+  }, [prov, free.length]);
 
   const test = async () => {
     const key = draft.trim() || state.key;
@@ -55,7 +64,7 @@ export default function KeyPanel({ state, onChange, onClose, notice }: {
         <div>
           <h2 id="key-h" className="text-base font-bold">Set your API key</h2>
           <p className="mt-1 text-sm text-foreground/70">
-            Finding the right data and calculating every number happen on our side. Your own key is used only to write the answer text.
+            Your key runs the AI that reads your question, picks which of our tools to use and writes the answer. Every number is calculated on our side and checked.
           </p>
         </div>
         <button type="button" onClick={onClose} aria-label="Close the API key panel"
@@ -77,11 +86,18 @@ export default function KeyPanel({ state, onChange, onClose, notice }: {
         <div className="flex flex-col gap-1">
           <label htmlFor="model" className="text-sm font-medium">Model name</label>
           <input id="model" value={state.model} spellCheck={false} autoComplete="off" maxLength={100}
+            list={prov === "openrouter" ? "free-models" : undefined}
             onChange={(e) => { saveChoice({ provider: prov, model: e.target.value }); onChange({ ...state, model: e.target.value }); }}
             placeholder={DEFAULT_MODELS[prov]}
             className="min-h-11 rounded-xl border border-foreground/20 bg-surface px-3 font-mono text-sm" />
+          {prov === "openrouter" && <datalist id="free-models">{free.map((m) => <option key={m} value={m} />)}</datalist>}
         </div>
       </div>
+      {prov === "openrouter" && (
+        <p className="mt-2 text-xs text-foreground/60">
+          Suggestions are free models that can use tools; clear the box to see them all. Free models allow 20 questions a minute and 50 a day on your OpenRouter account (1,000 a day once you have bought $10 of credit). Any other model id works too.
+        </p>
+      )}
 
       <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
         <div className="flex flex-col gap-1">

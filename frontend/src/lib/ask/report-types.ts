@@ -1,7 +1,7 @@
 import type { CountrySlug } from "./labels";
 
-/** The six answer types the backend router sorts questions into. */
-export type Category = "snapshot" | "compare" | "rank" | "trend" | "event" | "help";
+/** The answer types: the six fixed categories, plus "answer" for a typed question the agent answered. */
+export type Category = "snapshot" | "compare" | "rank" | "trend" | "event" | "help" | "answer";
 
 export type Cell = string | number | null;
 
@@ -47,7 +47,8 @@ export interface ReportCard {
   trace: TraceEntry[];
   grounding: { status: "verified" | "repaired" | "stripped"; removed: string[] };
   usage: WriterUsage;
-  router: RouterUsage;
+  /** The site's question router; null when the visitor's model did all the AI work (agent). */
+  router: RouterUsage | null;
   createdAt: string;
 }
 

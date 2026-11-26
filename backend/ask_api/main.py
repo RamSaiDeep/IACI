@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from . import config
+from .agent.providers import free_tool_models, supports_tools
 from .errors import AskError
 from .pipeline import run_ask
 from .writer import Writer
@@ -35,7 +36,15 @@ def _err(e: Exception) -> tuple[dict, int]:
 
 @app.get("/health")
 async def health():
-    return {"ok": True, "gateway_key": bool(config.gateway_key())}
+    return {"ok": True, "gateway_key": bool(config.gateway_key()), "agent": config.AGENT_ENABLED}
+
+
+@app.get("/models/free")
+async def models_free():
+    """Free OpenRouter models that can use tools, for the key panel's suggestions (default first)."""
+    async with httpx.AsyncClient() as client:
+        ids = await free_tool_models(client)
+    return JSONResponse({"models": ids, "default": ids[0] if ids else None}, headers={"Cache-Control": "public, max-age=3600"})
 
 
 @app.post("/test-key")
@@ -45,6 +54,9 @@ async def test_key(req: Request):
         w = Writer(body.get("provider") or "anthropic", body.get("model"), req.headers.get("x-llm-key"))
         async with httpx.AsyncClient() as client:
             await w.test(client)
+            if config.AGENT_ENABLED and w.provider == "openrouter" and await supports_tools(client, w.model) is False:
+                raise AskError("bad_request", f"{w.model} works, but it can't use tools, which answers need. "
+                                              "Pick a model from the suggestions.")
         return JSONResponse({"ok": True, "model": w.model}, headers=NO_STORE)
     except Exception as e:  # noqa: BLE001
         err, status = _err(e)

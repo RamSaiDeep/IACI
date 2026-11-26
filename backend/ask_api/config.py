@@ -36,6 +36,11 @@ GATEWAY_URL = os.environ.get("ASK_GATEWAY_URL", "https://ai-gateway.vercel.sh/v1
 ROUTER_MODEL = os.environ.get("ASK_ROUTER_MODEL", "baseten/mammoth-1")
 EXTRACT_MODEL = os.environ.get("ASK_EXTRACT_MODEL", "openai/gpt-5-nano")
 
+# ASK_AGENT=1: typed questions go to the v3 agent (the visitor's model calling our tools, agent/loop.py).
+# Off: the v2 chain (Mammoth-1 router -> GPT-5 nano slots -> category -> writer). The forms use the
+# fast direct category path either way.
+AGENT_ENABLED = os.environ.get("ASK_AGENT", "0").strip() == "1"
+
 # Thresholds chosen with the product owner (Nov 2026).
 RELATED_MIN = float(os.environ.get("ASK_RELATED_MIN", "0.5"))
 CATEGORY_MIN = float(os.environ.get("ASK_CATEGORY_MIN", "0.6"))

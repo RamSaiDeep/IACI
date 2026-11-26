@@ -25,7 +25,16 @@ Two separate things live here:
 ## 2. `ask_api/`: Ask the Index
 
 Run locally: `python -m uvicorn --app-dir backend ask_api.main:app --port 8000`
-(or the `ask-api` entry in `.claude/launch.json`). Tests: `python -m pytest backend/ask_api/tests`.
+(or the `ask-api` entry in `.claude/launch.json`; `ask-api-agent` runs it with the agent on).
+Tests: `python -m pytest backend/ask_api/tests`.
+
+**`ASK_AGENT=1`** (environment variable) sends typed questions to the v3 agent: the visitor's own model
+calls our tools. Without it, typed questions use the v2 chain. The four forms always use the fast direct path.
+`/health` reports which is on (`"agent": true`).
+
+Routes: `/health`, `/ask` (streams progress, then the answer), `/test-key` (checks the visitor's key;
+with the agent on it also checks an OpenRouter model can use tools), `/models/free` (free OpenRouter
+models with tool calling, for the key panel's suggestions).
 
 The design and the plan for the agent version are in `docs/ask-the-index/`
 (`03-v2-design.md` for what runs today, `04-agent-loop-plan.md` for what is being built).

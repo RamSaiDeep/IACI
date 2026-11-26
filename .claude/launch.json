@@ -13,6 +13,13 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "uvicorn", "--app-dir", "backend", "ask_api.main:app", "--port", "8000"],
       "port": 8000
+    },
+    {
+      "name": "ask-api-agent",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "--app-dir", "backend", "ask_api.main:app", "--port", "8000"],
+      "env": { "ASK_AGENT": "1" },
+      "port": 8000
     }
   ]
 }
