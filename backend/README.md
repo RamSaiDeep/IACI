@@ -4,7 +4,7 @@ Two separate things live here:
 
 1. **Data scripts** (top-level `*.py`): turn the pipeline's output into the static JSON and
    GeoJSON the website serves. Run by hand; nothing here runs on a server.
-2. **`ask_api/`**: the Ask the Index API (FastAPI), deployed on Render as `iaci-ask-api`.
+2. **`ask_api/`**: the ClimateIQ Agent API (FastAPI), deployed on Render as `climateiq-agent-api` from the `main` branch (https://climateiq-agent-api.onrender.com).
 
 ## 1. Data scripts
 
