@@ -199,3 +199,16 @@ def test_tables_have_no_jargon(ctx):
     assert "Rank" not in " ".join(table["columns"]) and "Anomaly" not in " ".join(table["columns"])
     assert table["rows"][0][3].endswith("of 35 years") and out["overall"]["compared_with_other_years"]
     assert "0 is normal" in table["note"]
+
+
+def test_every_comparison_says_each_place_is_judged_against_its_own_normal(ctx):
+    same_country = comparing.compare_places(ctx, [CHENNAI, KOLKATA])
+    assert same_country["notes"][0].startswith("Each place is measured against its own normal")
+    assert "90th percentile" in over_time.get_trend(ctx, DELHI, "heat")["what_it_measures"]
+    assert "Extreme heat" in one_place.get_snapshot(ctx, MUMBAI, {"year": 2024})["what_hazards_measure"]
+
+
+def test_prompt_carries_the_local_percentile_idea():
+    from ask_api.agent.prompt import system_prompt
+    p = system_prompt("india")
+    assert "45°C in Rajasthan" in p and "own 90th percentile" in p and "never say one was hotter" in p

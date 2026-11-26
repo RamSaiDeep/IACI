@@ -10,7 +10,7 @@ from __future__ import annotations
 from ..compute import components_of, contribution, label_of, ranked, window_series
 from ..labels import COMPONENT_LABEL, COUNTRY_INFO, MONTH_NAMES
 from ..stats import rank_highest, rnd, severity, standing
-from .context import SCORE, SCORE_NOTE, ToolContext, ToolError, hazard_arg, name_of, period_arg, place_arg
+from .context import SCORE, SCORE_NOTE, ToolContext, what_it_measures, ToolError, hazard_arg, name_of, period_arg, place_arg
 
 
 def get_snapshot(ctx: ToolContext, place_id: str, period: dict | None = None) -> dict:
@@ -52,7 +52,9 @@ def get_snapshot(ctx: ToolContext, place_id: str, period: dict | None = None) ->
             "overall": ({"value": rnd(overall["value"]), "level": severity(overall["value"]),
                          "compared_with_other_years": standing(overall["rank"], overall["n_years"]),
                          "rank": overall["rank"], "of_years": overall["n_years"]} if overall else None),
-            "hazards": hazards, "not_measured": not_measured, "show": [card, chart]}
+            "hazards": hazards, "not_measured": not_measured,
+            "what_hazards_measure": {COMPONENT_LABEL[c]: what_it_measures(c) for c in components_of(p)},
+            "show": [card, chart]}
 
 
 def get_extremes(ctx: ToolContext, place_id: str, hazard: str = "composite", unit: str = "month",
@@ -79,7 +81,7 @@ def get_extremes(ctx: ToolContext, place_id: str, hazard: str = "composite", uni
                     ["#", "When", SCORE, "Level"], [[i + 1, t["when"], t["value"], t["level"]] for i, t in enumerate(top)],
                     [2], note=f"The {len(top)} {word} of {len(items)} {what} since 1991. {SCORE_NOTE}")
     return {"place": p.name, "hazard": label_of(comp, p.country), "unit": unit, "order": word,
-            "out_of": len(items), "top": top, "show": [rid]}
+            "out_of": len(items), "top": top, "what_it_measures": what_it_measures(comp), "show": [rid]}
 
 
 def get_month_profile(ctx: ToolContext, place_id: str, year: int, hazard: str = "composite") -> dict:
@@ -108,4 +110,4 @@ def get_month_profile(ctx: ToolContext, place_id: str, year: int, hazard: str = 
                       [[r["month"], r["value"], r["level"], r["compared_with_same_month"]] for r in months], [1],
                       note=SCORE_NOTE)
     return {"place": p.name, "year": year, "hazard": label_of(comp, p.country), "months": months,
-            "highest_month": worst["month"], "show": [rid, table]}
+            "highest_month": worst["month"], "what_it_measures": what_it_measures(comp), "show": [rid, table]}

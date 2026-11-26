@@ -10,7 +10,7 @@ from ..compute import components_of, label_of, neighbours as nearby, period_mean
 from ..data import get_place
 from ..labels import COMPONENT_CODES, COMPONENT_LABEL, COUNTRY_INFO
 from ..stats import mean, rnd, simple_trend, standing
-from .context import SCORE, SCORE_NOTE, ToolContext, ToolError, hazard_arg, name_of, period_arg, place_arg
+from .context import what_it_measures, OWN_NORMAL_NOTE, SCORE, SCORE_NOTE, ToolContext, ToolError, hazard_arg, name_of, period_arg, place_arg
 
 
 def compare_places(ctx: ToolContext, place_ids: list[str], hazard: str = "composite", period: dict | None = None) -> dict:
@@ -57,15 +57,15 @@ def compare_places(ctx: ToolContext, place_ids: list[str], hazard: str = "compos
     trend_table = ctx.table(f"Change per decade in {name_of(comp, places[0].country)}, {label}",
                             ["Place", "Change per decade", "Direction"],
                             [[t["place"], t["change_per_decade"], t["direction"]] for t in trends]) if trends else None
-    notes = []
+    # Always: the most common misreading of a comparison is "higher score = hotter/wetter place".
+    notes = [OWN_NORMAL_NOTE]
     if len({p.country for p in places}) > 1:
-        notes.append("The places are in different countries: values show how unusual conditions were against each "
-                     "place's own history, not absolute heat, rain or wind.")
+        notes.append("The places are in different countries, each measured against its own history in the same way.")
     if any(len(components_of(p)) != len(components_of(places[0])) for p in places):
         notes.append("Not every hazard is measured at every place (sea level only on coasts), so overall indices "
                      "average different numbers of hazards.")
     return {"places": score, "period": label, "trend_hazard": label_of(comp, places[0].country), "trends": trends,
-            "differ_most": gaps[:3], "notes": notes, "show": [r for r in (table, chart, trend_table) if r]}
+            "differ_most": gaps[:3], "what_it_measures": what_it_measures(comp), "notes": notes, "show": [r for r in (table, chart, trend_table) if r]}
 
 
 def neighbours(ctx: ToolContext, place_id: str, period: dict | None = None, hazard: str = "composite") -> dict:

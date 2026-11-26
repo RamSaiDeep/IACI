@@ -20,7 +20,20 @@ from .resolve import resolve_period
 # Column name and one-line explanation used in every table, written for someone new to the index.
 SCORE = "Score (0 = normal)"
 SCORE_NOTE = ("Score: how unusual conditions were compared with what is normal for that place and time of year "
-              "(the 1991–2020 average). 0 is normal; +1 is clearly above normal; +2 or more is rare.")
+              "(the 1991–2020 average). 0 is normal; +1 is clearly above normal; +2 or more is rare. "
+              "Extremes are judged by each place's own standards: an extreme-heat day is hotter than that place's "
+              "hottest 10% of days, so 45°C can be normal in Rajasthan while 30°C is extreme in Kashmir.")
+OWN_NORMAL_NOTE = ("Each place is measured against its own normal, not against the others: a higher score means "
+                   "conditions were more unusual for that place, not that it was hotter, wetter or windier.")
+
+
+def what_it_measures(comp: str) -> str:
+    """One sentence on what a hazard counts, from the knowledge file (written from the About pages)."""
+    from .explain import knowledge  # local import: explain imports this module
+    if comp == "COMPOSITE":
+        return ("The overall index averages all the hazards measured at a place, each judged against that "
+                "place's own normal.")
+    return next(h["measures"] for h in knowledge()["hazards"].values() if h["code"] == comp)
 
 
 class ToolError(Exception):

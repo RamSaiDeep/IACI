@@ -14,7 +14,7 @@ from ..compute import components_of, label_of, period_mean, ranked, window_serie
 from ..data import Place, load_country
 from ..labels import COUNTRY_INFO
 from ..stats import rnd, simple_trend
-from .context import SCORE, Period, ToolContext, ToolError, hazard_arg, period_arg, place_arg, name_of
+from .context import OWN_NORMAL_NOTE, SCORE, Period, what_it_measures, ToolContext, ToolError, hazard_arg, period_arg, place_arg, name_of
 
 LEVELS = {"district": "child", "county": "child", "state": "top", "province": "top", "nation": "top"}
 OPS = {">": lambda v, t: v > t, ">=": lambda v, t: v >= t, "<": lambda v, t: v < t, "<=": lambda v, t: v <= t}
@@ -103,7 +103,8 @@ def rank_places(ctx: ToolContext, hazard: str = "composite", period: dict | None
                       note=f"{len(rows)} places ranked.")
     bars = ctx.bars(measure, unit, [{"label": r["place"], "sub": r["parent"], "value": r["value"]} for r in top])
     return {"measure": measure, "scope": scope, "ranked": len(rows), "order": order, "top": top,
-            "partial": per.partial, "note": per.note, "show": [table, bars]}
+            "partial": per.partial, "note": per.note, "what_it_measures": what_it_measures(comp),
+            "how_to_read": OWN_NORMAL_NOTE, "show": [table, bars]}
 
 
 def filter_places(ctx: ToolContext, conditions: list[dict], period: dict | None = None, within: str | None = None,

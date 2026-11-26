@@ -11,7 +11,7 @@ from __future__ import annotations
 from ..compute import components_of, label_of, period_mean, window_series
 from ..labels import COMPONENT_LABEL, MONTH_NAMES
 from ..stats import rnd, simple_trend
-from .context import SCORE, ToolContext, ToolError, hazard_arg, period_arg, place_arg, name_of
+from .context import SCORE, ToolContext, what_it_measures, ToolError, hazard_arg, period_arg, place_arg, name_of
 
 
 def _hazard_at(p, hazard: str) -> str:
@@ -35,6 +35,7 @@ def get_series(ctx: ToolContext, place_id: str, hazard: str = "composite", perio
     return {"place": p.name, "hazard": label_of(comp, p.country), "period": per.label,
             "values": [{"year": y, "value": rnd(v)} for y, v in s],
             "highest": {"year": hi[0], "value": rnd(hi[1])}, "lowest": {"year": lo[0], "value": rnd(lo[1])},
+            "what_it_measures": what_it_measures(comp),
             "show": [rid]}
 
 
@@ -63,7 +64,7 @@ def get_trend(ctx: ToolContext, place_id: str, hazard: str = "composite", period
             "change_per_decade": rnd(t["slope_per_decade"]), "direction": t["direction"],
             "early": {"years": t["early_years"], "average": rnd(t["early_mean"])},
             "recent": {"years": t["recent_years"], "average": rnd(t["recent_mean"])},
-            "years_used": t["n"], "show": [rid, table]}
+            "years_used": t["n"], "what_it_measures": what_it_measures(comp), "show": [rid, table]}
 
 
 def compare_periods(ctx: ToolContext, place_id: str, period_a: dict, period_b: dict, hazard: str = "composite") -> dict:
@@ -105,4 +106,4 @@ def count_exceedances(ctx: ToolContext, place_id: str, threshold: float, above: 
             "years_with_any": sorted(by_year),
             "most_recent": ({"month": f"{MONTH_NAMES[last[0] % 100 - 1]} {last[0] // 100}", "value": rnd(last[1])}
                             if last else None),
-            "show": [rid] if rid else []}
+            "what_it_measures": what_it_measures(comp), "show": [rid] if rid else []}
