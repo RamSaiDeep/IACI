@@ -171,6 +171,7 @@ def test_typed_question_becomes_an_agent_report(agent_on):
     r = out["report"]
     assert out["kind"] == "report" and r["feature"] == "answer" and r["router"] is None
     assert r["headline"] == "Heat is rising." and r["notes"][-1] == "2026 so far." and len(r["notes"]) > 1
+    assert r["sections"][0] == {"kind": "text", "title": "", "body": "Heat is rising."}  # headline shown first
     assert r["request"] == {"country": "india", "question": "Is heat rising in Delhi?", "category": None, "slots": None}
     assert agent_on["resolved"] == {"delhi": "india/state/DELHI"} and agent_on["model"] == "google/gemma-4-31b-it:free"
 

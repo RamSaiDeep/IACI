@@ -11,7 +11,7 @@ from __future__ import annotations
 from ..compute import components_of, label_of, period_mean, window_series
 from ..labels import COMPONENT_LABEL, MONTH_NAMES
 from ..stats import rnd, simple_trend
-from .context import ToolContext, ToolError, hazard_arg, period_arg, place_arg, name_of
+from .context import SCORE, ToolContext, ToolError, hazard_arg, period_arg, place_arg, name_of
 
 
 def _hazard_at(p, hazard: str) -> str:
@@ -30,7 +30,7 @@ def get_series(ctx: ToolContext, place_id: str, hazard: str = "composite", perio
         raise ToolError(f"No {name_of(comp, p.country)} data for {p.name} in {per.label}.")
     hi, lo = max(s, key=lambda t: t[1]), min(s, key=lambda t: t[1])
     rid = ctx.lines(f"{p.name}: {name_of(comp, p.country)}, {per.label}",
-                    f"{label_of(comp, p.country)}, {per.window_label.lower()} (anomaly)",
+                    f"{label_of(comp, p.country)}, {per.window_label.lower()} ({SCORE.lower()})",
                     [{"name": p.name, "points": [{"x": y, "y": rnd(v)} for y, v in s]}])
     return {"place": p.name, "hazard": label_of(comp, p.country), "period": per.label,
             "values": [{"year": y, "value": rnd(v)} for y, v in s],
@@ -51,7 +51,7 @@ def get_trend(ctx: ToolContext, place_id: str, hazard: str = "composite", period
     my = sum(v for _, v in s) / len(s)
     fit = [{"x": y, "y": rnd(my + t["slope_per_decade"] / 10 * (y - mx))} for y, _ in s]
     rid = ctx.lines(f"{p.name}: {name_of(comp, p.country)} trend, {per.label}",
-                    f"{label_of(comp, p.country)}, {per.window_label.lower()} (anomaly)",
+                    f"{label_of(comp, p.country)}, {per.window_label.lower()} ({SCORE.lower()})",
                     [{"name": p.name, "points": [{"x": y, "y": rnd(v)} for y, v in s]},
                      {"name": "Straight-line trend", "points": fit}])
     table = ctx.table(f"Trend: {name_of(comp, p.country)} at {p.name}", ["Measure", "Value"], [
@@ -78,7 +78,7 @@ def compare_periods(ctx: ToolContext, place_id: str, period_a: dict, period_b: d
         out.append({"period": per.label, "average": rnd(v)})
     diff = rnd(out[1]["average"] - out[0]["average"])
     rid = ctx.table(f"{p.name}: {name_of(comp, p.country)}, {a.label} vs {b.label}",
-                    ["Period", "Average anomaly"], [[o["period"], o["average"]] for o in out] + [["Difference (second − first)", diff]],
+                    ["Period", f"Average {SCORE.lower()}"], [[o["period"], o["average"]] for o in out] + [["Difference (second − first)", diff]],
                     [1])
     return {"place": p.name, "hazard": label_of(comp, p.country), "first": out[0], "second": out[1],
             "difference": diff, "show": [rid]}

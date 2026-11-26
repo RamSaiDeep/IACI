@@ -14,7 +14,7 @@ from ..compute import components_of, label_of, period_mean, ranked, window_serie
 from ..data import Place, load_country
 from ..labels import COUNTRY_INFO
 from ..stats import rnd, simple_trend
-from .context import Period, ToolContext, ToolError, hazard_arg, period_arg, place_arg, name_of
+from .context import SCORE, Period, ToolContext, ToolError, hazard_arg, period_arg, place_arg, name_of
 
 LEVELS = {"district": "child", "county": "child", "state": "top", "province": "top", "nation": "top"}
 OPS = {">": lambda v, t: v > t, ">=": lambda v, t: v >= t, "<": lambda v, t: v < t, "<=": lambda v, t: v <= t}
@@ -95,10 +95,10 @@ def rank_places(ctx: ToolContext, hazard: str = "composite", period: dict | None
     limit = max(1, min(int(limit or 10), 25))
     top = [{"rank": i + 1, **r} for i, r in enumerate(rows[:limit])]
     scope = _scope_label(country, region, coastal, level)
-    unit = "z-score per decade" if by == "change" else "z-score"
+    unit = "score change per decade" if by == "change" else SCORE.lower()
     measure = (f"Change per decade in {name_of(comp, country)}, {per.label}" if by == "change"
                else f"{label_of(comp, country)}, {per.label}" + ("" if per.single else " (average of the years)"))
-    table = ctx.table(f"{measure}: {scope}", ["Rank", "Place", "Within", "Change per decade" if by == "change" else "Anomaly"],
+    table = ctx.table(f"{measure}: {scope}", ["#", "Place", "Within", "Change per decade" if by == "change" else SCORE],
                       [[r["rank"], r["place"], r["parent"] or "", r["value"]] for r in top], [] if by == "change" else [3],
                       note=f"{len(rows)} places ranked.")
     bars = ctx.bars(measure, unit, [{"label": r["place"], "sub": r["parent"], "value": r["value"]} for r in top])
@@ -175,7 +175,7 @@ def compare_to_parent(ctx: ToolContext, within: str, hazard: str = "composite", 
     above = [r for r in rows if r["difference"] > 0]
     rid = ctx.table(f"{COUNTRY_INFO[country]['child_label']}s of {region.name} against the {region.level_label.lower()}, "
                     f"{name_of(comp, country)}, {per.label}",
-                    ["Place", "Anomaly", f"Difference from {region.name}"],
+                    ["Place", SCORE, f"Difference from {region.name}"],
                     [[region.name + " (whole)", rnd(parent_v), 0]] + [[r["place"], r["value"], r["difference"]] for r in rows],
                     [1], highlight_row=0)
     return {"parent": region.name, "parent_value": rnd(parent_v), "period": per.label, "hazard": label_of(comp, country),
@@ -193,7 +193,7 @@ def spread_within(ctx: ToolContext, within: str, hazard: str = "composite", peri
         raise ToolError(f"Not enough places with data in {region.name if region else country} for {per.label}.")
     middle = vals[len(vals) // 2][0]
     where = region.name if region else COUNTRY_INFO[country]["name"]
-    rid = ctx.bars(f"{label_of(comp, country)} across {where}, {per.label}", "z-score",
+    rid = ctx.bars(f"{label_of(comp, country)} across {where}, {per.label}", SCORE.lower(),
                    [{"label": p.name, "value": rnd(v)} for v, p in vals[:30]],
                    note=f"{len(vals)} places" + ("; top 30 shown." if len(vals) > 30 else "."))
     return {"scope": where, "hazard": label_of(comp, country), "period": per.label, "places": len(vals),

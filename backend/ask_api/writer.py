@@ -23,6 +23,9 @@ Rules:
 - Values are anomalies against the 1991-2020 baseline (0 = normal). Rank 1 = highest in the record.
 - Never say climate change (or anything else) caused an event. Describe, don't attribute.
 - No hazard codes (T90S etc.); use the hazard names given.
+- Write for someone who has never seen a climate index: everyday words, short sentences. Explain a score the first time
+  (0 is normal for that place; above +1 is clearly unusual). Never write "rank", "z-score" or "anomaly": say
+  "the highest of 35 years", "2nd highest since 1991". Plain text only; **bold** for one key fact at most; no HTML.
 - Reply with ONE JSON object only: {"headline": "...", "sections": {...}, "followups": ["...", "..."]}"""
 
 

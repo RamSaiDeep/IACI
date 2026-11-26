@@ -210,6 +210,7 @@ export default function AskClient() {
       <section aria-labelledby="chat-h" className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-surface p-4 shadow-card sm:p-6">
         <h2 id="chat-h" className="sr-only">Chat with the index</h2>
         <div className="no-print flex flex-col gap-3 rounded-xl bg-surface-muted p-4 text-sm">
+          <p className="font-semibold">Here are some things to try:</p>
           <ul className="grid gap-2 sm:grid-cols-2">
             {CARDS.map((c) => {
               const q = c.example.replace(/[“”]/g, "");

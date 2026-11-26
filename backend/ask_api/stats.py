@@ -60,6 +60,23 @@ def simple_trend(points: list[tuple[int, float | None]], little: float = 0.1) ->
             "early_years": f"{early[0][0]}–{early[-1][0]}", "recent_years": f"{recent[0][0]}–{recent[-1][0]}"}
 
 
+def ordinal(n: int) -> str:
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
+def standing(rank: int, total: int, unit: str = "years") -> str:
+    """A rank in plain words, for people new to the index: 1 of 35 -> "Highest of 35 years",
+    2 of 35 -> "2nd highest of 35 years", 35 of 35 -> "Lowest of 35 years", 34 of 35 -> "2nd lowest of 35 years"."""
+    if rank == 1:
+        return f"Highest of {total} {unit}"
+    from_bottom = total - rank + 1
+    if from_bottom == 1:
+        return f"Lowest of {total} {unit}"
+    if from_bottom < rank:
+        return f"{ordinal(from_bottom)} lowest of {total} {unit}"
+    return f"{ordinal(rank)} highest of {total} {unit}"
+
+
 def rank_highest(value: float, all_values) -> int:
     """1 = highest; ties share the better rank."""
     return sum(1 for v in all_values if v > value) + 1

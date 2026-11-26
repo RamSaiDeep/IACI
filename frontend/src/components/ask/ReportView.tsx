@@ -4,6 +4,7 @@ import { useState } from "react";
 import { colorForValue, formatValue } from "../../lib/indicators";
 import { shareUrl } from "../../lib/ask/client";
 import type { Cell, ReportCard, ReportSection } from "../../lib/ask/report-types";
+import RichText from "./RichText";
 
 const SERIES_COLORS = ["#f26a21", "#103b7b", "#0d9488", "#b45309"];
 const EYEBROW: Record<string, string> = { snapshot: "Snapshot", compare: "Comparison", rank: "Ranking", trend: "Trend", event: "Event explainer", help: "About the index", answer: "Answer" };
@@ -124,7 +125,7 @@ function Section({ s }: { s: ReportSection }) {
   return (
     <section className="flex flex-col gap-2">
       {s.title && <h3 className="text-sm font-bold uppercase tracking-wide text-foreground/70">{s.title}</h3>}
-      {s.kind === "text" && <p className="text-[15px] leading-relaxed">{s.body}</p>}
+      {s.kind === "text" && <RichText text={s.body} className="text-[15px] leading-relaxed" />}
       {s.kind === "table" && <Table s={s} />}
       {s.kind === "lines" && <LineChart s={s} />}
       {s.kind === "bars" && <Bars s={s} />}

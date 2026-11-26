@@ -132,7 +132,9 @@ async def run_agent_request(body: dict, country: str, question: str, previous: d
     report = {
         "feature": "answer", "title": question if len(question) <= 90 else question[:87] + "…",
         "subtitle": f"{info['index_name']} · {info['version']}", "country": country, "request": request,
-        "headline": out["headline"], "sections": out["sections"], "followups": out["followups"],
+        # The headline is shown as the first paragraph, as the form answers do.
+        "headline": out["headline"], "sections": [{"kind": "text", "title": "", "body": out["headline"]}, *out["sections"]],
+        "followups": out["followups"],
         "notes": list(STANDARD_CAVEATS) + out["notes"], "method": method(country), "trace": out["trace"],
         "grounding": out["grounding"],
         "usage": {"provider": body.get("provider") or "openrouter", "model": u["model"], "calls": u["calls"],

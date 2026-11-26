@@ -51,9 +51,10 @@ EXAMPLE_QUESTIONS = ["How was 2024 for Mumbai?", "Chennai vs Kolkata, 2015–202
                      "Worst drought districts in Rajasthan", "Is heat increasing in Delhi?"]
 
 STANDARD_CAVEATS = [
-    "Values are standardized anomalies (z-scores) against the 1991–2020 baseline, not raw weather measurements.",
+    "Scores show how unusual conditions were compared with what is normal for that place and time of year "
+    "(the 1991–2020 average): 0 is normal, +1 is clearly above normal, +2 or more is rare. They are not "
+    "temperatures or rainfall amounts.",
     "Figures are monthly averages over each district's area, so very local or short-lived events are smoothed out.",
-    "Ranks run from 1 (highest value) among the years or months in the record.",
 ]
 
 # Calendar months per season, with the year offset of each month (winter Y = Dec Y-1, Jan Y, Feb Y).

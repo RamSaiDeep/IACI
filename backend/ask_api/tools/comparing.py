@@ -9,8 +9,8 @@ from __future__ import annotations
 from ..compute import components_of, label_of, neighbours as nearby, period_mean, ranked, window_series
 from ..data import get_place
 from ..labels import COMPONENT_CODES, COMPONENT_LABEL, COUNTRY_INFO
-from ..stats import mean, rnd, simple_trend
-from .context import ToolContext, ToolError, hazard_arg, name_of, period_arg, place_arg
+from ..stats import mean, rnd, simple_trend, standing
+from .context import SCORE, SCORE_NOTE, ToolContext, ToolError, hazard_arg, name_of, period_arg, place_arg
 
 
 def compare_places(ctx: ToolContext, place_ids: list[str], hazard: str = "composite", period: dict | None = None) -> dict:
@@ -81,12 +81,13 @@ def neighbours(ctx: ToolContext, place_id: str, period: dict | None = None, haza
     for q, role in group:
         r = ranked(q, comp, per.y0, per.window) if comp == "COMPOSITE" or comp in components_of(q) else None
         rows.append({"place": q.name, "role": role, "value": rnd(r["value"]) if r else None,
-                     "rank_in_own_record": f"{r['rank']} of {r['n_years']}" if r else None})
+                     "compared_with_its_past": standing(r["rank"], r["n_years"]) if r else None})
     if rows[0]["value"] is None:
         raise ToolError(f"No {name_of(comp, p.country)} value for {p.name} in {per.label}.")
     rid = ctx.table(f"{p.name} and the places around it: {name_of(comp, p.country)}, {per.label}",
-                    ["Place", "Relation", "Anomaly", "Rank in its own record"],
-                    [[r["place"], r["role"], r["value"], r["rank_in_own_record"] or "—"] for r in rows], [2], highlight_row=0)
+                    ["Place", "Relation", SCORE, "Compared with its own past years"],
+                    [[r["place"], r["role"], r["value"], r["compared_with_its_past"] or "—"] for r in rows], [2],
+                    highlight_row=0, note=SCORE_NOTE)
     return {"place": p.name, "period": per.label, "hazard": label_of(comp, p.country), "places": rows, "show": [rid]}
 
 

@@ -17,6 +17,12 @@ from ..labels import HAZARD_TO_CODE
 from .resolve import resolve_period
 
 
+# Column name and one-line explanation used in every table, written for someone new to the index.
+SCORE = "Score (0 = normal)"
+SCORE_NOTE = ("Score: how unusual conditions were compared with what is normal for that place and time of year "
+              "(the 1991–2020 average). 0 is normal; +1 is clearly above normal; +2 or more is rare.")
+
+
 class ToolError(Exception):
     """A plain-language problem the model can fix (bad place id, period outside the data...).
     The agent loop sends the message back to the model as the tool's result."""

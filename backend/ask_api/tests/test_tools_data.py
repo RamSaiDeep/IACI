@@ -181,3 +181,21 @@ def test_call_tool_turns_mistakes_into_errors(ctx):
     ok = run("get_snapshot", {"place_id": MUMBAI, "period": {"year": 2024}, "made_up_arg": 1})
     assert "error" not in ok and ok["period"] == "2024"
     assert [t["ok"] for t in ctx.trace] == [False, False, False, True]
+
+
+# ---------------------------------------------------------------- plain language for first-time visitors
+
+def test_standing_reads_as_plain_words():
+    from ask_api.stats import standing
+    assert [standing(r, 35) for r in (1, 2, 18, 34, 35)] == [
+        "Highest of 35 years", "2nd highest of 35 years", "18th highest of 35 years",
+        "2nd lowest of 35 years", "Lowest of 35 years"]
+    assert standing(11, 36, "Julys") == "11th highest of 36 Julys"
+
+
+def test_tables_have_no_jargon(ctx):
+    out = one_place.get_snapshot(ctx, MUMBAI, {"year": 2024})
+    table = ctx.results[out["show"][0]]
+    assert "Rank" not in " ".join(table["columns"]) and "Anomaly" not in " ".join(table["columns"])
+    assert table["rows"][0][3].endswith("of 35 years") and out["overall"]["compared_with_other_years"]
+    assert "0 is normal" in table["note"]
