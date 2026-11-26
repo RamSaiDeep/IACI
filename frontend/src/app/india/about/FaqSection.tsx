@@ -218,12 +218,12 @@ const FAQS: FaqItem[] = [
           {[
             {
               label: "Coastal regions",
-              formula: "IACI = (T90S + T10S + PS + W + DS + SS) / 6",
+              formula: "IACI = (T90S − T10S + PS + W + DS + SS) / 6",
               note: "All six standardized components, including sea level, contribute equally.",
             },
             {
               label: "Inland regions",
-              formula: "IACI = (T90S + T10S + PS + W + DS) / 5",
+              formula: "IACI = (T90S − T10S + PS + W + DS) / 5",
               note: "The sea-level component is excluded and the remaining five are averaged.",
             },
           ].map((row) => (
