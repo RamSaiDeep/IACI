@@ -59,9 +59,16 @@ The design and the plan for the agent version are in `docs/ask-the-index/`
 
 | File | Role |
 |---|---|
-| `tools/` | Functions the agent will call. See `tools/__init__.py` for the list |
+| `tools/` | The 21 functions the agent can call. Start with `tools/__init__.py` (map) and `tools/registry.py` (the list the model sees) |
+| `tools/context.py` | What every tool shares: the visitor's country, the store of tables/charts (`result_id`s), `ToolError`, period checking |
 | `tools/places.py` | `find_place`: name → one place. Our names first, then Bharatlas, then "not found" |
 | `tools/resolve.py` | `resolve_hazard`, `resolve_period`, `data_coverage` |
+| `tools/one_place.py` | `get_snapshot`, `get_extremes`, `get_month_profile` |
+| `tools/over_time.py` | `get_series`, `get_trend` (straight-line change per decade), `compare_periods`, `count_exceedances` |
+| `tools/many_places.py` | `list_places`, `rank_places`, `filter_places`, `compare_to_parent`, `spread_within` |
+| `tools/comparing.py` | `compare_places` (any levels and countries), `neighbours` |
+| `tools/explain.py` | `explain_index`, `explain_place_method`, `explain_value` |
+| `knowledge/index_knowledge.json` | How the index is built, written from the website's About pages; a test keeps it in line with the code |
 | `bharatlas.py` | The only file that talks to Bharatlas (bharatlas.com): localities, villages, wards, PIN codes |
 | `reference/lgd_districts.csv` | Official LGD district codes → our district ids (built by `build_lgd_crosswalk.py`) |
 
@@ -84,3 +91,5 @@ cached by name. If it's down, the visitor is told to use the district name.
 - **New districts or renamed places in our data:** rerun `python backend/build_lgd_crosswalk.py`.
   It prints any matches it had to guess and our districts that have no LGD code.
 - **A place name that should work but doesn't:** add it to `PLACE_ALIASES` in `labels.py`.
+- **The About pages change:** update `knowledge/index_knowledge.json` to match.
+  `tests/test_tools_data.py` fails if its formulas, hazard lists or score bands drift from the code.

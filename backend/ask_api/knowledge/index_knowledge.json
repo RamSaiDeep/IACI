@@ -1,0 +1,91 @@
+{
+  "_source": "Written from the website's About pages and FAQs: frontend/src/app/about, app/india/about (FaqSection.tsx), app/nepal/about (FaqSection.tsx), app/uk/about and lib/countries (UK notes). Formula signs follow the stored data (extreme cold is subtracted; checked against every month). Kept in sync with labels.py and lib/indicators.ts by tests/test_tools_explain.py.",
+
+  "shared": {
+    "overview": {
+      "title": "What the Actuaries Climate Index is",
+      "text": "A standardized composite index that measures how climate extremes have changed over time, built for actuarial uses such as insurance pricing, catastrophe modelling and financial risk management. Unlike indicators that track average conditions, it focuses on extremes (unusual heat, cold, heavy rain, strong wind, drought and high sea level), because extremes drive most insured and uninsured losses. It is published monthly for each country and its regions, from 1991 onwards."
+    },
+    "why": {
+      "title": "Why it is built this way",
+      "text": "Four aims shape the index: objective physical grounding (it is computed from reanalysis weather data, not opinion or reported losses); actuarial and underwriting relevance (it measures the hazards that drive claims); cross-regional comparability (every region is measured against its own history in the same units, so regions and countries can be compared); and informing resilient public policy."
+    },
+    "calculation": {
+      "title": "How it is calculated",
+      "text": "1. Daily data to monthly measures: hourly reanalysis data is turned into daily values, and for each month each hazard is measured at every grid cell (for example, how many days were unusually warm, or the longest run of dry days). 2. Standardize: each monthly value is compared with the same calendar month in the 1991–2020 reference period, by subtracting that month's mean and dividing by its standard deviation. The result is a z-score. 3. Average into regions: a region's value for each hazard is the plain average of all grid cells inside it. 4. Combine: the overall index is the average of the hazard z-scores, with extreme cold subtracted (see the formula)."
+    },
+    "grid": {
+      "title": "The grid and how regional values are decided",
+      "text": "The index is grid-cell-first: every hazard is computed separately for each ERA5 grid cell, and only after standardization are cells averaged into districts, states or other regions. Every grid cell inside a region counts equally."
+    },
+    "baseline": {
+      "title": "The baseline and what the numbers mean",
+      "text": "Every value is a z-score against the 1991–2020 reference period, the World Meteorological Organization's 30-year climate normal. 0 means conditions matched that period's average for the same month and place. +1 means one standard deviation above it; −1 one below. Because each place is compared with its own history, the numbers show how unusual conditions were there, not absolute temperature, rainfall or wind."
+    },
+    "percentiles": {
+      "title": "What the 90th and 10th percentile thresholds mean",
+      "text": "They decide what counts as an unusually warm, cold or windy day. For each calendar day and grid cell, 150 past observations are pooled (a 5-day window around that day in each of the 30 reference years). The 90th percentile is the value only the top 10% exceed: any day above it is unusually warm (or unusually windy). The 10th percentile is the value only the bottom 10% fall below: any day below it is unusually cold."
+    },
+    "bands": {
+      "title": "How a value is described",
+      "text": "The website and these answers use the same bands: below −1 Below normal; −1 to 0 Near normal; 0 to +1 Moderate; +1 to +2 Elevated; +2 to +3.5 Severe; above +3.5 Extreme."
+    },
+    "applications": {
+      "title": "What the index is used for",
+      "text": "Actuarial risk assessment, insurance applications, climate-risk monitoring, regulatory reporting and research. It is an objective, reproducible measure of physical climate hazard that compares consistently across regions and over time. It measures hazard only: not exposure, vulnerability, or actual economic or insurance losses."
+    },
+    "future": {
+      "title": "Could more hazards be added?",
+      "text": "Yes. The method is designed to allow refinement as better datasets, higher-resolution climate products or additional indicators become available, while keeping the same standardized, reproducible framework."
+    },
+    "limitations": {
+      "title": "What the index does not show",
+      "text": "Values are monthly averages over each region's area, so very local or short-lived events (a single cloudburst, one hot afternoon) are smoothed out. They are standardized anomalies, not raw measurements. The index describes how unusual conditions were; it does not say what caused them, and it does not forecast."
+    }
+  },
+
+  "hazards": {
+    "heat": {"code": "T90S", "name": "Extreme heat (warm temperature)", "measures": "How often days and nights were unusually warm: above the 90th percentile of the 1991–2020 baseline for that calendar day and grid cell.", "data": "ERA5-Land hourly 2 m air temperature"},
+    "cold": {"code": "T10S", "name": "Extreme cold (cold temperature)", "measures": "How often days and nights were unusually cold: below the 10th percentile of the baseline. It is subtracted in the overall index, so fewer cold extremes than normal push the index up, the same convention as the North American Actuaries Climate Index.", "data": "ERA5-Land hourly 2 m air temperature"},
+    "rainfall": {"code": "PS", "name": "Heavy rainfall (extreme precipitation)", "measures": "The largest rainfall total over five consecutive days in the month, against the baseline: a measure of flood and deluge potential.", "data": "ERA5-Land daily total precipitation"},
+    "wind": {"code": "W", "name": "Strong wind", "measures": "How often days had unusually high wind speed: above the 90th percentile of the baseline.", "data": "ERA5-Land 10 m U and V wind components"},
+    "drought": {"code": "DS", "name": "Drought and dry spells", "measures": "The longest run of consecutive dry days, against the baseline: a measure of moisture deficit and drought stress.", "data": "ERA5-Land daily total precipitation"},
+    "sea_level": {"code": "SS", "name": "Sea level", "measures": "The monthly mean sea-level anomaly at coastal grid cells. Only regions that meet the sea have it.", "data": "ORAS5 ocean reanalysis, monthly mean sea level"}
+  },
+
+  "countries": {
+    "india": {
+      "index": "Indian Actuaries Climate Index (IACI)",
+      "status": "Version 1.0",
+      "levels": "Country, 36 states and union territories, and 782 districts.",
+      "components": ["heat", "cold", "rainfall", "wind", "drought", "sea_level"],
+      "formula": {
+        "coastal": "IACI = (T90S − T10S + PS + W + DS + SS) / 6: all six hazards, including sea level.",
+        "inland": "IACI = (T90S − T10S + PS + W + DS) / 5: sea level does not apply, so the other five are averaged."
+      },
+      "datasets": "Copernicus (C3S) ERA5-Land reanalysis (hourly 2 m air temperature, daily total precipitation, 10 m wind components); Copernicus (C3S) ORAS5 ocean reanalysis (monthly mean sea level at coastal grid cells); Survey of India administrative boundaries.",
+      "notes": ["Sea level applies to 13 of 36 states and union territories and 87 of 782 districts.", "Lakshadweep has a sea-level series but no overall index: its islands are smaller than one land grid cell, so the land hazards cannot be measured there, and the index needs all five land hazards."]
+    },
+    "nepal": {
+      "index": "Nepal Actuaries Climate Index (NACI)",
+      "status": "Published",
+      "levels": "Four levels: the country, 7 provinces, 77 districts and 750+ local levels (gaunpalika and nagarpalika).",
+      "components": ["heat", "cold", "rainfall", "wind", "drought"],
+      "formula": {"inland": "NACI = (T90S − T10S + PS + W + DS) / 5 everywhere: Nepal is landlocked."},
+      "datasets": "Copernicus (C3S) ERA5-Land reanalysis.",
+      "notes": ["Nepal is landlocked, so sea level is not part of its index. It is not recorded as zero (which would mean normal) or as missing; it simply does not apply, and the five-hazard formula is used everywhere, as it is for India's inland regions."]
+    },
+    "uk": {
+      "index": "UK Actuaries Climate Index",
+      "status": "Draft",
+      "levels": "The United Kingdom, its four nations, and counties (Office for National Statistics 'Counties and Unitary Authorities': English counties and unitary authorities, Scottish council areas, Welsh principal areas and Northern Ireland's 11 council areas).",
+      "components": ["heat", "cold", "rainfall", "wind", "drought", "sea_level"],
+      "formula": {
+        "coastal": "(T90S − T10S + PS + W + DS + SS) / 6 for regions that meet the sea.",
+        "inland": "(T90S − T10S + PS + W + DS) / 5 for inland regions."
+      },
+      "datasets": "Hourly reanalysis weather data, turned into daily values and monthly extreme counts per grid cell (see the UK About page).",
+      "notes": ["The UK index is a draft.", "Nation values are the area-weighted average of their counties' values, hazard by hazard; the overall index is then the average of those hazards."]
+    }
+  }
+}

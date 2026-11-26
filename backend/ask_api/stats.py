@@ -39,6 +39,27 @@ def sen_mann_kendall(points: list[tuple[int, float | None]], alpha: float = 0.05
     return {"n": n, "slope_per_decade": slope * 10, "p": p, "direction": direction}
 
 
+def simple_trend(points: list[tuple[int, float | None]], little: float = 0.1) -> dict:
+    """Plain straight-line trend for the agent tools (no significance test, by design).
+
+    slope_per_decade: least-squares slope x 10. early/recent: mean of the first and last 10 years.
+    direction: "rising" / "falling", or "little change" when |slope| < `little` z-score per decade."""
+    pts = sorted((x, y) for x, y in points if y is not None)
+    n = len(pts)
+    if n < 8:
+        return {"n": n, "slope_per_decade": None, "direction": "not enough years (need 8)",
+                "early_mean": None, "recent_mean": None, "early_years": None, "recent_years": None}
+    mx = sum(x for x, _ in pts) / n
+    my = sum(y for _, y in pts) / n
+    slope = sum((x - mx) * (y - my) for x, y in pts) / sum((x - mx) ** 2 for x, _ in pts)
+    k = min(10, n // 2)
+    early, recent = pts[:k], pts[-k:]
+    direction = "little change" if abs(slope * 10) < little else "rising" if slope > 0 else "falling"
+    return {"n": n, "slope_per_decade": slope * 10, "direction": direction,
+            "early_mean": mean(y for _, y in early), "recent_mean": mean(y for _, y in recent),
+            "early_years": f"{early[0][0]}–{early[-1][0]}", "recent_years": f"{recent[0][0]}–{recent[-1][0]}"}
+
+
 def rank_highest(value: float, all_values) -> int:
     """1 = highest; ties share the better rank."""
     return sum(1 for v in all_values if v > value) + 1
