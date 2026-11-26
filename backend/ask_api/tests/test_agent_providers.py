@@ -154,3 +154,11 @@ def test_run_agent_through_the_openai_adapter():
     assert [t["name"] for t in out["trace"]] == ["triage", "explain_value"]
     last = sent[-1]["body"]["messages"]
     assert last[-1]["role"] == "tool" and json.loads(last[-1]["content"])["band"] == "Elevated"
+
+
+def test_missing_call_ids_are_unique_across_turns():
+    no_id = (200, {"choices": [{"message": {"tool_calls": [{"type": "function", "function": {"name": "find_place", "arguments": "{}"}}]}}]})
+    client, _ = mock(no_id, no_id)
+    m = make_model("openrouter", "x/y", KEY, client)
+    a, b = turn(m).calls[0].id, turn(m).calls[0].id
+    assert a != b and a.startswith("call_")

@@ -194,3 +194,15 @@ def test_follow_up_carries_the_earlier_answer():
                           previous={"question": "How was 2024 for Mumbai?", "summary": "Mumbai: 2024. It was hot."}))
     first_user = model.seen[0]["messages"][0]["text"]
     assert "Earlier question: How was 2024 for Mumbai?" in first_user and "Follow-up question: And the monsoon?" in first_user
+
+
+def test_repeated_identical_calls_are_not_rerun_and_end_in_a_final_answer():
+    # What a weak free model did live: find_place("Delhi") again and again instead of moving on.
+    steps = [in_scope("trend")] + [call("find_place", name="Delhi")] * 3 + \
+            [lambda m: call("final_answer", headline="Delhi is a state.", sections=[], show=[], followups=[])]
+    out, _, model = run(ScriptedModel(*steps), question="Is heat increasing in Delhi?")
+    assert [t["name"] for t in out["trace"]] == ["triage", "find_place"]  # ran once, repeats not shown
+    repeat = last_result(model.seen[3]["messages"], "find_place")  # what the model saw after its first repeat
+    assert "already called find_place" in repeat["error"] and repeat["previous_result"]["status"] == "found"
+    assert model.seen[-1]["force"] == "final_answer"  # after 2 repeats the next turn must finish
+    assert len(model.seen) == 5

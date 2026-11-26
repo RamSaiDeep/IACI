@@ -162,3 +162,8 @@ def test_coastal_inland_and_no_index():
     lak = data_coverage("india/state/LAKSHADWEEP")
     assert lak["has_overall_index"] is False and "No overall index" in lak["formula"]
     assert data_coverage("nope")["status"] == "error"
+
+
+def test_wrong_level_hint_is_only_a_preference(fake_bharatlas):
+    r = find("Kent", country="uk", level_hint="state")  # Kent is a county; the model guessed "state"
+    assert r["status"] == "found" and r["place"]["name"] == "Kent"

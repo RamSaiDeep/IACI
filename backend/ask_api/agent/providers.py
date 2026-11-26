@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import re
 import time
+import uuid
 
 import httpx
 
@@ -210,9 +211,10 @@ class OpenAIStyleModel:
             d = await _post(self._client, self._url, body, headers, self._key, self.name, self._who)
         msg = ((d.get("choices") or [{}])[0].get("message")) or {}
         u = d.get("usage") or {}
-        calls = [Call(tc.get("id") or f"call_{i}", (tc.get("function") or {}).get("name", ""),
+        # Some models send no id: make one that is unique across the whole conversation, or results get mixed up.
+        calls = [Call(tc.get("id") or f"call_{uuid.uuid4().hex[:12]}", (tc.get("function") or {}).get("name", ""),
                       _args((tc.get("function") or {}).get("arguments")))
-                 for i, tc in enumerate(msg.get("tool_calls") or [])]
+                 for tc in msg.get("tool_calls") or []]
         return Reply(text=msg.get("content") or None, calls=calls,
                      input_tokens=int(u.get("prompt_tokens") or 0), output_tokens=int(u.get("completion_tokens") or 0))
 

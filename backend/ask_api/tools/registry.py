@@ -106,9 +106,11 @@ TOOLS: list[Tool] = [
                 hazard=HAZARD, period=PERIOD), over_time.count_exceedances),
 
     # Many places
-    Tool("list_places", "The places in a state or country, optionally coastal or inland only.",
+    Tool("list_places", "Only to answer 'which/how many places are in X'. To rank or filter places use rank_places or "
+         "filter_places directly; they search every place themselves.",
          schema([], within=WITHIN, level=LEVEL, coastal=COASTAL), many_places.list_places),
-    Tool("rank_places", "Order places by a hazard. by='value': most extreme in a period (default: last complete year; a "
+    Tool("rank_places", "Order ALL places in a country or state by a hazard in one call (no find_place per place needed; "
+         "coastal=true for coastal places only). by='value': most extreme in a period (default: last complete year; a "
          "range gives the average). by='change': fastest rising per decade (default: whole record).",
          schema([], hazard=HAZARD, period=PERIOD, within=WITHIN, level=LEVEL, coastal=COASTAL,
                 by={"type": "string", "enum": ["value", "change"]}, order={"type": "string", "enum": ["highest", "lowest"]},

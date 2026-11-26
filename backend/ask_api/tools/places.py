@@ -53,6 +53,9 @@ async def find_place(client: httpx.AsyncClient, name: str, country: str | None =
     # 1. Our own names and aliases.
     r = resolve(name, country)
     matches = [m for m in r["matches"] if _fits(m.place, level, parent)]
+    if level and not matches:  # the hint is only a preference: "Kent" with "state" should still find the county
+        level = None
+        matches = [m for m in r["matches"] if _fits(m.place, None, parent)]
     good = [m for m in matches if m.how != "fuzzy"]
     if r["status"] in ("exact", "ambiguous") and good:
         good = _prefer_region_over_namesake(good, level)

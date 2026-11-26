@@ -32,6 +32,7 @@ from .prompt import FINAL_ANSWER, FINISHERS, TRIAGE, system_prompt
 
 MAX_STEPS = 8  # model turns after triage
 MAX_CALLS = 12  # data/lookup tool calls in total
+MAX_REPEATS = 2  # identical repeated calls before the next turn must be final_answer
 RESULT_CHARS = 8000  # longest tool result sent back to the model (the full result is kept for the number check)
 
 OUT_OF_SCOPE_TEXT = ("I can answer questions about climate extremes in the Actuaries Climate Index for India, "
@@ -94,6 +95,8 @@ async def run_agent(question: str, ctx: ToolContext, model: Model, emit: Callabl
     # 2. Loop
     facts: list[dict] = [{"question": question}, {"earlier": (previous or {}).get("summary", "")}]
     calls_made, nudged, repaired, force = 0, False, False, None
+    seen: dict[tuple, dict] = {}  # (tool, inputs) -> result, to catch a model calling the same thing again
+    repeats = 0
     for _ in range(MAX_STEPS):
         r = usage.add(await model.turn(system, messages, TOOL_SPECS if not force else [FINISHERS[force]], force=force))
         force = None
@@ -113,13 +116,22 @@ async def run_agent(question: str, ctx: ToolContext, model: Model, emit: Callabl
             if c.name in FINISHERS:
                 finisher = finisher or c
                 continue
-            if calls_made >= MAX_CALLS:
+            key = (c.name, json.dumps(c.args, sort_keys=True, default=str))
+            if key in seen:  # same tool, same inputs: don't run it again, hand back what it already returned
+                repeats += 1
+                if repeats >= MAX_REPEATS:
+                    force = "final_answer"
+                result = {"error": f"You already called {c.name} with exactly these inputs; its result is included "
+                                   "here. Do not repeat it. Call the next tool you need (for example a data tool "
+                                   "with the place id) or finish with final_answer.", "previous_result": seen[key]}
+            elif calls_made >= MAX_CALLS:
                 result = {"error": "Tool-call limit reached. Finish now with final_answer."}
             else:
                 emit(_step_text(c.name, c.args))
                 result = await call_tool(ctx, c.name, c.args)
                 calls_made += 1
                 facts.append(result)
+                seen[key] = _trim(result)
             messages.append({"role": "tool", "id": c.id, "name": c.name, "result": _trim(result)})
         if not finisher:
             continue
