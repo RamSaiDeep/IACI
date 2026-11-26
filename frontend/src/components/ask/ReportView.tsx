@@ -134,9 +134,8 @@ function Section({ s }: { s: ReportSection }) {
 }
 
 export default function ReportView({
-  report, onFollowUp, busy,
-}: { report: ReportCard; onFollowUp: (q: string) => void; busy: boolean }) {
-  const [follow, setFollow] = useState("");
+  report,
+}: { report: ReportCard }) {
   const [copied, setCopied] = useState(false);
   const u = report.usage;
 
@@ -184,26 +183,6 @@ export default function ReportView({
           {report.router && `Routing (${report.router.models.join(" + ")}, site key): ${report.router.calls} call${report.router.calls === 1 ? "" : "s"}, ${report.router.tokens.toLocaleString()} tokens, $${report.router.costUsd.toFixed(5)}.`}
         </p>
       </details>
-
-      <form
-        className="flex flex-col gap-2 print:hidden"
-        onSubmit={(e) => { e.preventDefault(); if (follow.trim()) { onFollowUp(follow.trim()); setFollow(""); } }}
-      >
-        <label htmlFor="follow" className="text-sm font-semibold">Ask a follow-up</label>
-        <div className="flex flex-wrap gap-2">
-          <input id="follow" value={follow} onChange={(e) => setFollow(e.target.value)} placeholder="e.g. now just the monsoon months" maxLength={300}
-            className="min-h-11 min-w-0 flex-1 rounded-xl border border-foreground/20 bg-surface px-3 text-sm" />
-          <button type="submit" disabled={busy || !follow.trim()} className="min-h-11 rounded-xl bg-accent px-5 text-sm font-semibold text-white disabled:opacity-50">Ask</button>
-        </div>
-        {report.followups.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {report.followups.map((f) => (
-              <button key={f} type="button" disabled={busy} onClick={() => onFollowUp(f)}
-                className="min-h-11 rounded-full border border-foreground/20 bg-surface px-4 text-left text-xs hover:border-accent disabled:opacity-50">{f}</button>
-            ))}
-          </div>
-        )}
-      </form>
 
       <div className="flex flex-wrap gap-2 print:hidden">
         <button type="button" onClick={copy} className="min-h-11 rounded-xl border border-foreground/20 px-4 text-sm font-semibold hover:border-accent">

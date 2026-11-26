@@ -2,28 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ApiError, DEFAULT_MODELS, PROVIDER_LABELS, ask, loadChoice, loadKey, readSharedRequest } from "../../lib/ask/client";
-import { COUNTRY_INFO, COUNTRY_SLUGS, MONTH_NAMES, type CountrySlug } from "../../lib/ask/labels";
+import { COUNTRY_INFO, COUNTRY_SLUGS, type CountrySlug } from "../../lib/ask/labels";
 import type { AskRequest, Category, ClarifyResponse, ReportCard, Slots } from "../../lib/ask/report-types";
 import KeyPanel, { type KeyState } from "./KeyPanel";
 import ReportView from "./ReportView";
 
-type Mode = Exclude<Category, "help">;
+// Event is hidden from the page for now (the backend still supports it).
+type Mode = Exclude<Category, "help" | "event">;
 
 const CARDS: { mode: Mode; title: string; blurb: string; example: string; icon: string }[] = [
   { mode: "snapshot", title: "Snapshot", blurb: "How one place did in a year, season or month, ranked against every year since 1991.", example: "“How was 2024 for Nellore?”", icon: "M3 4h18v18H3zM16 2v4M8 2v4M3 10h18" },
   { mode: "compare", title: "Compare", blurb: "Two places side by side over a period, hazard by hazard.", example: "“Chennai vs Hyderabad, 2015–2025”", icon: "M3 4h7v16H3zM14 4h7v16h-7z" },
   { mode: "rank", title: "Ranking", blurb: "A ranked list of districts for any hazard and period.", example: "“Worst drought districts in Maharashtra”", icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
   { mode: "trend", title: "Trend", blurb: "Is a hazard rising or falling at a place, and how sure is that?", example: "“Is heat increasing in Guntur?”", icon: "M3 17l6-6 4 4 8-8M14 7h7v7" },
-  { mode: "event", title: "Event", blurb: "One month against the same month in every other year.", example: "“Wayanad, July 2024”", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
-];
-
-const EXAMPLES = [
-  "How was 2024 for Nellore?",
-  "Which Odisha districts had the worst rainfall in monsoon 2024?",
-  "Is extreme heat increasing in Guntur?",
-  "Chennai vs Hyderabad, 2015–2025",
-  "What happened in Wayanad in July 2024?",
-  "What does the drought component measure?",
 ];
 
 const HAZARDS: [string, string][] = [
@@ -58,7 +49,6 @@ function Field({ id, label, children }: { id: string; label: string; children: R
 
 export default function AskClient() {
   const [country, setCountry] = useState<CountrySlug>("india");
-  const [question, setQuestion] = useState("");
   const [mode, setMode] = useState<Mode>("snapshot");
   const [keyState, setKeyState] = useState<KeyState>({ key: "", store: null, provider: "anthropic", model: DEFAULT_MODELS.anthropic });
   const [panelOpen, setPanelOpen] = useState(false);
@@ -83,7 +73,6 @@ export default function AskClient() {
   const [hazard, setHazard] = useState("composite");
   const [period, setPeriod] = useState("monsoon2024");
   const [rankBy, setRankBy] = useState<"value" | "worsening">("value");
-  const [month, setMonth] = useState(7);
 
   // Restore the key, model choice and any shared request once, after mount (storage is client-only).
   useEffect(() => {
@@ -129,12 +118,9 @@ export default function AskClient() {
     }
   }
 
-  const askFree = (q: string, previous?: AskRequest["previous"]) => run({ country, question: q, previous });
-
   const pick = (o: ClarifyResponse["options"][number]) => {
     if (!clarify) return;
     const { c, req } = clarify;
-    if (o.question) { setQuestion(o.question); void askFree(o.question); return; }
     if (o.category) { void run({ ...req, category: o.category, slots: null }); return; }
     void run({ ...req, category: c.category ?? req.category, slots: c.slots ?? req.slots,
       resolved: { ...req.resolved, [(c.query ?? "").toLowerCase()]: o.id ?? "" } });
@@ -147,15 +133,11 @@ export default function AskClient() {
       : mode === "rank" ? { region: region || null, country, hazard, rank_by: rankBy, order: "highest", limit: null,
           year: null, season: null, month: null, from_year: null, to_year: null, last_years: null,
           ...RANK_PERIODS.find((p) => p.id === period)!.slots }
-      : mode === "trend" ? { place, hazard, season: null, from_year: null, to_year: null }
-      : { place, month, year };
+      : { place, hazard, season: null, from_year: null, to_year: null };
     void run({ country, category: mode, slots });
   };
 
   const guidedReady = mode === "compare" ? !!place.trim() && !!placeB.trim() : mode === "rank" ? true : !!place.trim();
-
-  const followUp = (q: string) =>
-    askFree(q, report ? { question: report.request.question, category: report.feature, slots: report.request.slots, summary: `${report.title}. ${report.headline}` } : undefined);
 
   return (
     <div className="flex flex-col gap-10">
@@ -185,76 +167,31 @@ export default function AskClient() {
         </div>
       )}
 
-      {/* Question box */}
+      {/* Heading + country */}
       <section className="no-print flex flex-col items-center gap-5 text-center">
-        <span className="eyebrow">Ask the Index · AI assistant</span>
-        <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-5xl">Ask anything about climate extremes</h1>
+        <span className="eyebrow">Ask the Index</span>
+        <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-5xl">Get to know your climate</h1>
         <p className="max-w-2xl text-base text-foreground/70 sm:text-lg">
-          Get a written answer, a chart and a table, built from the index&apos;s own monthly values. No component codes needed.
+          Pick what you want to find out, fill in a place and a period, and get a written answer with a chart and a table, built from the index&apos;s own monthly values.
         </p>
-
-        <form className="flex w-full max-w-3xl flex-col gap-3 rounded-2xl border border-foreground/10 bg-surface p-4 text-left shadow-card"
-          onSubmit={(e) => { e.preventDefault(); if (question.trim()) void askFree(question.trim()); }}>
-          <label htmlFor="ask" className="sr-only">Your question</label>
-          <input id="ask" type="text" value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={500}
-            placeholder={`e.g. How was 2024 for ${info.example}?`}
-            className="w-full bg-transparent px-2 py-3 text-lg outline-none" />
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-foreground/10 pt-3">
-            <div role="group" aria-label="Country" className="flex flex-wrap items-center gap-2">
-              <span className="mr-1 text-sm text-foreground/60">Country</span>
-              {COUNTRY_SLUGS.map((c) => (
-                <button key={c} type="button" aria-pressed={country === c} onClick={() => setCountry(c)}
-                  className={`min-h-11 rounded-full px-4 text-sm ${country === c ? "bg-accent font-semibold text-white" : "bg-surface-muted text-foreground/80"}`}>
-                  {COUNTRY_INFO[c].name}
-                </button>
-              ))}
-            </div>
-            <button type="submit" disabled={busy || !question.trim()} className="min-h-12 rounded-xl bg-accent px-7 text-base font-semibold text-white disabled:opacity-50">
-              {busy ? "Working…" : "Ask →"}
+        <div role="group" aria-label="Country" className="flex flex-wrap items-center justify-center gap-2">
+          <span className="mr-1 text-sm text-foreground/60">Country</span>
+          {COUNTRY_SLUGS.map((c) => (
+            <button key={c} type="button" aria-pressed={country === c} onClick={() => setCountry(c)}
+              className={`min-h-11 rounded-full px-4 text-sm ${country === c ? "bg-accent font-semibold text-white" : "bg-surface-muted text-foreground/80"}`}>
+              {COUNTRY_INFO[c].name}
             </button>
-          </div>
-        </form>
+          ))}
+        </div>
       </section>
-
-      {/* Result area */}
-      <div ref={resultRef} aria-live="polite" className="flex flex-col gap-4 scroll-mt-24">
-        {busy && (
-          <div className="w-full max-w-3xl rounded-xl bg-surface p-4 text-left text-sm shadow-card" role="status" aria-live="polite">
-            <p className="font-semibold">Working on it… {secs}s</p>
-            <ol className="mt-2 flex flex-col gap-1">
-              {steps.map((t, i) => (
-                <li key={i} className={i === steps.length - 1 ? "text-foreground" : "text-foreground/60"}>
-                  <span aria-hidden>{i === steps.length - 1 ? "⏳" : "✓"}</span> {t}
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
-        {error && <p role="alert" className="rounded-xl border border-rose-600/30 bg-rose-600/10 p-4 text-sm text-rose-800">{error}</p>}
-        {clarify && (
-          <div className="rounded-xl border border-accent/40 bg-surface p-5 shadow-card">
-            <p className="font-semibold">{clarify.c.question}</p>
-            {clarify.c.options.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {clarify.c.options.map((o) => (
-                  <button key={o.id ?? o.category ?? o.question ?? o.label} type="button" disabled={busy} onClick={() => pick(o)}
-                    className="min-h-11 rounded-full border border-foreground/20 px-4 text-sm hover:border-accent">{o.label}</button>
-                ))}
-              </div>
-            )}
-            {clarify.c.options.length === 0 && <p className="mt-1 text-sm text-foreground/60">Reword your question above and ask again.</p>}
-          </div>
-        )}
-        {report && <ReportView report={report} busy={busy} onFollowUp={followUp} />}
-      </div>
 
       {/* Starting points */}
       <section aria-labelledby="start-h" className="no-print flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="start-h" className="text-xl font-bold">Or pick a starting point</h2>
-          <span className="text-sm text-foreground/60">Each one opens a short guided form</span>
+          <h2 id="start-h" className="text-xl font-bold">What would you like to know?</h2>
+          <span className="text-sm text-foreground/60">Choose one, then fill in the short form below it</span>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CARDS.map((c) => (
             <button key={c.mode} type="button" aria-pressed={mode === c.mode} onClick={() => setMode(c.mode)}
               className={`flex flex-col gap-3 rounded-2xl p-5 text-left ${mode === c.mode ? "bg-accent/5 shadow-card ring-2 ring-accent" : "bg-surface ring-1 ring-foreground/15 hover:ring-accent/60"}`}>
@@ -292,36 +229,52 @@ export default function AskClient() {
               <Field id="tr-place" label="Place"><input id="tr-place" className={field} value={place} onChange={(e) => setPlace(e.target.value)} placeholder={`e.g. ${info.example}`} /></Field>
               <Field id="tr-hazard" label="Hazard"><select id="tr-hazard" className={field} value={hazard} onChange={(e) => setHazard(e.target.value)}>{hazards.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select></Field>
             </>)}
-            {mode === "event" && (<>
-              <Field id="ev-place" label="Place"><input id="ev-place" className={field} value={place} onChange={(e) => setPlace(e.target.value)} placeholder="e.g. Wayanad" /></Field>
-              <Field id="ev-month" label="Month"><select id="ev-month" className={field} value={month} onChange={(e) => setMonth(+e.target.value)}>{MONTH_NAMES.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}</select></Field>
-              <Field id="ev-year" label="Year"><select id="ev-year" className={field} value={year} onChange={(e) => setYear(+e.target.value)}>{YEARS.map((y) => <option key={y}>{y}</option>)}</select></Field>
-            </>)}
             <button type="submit" disabled={busy || !guidedReady} className="min-h-11 rounded-xl bg-accent px-5 text-[15px] font-semibold text-white disabled:opacity-50">
-              {mode === "compare" ? "Compare" : mode === "rank" ? "Show ranking" : mode === "event" ? "Explain" : mode === "trend" ? "Show trend" : "Generate report"}
+              {mode === "compare" ? "Compare" : mode === "rank" ? "Show ranking" : mode === "trend" ? "Show trend" : "Generate report"}
             </button>
           </div>
           {!hasKey && <p className="text-sm text-foreground/60">Answers need an API key. Use &ldquo;Set API key&rdquo; at the top of the page.</p>}
         </form>
       </section>
 
-      {/* Try asking */}
-      <section aria-labelledby="try-h" className="no-print flex flex-col gap-3">
-        <h2 id="try-h" className="text-lg font-bold">Try asking</h2>
-        <div className="flex flex-wrap gap-2.5">
-          {EXAMPLES.map((q) => (
-            <button key={q} type="button" onClick={() => { setQuestion(q); document.getElementById("ask")?.focus(); }}
-              className="min-h-11 rounded-full border border-foreground/20 bg-surface px-4 text-sm hover:border-accent">{q}</button>
-          ))}
-        </div>
-      </section>
+      {/* Result area */}
+      <div ref={resultRef} aria-live="polite" className="flex flex-col gap-4 scroll-mt-24">
+        {busy && (
+          <div className="w-full max-w-3xl rounded-xl bg-surface p-4 text-left text-sm shadow-card" role="status" aria-live="polite">
+            <p className="font-semibold">Working on it… {secs}s</p>
+            <ol className="mt-2 flex flex-col gap-1">
+              {steps.map((t, i) => (
+                <li key={i} className={i === steps.length - 1 ? "text-foreground" : "text-foreground/60"}>
+                  <span aria-hidden>{i === steps.length - 1 ? "⏳" : "✓"}</span> {t}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+        {error && <p role="alert" className="rounded-xl border border-rose-600/30 bg-rose-600/10 p-4 text-sm text-rose-800">{error}</p>}
+        {clarify && (
+          <div className="rounded-xl border border-accent/40 bg-surface p-5 shadow-card">
+            <p className="font-semibold">{clarify.c.question}</p>
+            {clarify.c.options.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {clarify.c.options.map((o) => (
+                  <button key={o.id ?? o.category ?? o.label} type="button" disabled={busy} onClick={() => pick(o)}
+                    className="min-h-11 rounded-full border border-foreground/20 px-4 text-sm hover:border-accent">{o.label}</button>
+                ))}
+              </div>
+            )}
+            {clarify.c.options.length === 0 && <p className="mt-1 text-sm text-foreground/60">Change the form above and try again.</p>}
+          </div>
+        )}
+        {report && <ReportView report={report} />}
+      </div>
 
       {/* How answers work */}
       <section aria-labelledby="how-h" className="no-print rounded-2xl border border-foreground/10 bg-surface p-6">
         <h2 id="how-h" className="mb-4 text-lg font-bold">How answers work</h2>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
-            ["Numbers come only from the index", "A small routing model picks the kind of answer, our code reads and calculates every figure, and your chosen model only writes the sentences. Each number in the text is checked."],
+            ["Numbers come only from the index", "Our code reads and calculates every figure, and your chosen model only writes the sentences. Each number in the text is checked."],
             ["You can see how it was worked out", "Each answer lists the places, hazards, periods and baseline it used, step by step."],
             ["Clear about limits", "Baseline 1991–2020 · monthly area averages · standardized anomalies. Context, not attribution."],
           ].map(([t, d]) => (
