@@ -1,7 +1,8 @@
-"""Our own district boundaries: which India district contains a point.
+"""Our own district boundaries: which district contains a point (India by default; Nepal and the UK too).
 
-Used by find_place (a Bharatlas result comes with coordinates) and by build_lgd_crosswalk.py.
-Plain-Python point-in-polygon with a bounding-box pre-filter, so no geometry library is needed.
+Used by find_place (a Bharatlas result comes with coordinates), by build_lgd_crosswalk.py, and by
+build_events.py (placing disaster events on our districts). Plain-Python point-in-polygon with a
+bounding-box pre-filter, so no geometry library is needed.
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ from functools import lru_cache
 
 from .config import GEO_ROOT
 from .data import load_country, norm
+from .labels import COUNTRY_INFO
 
 
 @dataclass(frozen=True)
@@ -41,15 +43,15 @@ def point_in_geometry(x: float, y: float, geom: dict) -> bool:
                for poly in polys)
 
 
-@lru_cache(maxsize=1)
-def india_districts() -> tuple[District, ...]:
-    """Every India district boundary we can tie to a place in the index data (read once, then cached)."""
-    places = [p for p in load_country("india").places.values() if p.level == "child"]
+@lru_cache(maxsize=None)
+def districts(country: str = "india") -> tuple[District, ...]:
+    """Every district-level boundary of a country we can tie to a place in the index data (read once, cached)."""
+    places = [p for p in load_country(country).places.values() if p.level == "child"]
     by_name: dict[str, list] = {}
     for p in places:
         by_name.setdefault(p.norm_name, []).append(p)
     out = []
-    for f in sorted((GEO_ROOT / "india" / "district").glob("*.json")):
+    for f in sorted((GEO_ROOT / country / COUNTRY_INFO[country]["child_id"]).glob("*.json")):
         for feat in json.loads(f.read_text(encoding="utf-8"))["features"]:
             props, geom = feat.get("properties") or {}, feat.get("geometry")
             cand = by_name.get(norm(props.get("name") or ""))
@@ -65,15 +67,24 @@ def india_districts() -> tuple[District, ...]:
     return tuple(out)
 
 
-def district_at(lat: float, lng: float) -> str | None:
-    """Place id of the India district containing the point, or None (sea, outside India, boundary gap)."""
-    for d in india_districts():
+def india_districts() -> tuple[District, ...]:
+    return districts("india")
+
+
+def district_at(lat: float, lng: float, country: str = "india") -> str | None:
+    """Place id of the district containing the point, or None (sea, outside the country, boundary gap)."""
+    for d in districts(country):
         x0, y0, x1, y1 = d.bbox
         if x0 <= lng <= x1 and y0 <= lat <= y1 and point_in_geometry(lng, lat, d.geometry):
             return d.place_id
     return None
 
 
-def nearest_district(lat: float, lng: float) -> str:
+def nearest_district(lat: float, lng: float, country: str = "india") -> str:
     """Closest district centre: only for points just off a coastline or boundary."""
-    return min(india_districts(), key=lambda d: (d.centre[0] - lng) ** 2 + (d.centre[1] - lat) ** 2).place_id
+    return min(districts(country), key=lambda d: (d.centre[0] - lng) ** 2 + (d.centre[1] - lat) ** 2).place_id
+
+
+def districts_in(geom: dict, country: str = "india") -> list[str]:
+    """Districts whose centre lies inside an area (e.g. a flood's affected-area outline)."""
+    return [d.place_id for d in districts(country) if point_in_geometry(d.centre[0], d.centre[1], geom)]

@@ -60,7 +60,9 @@ export interface AskRequest {
   slots?: Slots | null;
   /** Names the user disambiguated: typed name (lower case) -> place id. */
   resolved?: Record<string, string>;
-  previous?: { question?: string | null; category: Category; slots?: Slots | null; summary: string };
+  /** The last answer, plus up to 3 recent exchanges (question + headline) so follow-ups keep context. */
+  previous?: { question?: string | null; category: Category; slots?: Slots | null; summary: string;
+    history?: { question: string; summary: string }[] };
   provider?: string;
   model?: string;
 }

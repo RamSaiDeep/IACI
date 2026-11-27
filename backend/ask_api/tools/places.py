@@ -47,6 +47,10 @@ async def find_place(client: httpx.AsyncClient, name: str, country: str | None =
     name = (name or "").strip()
     if not name:
         return _result("not_found", message="Which place do you mean? Name a district, state or country.")
+    if "," in name and not within:  # "Kachchh, Gujarat": look up the first part inside the rest
+        head, _, tail = name.partition(",")
+        if head.strip() and _parent_of(tail.strip(), country):
+            name, within = head.strip(), tail.strip()
     level = LEVEL_HINTS.get((level_hint or "").lower())
     parent = _parent_of(within, country)
 
@@ -82,9 +86,11 @@ async def find_place(client: httpx.AsyncClient, name: str, country: str | None =
         pid, hit = next(iter(found.items()))
         place = get_place(pid)
         shown = hit.name.title() if hit.name.isupper() else hit.name
-        return _result("found", place=place, how="bharatlas", note=(
-            f"{shown} ({hit.kind}) is in {place.name} district, {place.parent_name}. "
-            "The index is reported by district (place found via Bharatlas)."))
+        out = _result("found", place=place, how="bharatlas", note=(
+            f"There is no separate data for {shown}: it is a {hit.kind} in {place.name} district, "
+            f"{place.parent_name}, so these figures are for {place.name} district (place found via Bharatlas)."))
+        out.update(asked_for=shown, inside_district=True)  # tells the model to say this in its answer
+        return out
     if len(found) > MAX_OPTIONS:
         return _result("choose", message=(
             f'"{name}" is the name of places in {len(found)} different districts. Which state is it in?'))
@@ -171,11 +177,22 @@ def _district_of(hit: bharatlas.Hit) -> str | None:
     return nearest_district(hit.lat, hit.lng) if hit.kind == "PIN code" else None
 
 
+# What a typed name most likely means, best first: "Madanapalle" is a town, even though a sub-district
+# and villages share the name. Only the best kind with any match is used.
+KIND_ORDER = ["PIN code", "town or city", "city ward", "sub-district", "block", "village or town"]
+
+
 def _districts_for(hits: list, parent: Place | None) -> dict[str, bharatlas.Hit]:
-    """One entry per distinct district (first hit kept), limited to `parent` if the visitor named a state."""
-    out: dict[str, bharatlas.Hit] = {}
-    for h in hits:
-        pid = _district_of(h)
-        if pid and pid not in out and (not parent or get_place(pid).parent_id == parent.id):
-            out[pid] = h
-    return out
+    """One entry per distinct district (first hit kept), from the best kind of match that found anything,
+    limited to `parent` if the visitor named a state."""
+    for kind in KIND_ORDER:
+        out: dict[str, bharatlas.Hit] = {}
+        for h in hits:
+            if h.kind != kind:
+                continue
+            pid = _district_of(h)
+            if pid and pid not in out and (not parent or get_place(pid).parent_id == parent.id):
+                out[pid] = h
+        if out:
+            return out
+    return {}

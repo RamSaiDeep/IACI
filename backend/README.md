@@ -21,6 +21,7 @@ Two separate things live here:
 | `inspect_region.py` | Explains why a region shows "—" on the site |
 | `make_demo_data.py` | Writes fake data so a new country's pages can be built before real numbers exist |
 | `build_lgd_crosswalk.py` | Builds `ask_api/reference/lgd_districts.csv` from Bharatlas (see below) |
+| `build_events.py` | Builds `ask_api/reference/events.csv` and `event_places.csv` (past disasters) from GDACS, Nepal's BIPAD portal and the Met Office |
 
 ## 2. `ask_api/`: Ask the Index
 
@@ -81,9 +82,11 @@ The design and the plan for the agent version are in `docs/ask-the-index/`
 | `tools/over_time.py` | `get_series`, `get_trend` (straight-line change per decade), `compare_periods`, `count_exceedances` |
 | `tools/many_places.py` | `list_places`, `rank_places`, `filter_places`, `compare_to_parent`, `spread_within` |
 | `tools/comparing.py` | `compare_places` (any levels and countries), `neighbours` |
+| `tools/events.py` | `find_events`, `get_event`, `event_signal`: past floods, cyclones, heatwaves, droughts and what the index recorded during them |
 | `tools/explain.py` | `explain_index`, `explain_place_method`, `explain_value` |
 | `knowledge/index_knowledge.json` | How the index is built, written from the website's About pages; a test keeps it in line with the code |
 | `bharatlas.py` | The only file that talks to Bharatlas (bharatlas.com): localities, villages, wards, PIN codes |
+| `reference/events.csv`, `event_places.csv` | Past weather disasters and the districts/states each affected (built by `build_events.py`; open sources only) |
 | `reference/lgd_districts.csv` | Official LGD district codes → our district ids (built by `build_lgd_crosswalk.py`) |
 
 ### How a place name is found (`tools/places.py`)
@@ -91,8 +94,10 @@ The design and the plan for the agent version are in `docs/ask-the-index/`
 1. **Our names and aliases** (`data.resolve` + `labels.PLACE_ALIASES`): districts, states,
    countries, old names (Bombay → Mumbai), short forms (Vizag, Noida). Ambiguous names
    (Aurangabad) come back as options for the visitor.
-2. **Bharatlas** (India only, when step 1 finds nothing certain): exact-name search of city
-   wards, sub-districts, blocks and villages, or a PIN code. Each result's coordinates are
+2. **Bharatlas** (India only, when step 1 finds nothing certain): exact-name search of towns and
+   cities, city wards, sub-districts, blocks and villages, or a PIN code (sub-districts also as
+   "X (Urban)" / "X Rural"). A town beats a village of the same name. The answer then says the
+   index has no separate data for that town and uses the district containing it. Each result's coordinates are
    tested against our own district boundaries (`geo.district_at`), so districts newer than
    Bharatlas's list still work. The LGD code table is the fallback.
 3. **Not found**: a plain message, with near-miss spellings as options. Nothing is guessed.
@@ -105,5 +110,6 @@ cached by name. If it's down, the visitor is told to use the district name.
 - **New districts or renamed places in our data:** rerun `python backend/build_lgd_crosswalk.py`.
   It prints any matches it had to guess and our districts that have no LGD code.
 - **A place name that should work but doesn't:** add it to `PLACE_ALIASES` in `labels.py`.
+- **Refresh the disaster events:** rerun `python backend/build_events.py` (or `--only gdacs|bipad|metoffice`).
 - **The About pages change:** update `knowledge/index_knowledge.json` to match.
   `tests/test_tools_data.py` fails if its formulas, hazard lists or score bands drift from the code.

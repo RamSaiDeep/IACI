@@ -81,7 +81,7 @@ PLACE_ALIASES: dict[str, list[str]] = {
     "andaman and nicobar islands": ["andaman and nicobar"],
     "sambhaji nagar": ["chhatrapati sambhaji nagar"], "chhatrapati sambhajinagar": ["chhatrapati sambhaji nagar"],
     "aurangabad": ["aurangabad", "chhatrapati sambhaji nagar"],
-    "coorg": ["kodagu"], "cochin": ["ernakulam"], "kochi": ["ernakulam"], "poona": ["pune"],
+    "kutch": ["kachchh"], "kutchh": ["kachchh"], "kachh": ["kachchh"], "coorg": ["kodagu"], "cochin": ["ernakulam"], "kochi": ["ernakulam"], "poona": ["pune"],
     "benares": ["varanasi"], "banaras": ["varanasi"], "kashi": ["varanasi"],
     "belgaum": ["belagavi"], "mangalore": ["dakshina kannada"], "mangaluru": ["dakshina kannada"],
     "gulbarga": ["kalaburagi"], "tuticorin": ["thoothukudi"], "calicut": ["kozhikode"],

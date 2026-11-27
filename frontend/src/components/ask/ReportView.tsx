@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { colorForValue, formatValue } from "../../lib/indicators";
-import { shareUrl } from "../../lib/ask/client";
 import type { Cell, ReportCard, ReportSection } from "../../lib/ask/report-types";
 import RichText from "./RichText";
 
-const SERIES_COLORS = ["#f26a21", "#103b7b", "#0d9488", "#b45309"];
+// The "How this was worked out" box (tool calls, number check, token use). Hidden for now; the backend still
+// sends the trace with every answer, so setting this to true brings the box back.
+const SHOW_WORKINGS = false;
+
+const SERIES_COLORS =["#f26a21", "#103b7b", "#0d9488", "#b45309"];
 const EYEBROW: Record<string, string> = { snapshot: "Snapshot", compare: "Comparison", rank: "Ranking", trend: "Trend", event: "Event explainer", help: "About the index", answer: "Answer" };
 
 function CellView({ v, isValue }: { v: Cell; isValue: boolean }) {
@@ -92,24 +94,38 @@ function LineChart({ s }: { s: Extract<ReportSection, { kind: "lines" }> }) {
   );
 }
 
+/** The site's score colour (as in tables and maps), made solid enough to read as a bar. */
+function solidScoreColor(v: number): string {
+  return colorForValue(v).replace(/,([\d.]+)\)$/, (_m, a) => `,${Math.max(0.85, Number(a))})`);
+}
+
 function Bars({ s }: { s: Extract<ReportSection, { kind: "bars" }> }) {
   const max = Math.max(...s.rows.map((r) => Math.abs(r.value)), 0.01);
+  const isScore = /score/i.test(s.unit); // scores get the score colours; counts (e.g. months) use the brand colour
+  const show = (v: number) => (isScore ? formatValue(v) : Number.isInteger(v) ? String(v) : v.toFixed(2));
   return (
-    <ul className="flex flex-col gap-1.5" aria-label={s.title}>
-      {s.rows.map((r) => (
-        <li key={r.label + (r.sub ?? "")} className="grid grid-cols-[minmax(6rem,10rem)_1fr_3.5rem] items-center gap-2 text-sm">
-          <span className="truncate" title={r.sub ? `${r.label}, ${r.sub}` : r.label}>{r.label}</span>
-          <span className="relative h-4 rounded bg-surface-muted">
-            <span
-              className={`absolute inset-y-0 left-0 rounded ${r.highlight ? "bg-accent" : "bg-navy-mid/60"}`}
-              style={{ width: `${(Math.abs(r.value) / max) * 100}%` }}
-            />
-          </span>
-          <span className="text-right font-mono text-xs">{formatValue(r.value)}</span>
-        </li>
-      ))}
-      <li className="text-xs text-foreground/60">Unit: {s.unit}</li>
-    </ul>
+    <figure className="flex flex-col gap-2">
+      <ol className="flex flex-col gap-2.5" aria-label={s.title}>
+        {s.rows.map((r) => (
+          // Phones: name on its own line, bar and value below. Wider screens: name | bar | value in one row.
+          <li key={r.label + (r.sub ?? "")} className="grid grid-cols-[1fr_3.5rem] items-center gap-x-3 gap-y-1 sm:grid-cols-[minmax(7rem,11rem)_1fr_3.5rem]">
+            <span className="col-span-2 min-w-0 leading-tight sm:col-span-1">
+              <span className={`block truncate text-sm ${r.highlight ? "font-bold" : "font-medium"}`}>{r.label}</span>
+              {r.sub && <span className="block truncate text-xs text-foreground/55">{r.sub}</span>}
+            </span>
+            <span className="h-3 rounded-full bg-foreground/5" aria-hidden="true">
+              <span className="block h-full rounded-full"
+                style={{ width: `${Math.max(3, (Math.abs(r.value) / max) * 100)}%`,
+                         background: isScore ? solidScoreColor(r.value) : "var(--accent)" }} />
+            </span>
+            <span className="text-right font-mono text-sm font-semibold tabular-nums">{show(r.value)}</span>
+          </li>
+        ))}
+      </ol>
+      <figcaption className="text-xs text-foreground/60">
+        {isScore ? "Score: 0 is normal for that place; longer, redder bars are more unusual." : `Unit: ${s.unit}`}
+      </figcaption>
+    </figure>
   );
 }
 
@@ -137,16 +153,7 @@ function Section({ s }: { s: ReportSection }) {
 export default function ReportView({
   report,
 }: { report: ReportCard }) {
-  const [copied, setCopied] = useState(false);
   const u = report.usage;
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl(report.request));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch { /* clipboard blocked */ }
-  };
 
   return (
     <article className="report-card flex flex-col gap-6 rounded-2xl border border-foreground/10 bg-surface p-5 shadow-card sm:p-8" aria-label={report.title}>
@@ -164,7 +171,7 @@ export default function ReportView({
         <ul className="mt-1 list-disc pl-4">{report.notes.map((n) => <li key={n}>{n}</li>)}</ul>
       </section>
 
-      <details className="rounded-xl border border-foreground/10 p-4 text-sm">
+      {SHOW_WORKINGS && <details className="rounded-xl border border-foreground/10 p-4 text-sm">
         <summary className="cursor-pointer font-semibold">How this was worked out</summary>
         <p className="mt-2 text-xs text-foreground/70">
           Every number comes from these calculations on the published index values. The AI only chose what to look up and wrote the sentences; each number in its text was checked against these results
@@ -183,17 +190,7 @@ export default function ReportView({
           {u.provider === "none" ? "Fixed text: no writing model used. " : `${report.feature === "answer" ? "Your model chose the tools and wrote the answer" : "Writing"} (${u.model}, your key): ${u.calls} call${u.calls === 1 ? "" : "s"}, about ${u.inputTokens.toLocaleString()} tokens in and ${u.outputTokens.toLocaleString()} out. `}
           {report.router && `Routing (${report.router.models.join(" + ")}, site key): ${report.router.calls} call${report.router.calls === 1 ? "" : "s"}, ${report.router.tokens.toLocaleString()} tokens, $${report.router.costUsd.toFixed(5)}.`}
         </p>
-      </details>
-
-      <div className="flex flex-wrap gap-2 print:hidden">
-        <button type="button" onClick={copy} className="min-h-11 rounded-xl border border-foreground/20 px-4 text-sm font-semibold hover:border-accent">
-          {copied ? "Link copied" : "Copy link"}
-        </button>
-        <button type="button" onClick={() => window.print()} className="min-h-11 rounded-xl border border-foreground/20 px-4 text-sm font-semibold hover:border-accent">
-          Download as PDF
-        </button>
-        <span className="self-center text-xs text-foreground/50">The link holds the question, not your key. For PDF, choose &ldquo;Save as PDF&rdquo; in the print dialog.</span>
-      </div>
+      </details>}
     </article>
   );
 }

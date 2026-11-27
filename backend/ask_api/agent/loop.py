@@ -72,9 +72,7 @@ class Usage:
 async def run_agent(question: str, ctx: ToolContext, model: Model, emit: Callable[[str], None],
                     previous: dict | None = None) -> dict:
     system = system_prompt(ctx.country)
-    text = question if not previous else (
-        f"Earlier question: {previous.get('question') or '(from a form)'}\n"
-        f"Earlier answer: {previous.get('summary', '')}\nFollow-up question: {question}")
+    text = _with_history(question, previous)
     messages: list[dict] = [{"role": "user", "text": text}]
     usage = Usage(model.name)
 
@@ -94,7 +92,7 @@ async def run_agent(question: str, ctx: ToolContext, model: Model, emit: Callabl
 
     # 2. Loop
     facts: list[dict] = [{"question": question}, {"earlier": (previous or {}).get("summary", "")}]
-    calls_made, nudged, repaired, force = 0, False, False, None
+    calls_made, nudged, repaired, empty_retried, force = 0, False, False, False, None
     seen: dict[tuple, dict] = {}  # (tool, inputs) -> result, to catch a model calling the same thing again
     repeats = 0
     for _ in range(MAX_STEPS):
@@ -139,8 +137,18 @@ async def run_agent(question: str, ctx: ToolContext, model: Model, emit: Callabl
             return _clarify(finisher.args, ctx, usage)
         if finisher.name == "out_of_scope":
             return _out_of_scope(finisher.args.get("reason"), ctx, usage)
+        # final_answer with nothing in it: one chance to go back and use the tools.
+        a = finisher.args
+        if not empty_retried and not (a.get("headline") or a.get("sections") or ctx.results):
+            empty_retried = True
+            emit("The answer came back empty; asking the model to look again")
+            messages.append({"role": "tool", "id": finisher.id, "name": "final_answer", "result": {
+                "error": "Your answer is empty. Call find_place for each place named (a plain name, e.g. \"Kachchh\"), "
+                         "then the data tools, then final_answer with a headline. If a place can't be found, call "
+                         "ask_user instead."}})
+            continue
         # final_answer: number check, with one chance to rewrite.
-        bad = _ungrounded_numbers(finisher.args, facts)
+        bad =_ungrounded_numbers(finisher.args, facts)
         if bad and not repaired:
             repaired = True
             emit(f"Some numbers did not match the data ({', '.join(bad)}); asking for a rewrite")
@@ -234,6 +242,21 @@ def _notes(facts: list[dict]) -> list[str]:
     if any(f.get("how") == "bharatlas" for f in facts):
         out.append(f"Place lookup: {BHARATLAS_CREDIT}.")
     return out
+
+
+MAX_HISTORY = 3  # earlier exchanges kept as context: question + answer headline only, so requests stay small
+
+
+def _with_history(question: str, previous: dict | None) -> str:
+    """The visitor's question, preceded by a compact record of the conversation so far."""
+    if not previous:
+        return question
+    history = [h for h in (previous.get("history") or []) if isinstance(h, dict)][-MAX_HISTORY:]
+    if not history:  # older pages send only the last answer
+        history = [{"question": previous.get("question") or "(from a form)", "summary": previous.get("summary", "")}]
+    lines = [f"{i}. Q: {str(h.get('question', ''))[:300]}\n   A: {str(h.get('summary', ''))[:500]}"
+             for i, h in enumerate(history, 1)]
+    return "Earlier in this conversation:\n" + "\n".join(lines) + f"\n\nFollow-up question: {question}"
 
 
 def _step_text(name: str, args: dict) -> str:

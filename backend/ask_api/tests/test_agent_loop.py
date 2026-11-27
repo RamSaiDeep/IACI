@@ -193,7 +193,7 @@ def test_follow_up_carries_the_earlier_answer():
     asyncio.run(run_agent("And the monsoon?", ctx, model, lambda _t: None,
                           previous={"question": "How was 2024 for Mumbai?", "summary": "Mumbai: 2024. It was hot."}))
     first_user = model.seen[0]["messages"][0]["text"]
-    assert "Earlier question: How was 2024 for Mumbai?" in first_user and "Follow-up question: And the monsoon?" in first_user
+    assert "Q: How was 2024 for Mumbai?" in first_user and "Follow-up question: And the monsoon?" in first_user
 
 
 def test_repeated_identical_calls_are_not_rerun_and_end_in_a_final_answer():
@@ -206,3 +206,25 @@ def test_repeated_identical_calls_are_not_rerun_and_end_in_a_final_answer():
     assert "already called find_place" in repeat["error"] and repeat["previous_result"]["status"] == "found"
     assert model.seen[-1]["force"] == "final_answer"  # after 2 repeats the next turn must finish
     assert len(model.seen) == 5
+
+
+def test_memory_keeps_the_last_three_exchanges_only():
+    from ask_api.agent.loop import _with_history
+    hist = [{"question": f"Q{i}", "summary": f"A{i}"} for i in range(1, 6)]
+    text = _with_history("And now?", {"question": "Q5", "summary": "A5", "history": hist})
+    assert "Q1" not in text and "Q2" not in text and all(f"Q{i}" in text for i in (3, 4, 5))
+    assert text.endswith("Follow-up question: And now?") and _with_history("Hi", None) == "Hi"
+
+
+def test_empty_final_answer_gets_one_retry():
+    empty = call("final_answer", headline="", sections=[], show=[], followups=[])
+    out, steps, model = run(ScriptedModel(in_scope("snapshot"), empty, *snapshot_steps(good_final)[1:]))
+    assert out["headline"].startswith("Mumbai's 2024 overall index was")
+    assert "Your answer is empty" in last_result(model.seen[1 + 1]["messages"], "final_answer")["error"]
+    assert any("came back empty" in s for s in steps)
+
+
+def test_empty_final_answer_twice_falls_back_to_the_plain_message():
+    empty = call("final_answer", headline="", sections=[], show=[], followups=[])
+    out, _, _ = run(ScriptedModel(in_scope("snapshot"), empty, empty))
+    assert out["headline"] == "I couldn't find an answer in the index."

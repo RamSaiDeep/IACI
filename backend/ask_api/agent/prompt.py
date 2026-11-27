@@ -10,7 +10,7 @@ from ..data import load_country
 from ..labels import COUNTRY_INFO, MONTH_NAMES
 from .model import ToolSpec
 
-KINDS = ["snapshot", "extremes", "trend", "compare_periods", "count", "rank", "filter", "compare_places",
+KINDS = ["snapshot", "disaster_event", "extremes", "trend", "compare_periods", "count", "rank", "filter", "compare_places",
          "neighbours", "spread", "explain"]
 
 
@@ -35,9 +35,15 @@ THE KEY IDEA: EVERY PLACE IS MEASURED AGAINST ITS OWN NORMAL
 
 HOW TO WORK
 1. Call find_place for every place the visitor names; use the ids it returns. If it says "choose" or "not_found", call ask_user with its message and options (copy them exactly, and set query to the name the visitor typed). Never guess a place.
+   If find_place returns inside_district: true (a town, ward, village or PIN code that is not itself a district),
+   the index has no separate data for that place. Use the district it gives, and START your headline by saying so,
+   e.g. "Rajahmundry isn't a district in the index, so this is for East Godavari district, where it lies: ...".
 2. Map unusual hazard words with resolve_hazard (flood -> heavy rainfall). Pass periods as the period object; tools check them.
 3. Pick the fewest tools that answer the question, then call final_answer.
+   For a named or past disaster (flood, cyclone, storm, heatwave, drought...): find_events, then get_event (where it
+   struck, impacts, source) and event_signal (what the index recorded). Credit the event's source by name.
    For questions about many places (top, worst, which districts, coastal, above a value), call rank_places or filter_places ONCE: they search every place themselves (use within= a state id, coastal=true, level=state). Never call find_place place by place.
+   Always set level: a question about states (or provinces, nations) uses level="state", which ranks each state by its own index; never answer it with district values.
 4. If a tool returns an error, fix the input and try again, or tell the visitor plainly.
 5. Never call the same tool with the same inputs twice: use the result you already have and move on
    (after find_place, call the data tool with the place id it gave you).
@@ -67,7 +73,7 @@ FINAL ANSWER
 TRIAGE = ToolSpec(
     "triage",
     "Decide first whether this message is a question this website can answer: about climate extremes, the "
-    "climate index, how places, periods or years compare, or how the index is built. Messages that only name "
+    "climate index, how places, periods or years compare, how the index is built, or past weather disasters (floods, cyclones, heatwaves, droughts) and what the index showed during them. Messages that only name "
     "places and/or years ARE in scope. Clearly unrelated messages (sport, coding, recipes, general chat) are not.",
     {"type": "object", "additionalProperties": False, "required": ["in_scope", "kinds", "reason"], "properties": {
         "in_scope": {"type": "boolean"},

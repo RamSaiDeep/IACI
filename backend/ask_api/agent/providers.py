@@ -42,7 +42,7 @@ CATALOG_URL = "https://openrouter.ai/api/v1/models"
 CATALOG_TTL = 24 * 3600
 _catalog: dict = {"at": 0.0, "models": []}
 
-MAX_TOKENS = 4096  # reasoning models spend part of this thinking; too low and they return nothing
+MAX_TOKENS = 8192  # reasoning models spend much of this thinking (seen: 2,700 before a final answer); too low = empty reply
 TIMEOUT = 110.0
 
 

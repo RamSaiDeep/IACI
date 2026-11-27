@@ -64,6 +64,7 @@ export default function AskClient() {
   const [steps, setSteps] = useState<string[]>([]);
   const [secs, setSecs] = useState(0);
   const [thread, setThread] = useState<Msg[]>([]);
+  const started = thread.length > 0; // after the first question, the suggestions and forms make way for the chat
   const [question, setQuestion] = useState("");
   const [shared, setShared] = useState<AskRequest | null>(null);
   const endRef = useRef<HTMLLIElement>(null);
@@ -128,8 +129,12 @@ export default function AskClient() {
 
   // A typed question; the last report in the thread is sent as context so follow-ups work.
   const askFree = (q: string) => {
-    const last = [...thread].reverse().find((m): m is Extract<Msg, { role: "report" }> => m.role === "report")?.report;
-    const previous = last ? { question: last.request.question, category: last.feature, slots: last.request.slots, summary: `${last.title}. ${last.headline}` } : undefined;
+    // Memory, kept compact: the last 3 answers as question + headline only (no tables or tool results).
+    const reports = thread.filter((m): m is Extract<Msg, { role: "report" }> => m.role === "report").map((m) => m.report);
+    const last = reports[reports.length - 1];
+    const history = reports.slice(-3).map((r) => ({ question: r.request.question ?? r.title, summary: r.headline }));
+    const previous = last ? { question: last.request.question, category: last.feature, slots: last.request.slots,
+      summary: `${last.title}. ${last.headline}`, history } : undefined;
     void run({ country, question: q, previous }, q);
   };
 
@@ -188,9 +193,24 @@ export default function AskClient() {
         </div>
       )}
 
-      {/* Heading + country */}
+      {/* Heading + country; once a chat starts, a compact bar instead so the chat gets the screen */}
+      {started ? (
+        <div className="no-print sticky top-(--header-h) z-10 -mx-4 flex flex-wrap items-center gap-2 border-b border-foreground/10 bg-background/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6">
+          <span className="mr-auto text-lg font-semibold">Climate <strong className="font-extrabold text-accent">IQ</strong> Agent</span>
+          <div role="group" aria-label="Country" className="order-last flex w-full flex-wrap gap-1.5 sm:order-none sm:w-auto">
+            {COUNTRY_SLUGS.map((c) => (
+              <button key={c} type="button" aria-pressed={country === c} onClick={() => setCountry(c)}
+                className={`min-h-11 rounded-full px-3 text-sm ${country === c ? "bg-accent font-semibold text-white" : "bg-surface-muted text-foreground/80"}`}>
+                {COUNTRY_INFO[c].name}
+              </button>
+            ))}
+          </div>
+          <button type="button" disabled={busy} onClick={() => setThread([])}
+            className="min-h-11 rounded-xl border border-foreground/20 px-4 text-sm font-semibold hover:border-accent disabled:opacity-50">New chat</button>
+        </div>
+      ) : (
       <section className="no-print flex flex-col items-center gap-5 text-center">
-        <span className="eyebrow">ClimateIQ Agent</span>
+        <span className="text-base font-semibold text-foreground/80">Climate <strong className="font-extrabold text-accent">IQ</strong> Agent</span>
         <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-5xl">Get to know your climate</h1>
         <p className="max-w-2xl text-base text-foreground/70 sm:text-lg">
           Ask in your own words, or fill in a short form. Every answer comes with a chart and a table, built from the index&apos;s own monthly values.
@@ -205,11 +225,13 @@ export default function AskClient() {
           ))}
         </div>
       </section>
+      )}
 
-      {/* Chat */}
-      <section aria-labelledby="chat-h" className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-surface p-4 shadow-card sm:p-6">
+      {/* Chat: framed before the first question, full width (no frame) once it starts */}
+      <section aria-labelledby="chat-h" className={`flex flex-col gap-4 ${started ? "-mt-6 min-h-[calc(100dvh-var(--header-h)-4rem)]" : "rounded-2xl border border-foreground/10 bg-surface p-4 shadow-card sm:p-6"}`}>
         <h2 id="chat-h" className="sr-only">Chat with the index</h2>
-        <div className="no-print flex flex-col gap-3 rounded-xl bg-surface-muted p-4 text-sm">
+        {/* Suggestions only before the first question; after that the follow-up buttons take over. */}
+        {started || <div className="no-print flex flex-col gap-3 rounded-xl bg-surface-muted p-4 text-sm">
           <p className="font-semibold">Here are some things to try:</p>
           <ul className="grid gap-2 sm:grid-cols-2">
             {CARDS.map((c) => {
@@ -225,7 +247,7 @@ export default function AskClient() {
               );
             })}
           </ul>
-        </div>
+        </div>}
 
         <ol aria-live="polite" className="flex flex-col gap-4">
           {thread.map((m, i) => (
@@ -277,7 +299,7 @@ export default function AskClient() {
           </div>
         )}
 
-        <form className="no-print flex gap-2 border-t border-foreground/10 pt-4"
+        <form className={`no-print flex gap-2 border-t border-foreground/10 pt-4 ${started ? "sticky bottom-0 mt-auto z-10 -mx-4 bg-background/95 px-4 pb-4 backdrop-blur sm:-mx-6 sm:px-6" : ""}`}
           onSubmit={(e) => { e.preventDefault(); const q = question.trim(); if (q) { askFree(q); setQuestion(""); } }}>
           <label htmlFor="ask" className="sr-only">Your question</label>
           <input id="ask" type="text" value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={500}
@@ -290,8 +312,8 @@ export default function AskClient() {
         {!hasKey && <p className="no-print text-sm text-foreground/60">Answers need an API key. Use &ldquo;Set API key&rdquo; at the top of the page.</p>}
       </section>
 
-      {/* Starting points */}
-      <section aria-labelledby="start-h" className="no-print flex flex-col gap-4">
+      {/* Starting points: only before the first question */}
+      {!started && <section aria-labelledby="start-h" className="no-print flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 id="start-h" className="text-xl font-bold">Or fill in a short form</h2>
           <span className="text-sm text-foreground/60">Choose one; the answer appears in the chat above</span>
@@ -340,7 +362,7 @@ export default function AskClient() {
           </div>
           {!hasKey && <p className="text-sm text-foreground/60">Answers need an API key. Use &ldquo;Set API key&rdquo; at the top of the page.</p>}
         </form>
-      </section>
+      </section>}
 
       {/* How answers work */}
       <section aria-labelledby="how-h" className="no-print rounded-2xl border border-foreground/10 bg-surface p-6">
@@ -348,7 +370,7 @@ export default function AskClient() {
         <div className="grid gap-6 sm:grid-cols-3">
           {[
             ["Numbers come only from the index", "Our code reads and calculates every figure, and your chosen model only writes the sentences. Each number in the text is checked."],
-            ["You can see how it was worked out", "Each answer lists the places, hazards, periods and baseline it used, step by step."],
+            ["Every place against its own normal", "Scores show how unusual conditions were for that place, compared with its own 1991–2020 record, not raw temperatures or rainfall."],
             ["Clear about limits", "Baseline 1991–2020 · monthly area averages · standardized anomalies. Context, not attribution."],
           ].map(([t, d]) => (
             <div key={t} className="flex flex-col gap-1"><span className="text-[15px] font-semibold">{t}</span><span className="text-sm text-foreground/70">{d}</span></div>

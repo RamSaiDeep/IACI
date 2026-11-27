@@ -166,7 +166,7 @@ def test_knowledge_matches_code_and_website():
 # ---------------------------------------------------------------- registry
 
 def test_every_tool_has_a_valid_schema():
-    assert len(TOOLS) == len(BY_NAME) == 21
+    assert len(TOOLS) == len(BY_NAME) == 24
     for t in TOOLS:
         p = t.parameters
         assert p["type"] == "object" and set(p["required"]) <= set(p["properties"]) and t.description
@@ -212,3 +212,22 @@ def test_prompt_carries_the_local_percentile_idea():
     from ask_api.agent.prompt import system_prompt
     p = system_prompt("india")
     assert "45°C in Rajasthan" in p and "own 90th percentile" in p and "never say one was hotter" in p
+
+
+def test_every_tool_is_fully_described_for_small_models():
+    for t in TOOLS:
+        assert t.purpose and t.use_when and t.returns and t.example, t.name
+        d = t.description
+        assert all(k in d for k in ("PURPOSE:", "USE WHEN:", "RETURNS:", "EXAMPLE:")), t.name
+        undocumented = [k for k, v in t.parameters["properties"].items() if not v.get("description")]
+        assert not undocumented, (t.name, undocumented)
+
+
+def test_level_is_required_for_many_place_tools():
+    for name in ("list_places", "rank_places", "filter_places"):
+        assert "level" in BY_NAME[name].parameters["required"], name
+
+
+def test_state_ranking_uses_state_values(ctx):
+    out = many_places.rank_places(ctx, "heat", None, None, "state", by="change", limit=5)
+    assert all(r["id"].startswith("india/state/") for r in out["top"]) and "states" in out["scope"]

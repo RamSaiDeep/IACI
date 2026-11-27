@@ -84,7 +84,8 @@ def test_locality_is_placed_by_our_own_boundaries(fake_bharatlas):
     answers["whitefield"] = [Hit("Whitefield", "city ward", 12.965, 77.730, state="Karnataka")]
     r = find("Whitefield")
     assert r["status"] == "found" and r["how"] == "bharatlas" and "Bengaluru" in r["place"]["name"]
-    assert "Whitefield (city ward) is in" in r["note"] and "Bharatlas" in r["note"]
+    assert r["note"].startswith("There is no separate data for Whitefield: it is a city ward in")
+    assert "Bharatlas" in r["note"] and r["inside_district"] is True and r["asked_for"] == "Whitefield"
 
 
 def test_same_locality_in_many_districts_asks_which(fake_bharatlas):
@@ -167,3 +168,31 @@ def test_coastal_inland_and_no_index():
 def test_wrong_level_hint_is_only_a_preference(fake_bharatlas):
     r = find("Kent", country="uk", level_hint="state")  # Kent is a county; the model guessed "state"
     assert r["status"] == "found" and r["place"]["name"] == "Kent"
+
+
+def test_town_inside_a_district_says_there_is_no_separate_data(fake_bharatlas):
+    answers, _ = fake_bharatlas
+    answers["rajahmundry"] = [Hit("RAJAHMUNDRY", "town or city", 17.0, 81.78, state="Andhra Pradesh")]
+    r = find("Rajahmundry")
+    assert r["status"] == "found" and r["inside_district"] is True and r["asked_for"] == "Rajahmundry"
+    assert r["note"].startswith("There is no separate data for Rajahmundry: it is a town or city in")
+    assert f"these figures are for {r['place']['name']} district" in r["note"]
+
+
+def test_a_town_beats_a_village_or_sub_district_of_the_same_name(fake_bharatlas):
+    answers, _ = fake_bharatlas
+    answers["sampletown"] = [Hit("Sampletown", "village or town", 13.08, 80.27),  # Chennai
+                             Hit("SAMPLETOWN", "town or city", 17.39, 78.46)]      # Hyderabad
+    r = find("Sampletown")
+    assert r["status"] == "found" and r["place"]["name"] == "Hyderabad" and "town or city" in r["note"]
+
+
+def test_name_with_state_after_a_comma(fake_bharatlas):
+    _, asked = fake_bharatlas
+    r = find("Kachchh, Gujarat")
+    assert r["status"] == "found" and r["place"]["id"] == "india/district/GUJARAT/KACHCHH" and not asked
+
+
+def test_kutch_is_an_alias_of_kachchh(fake_bharatlas):
+    r = find("Kutch")
+    assert r["status"] == "found" and r["place"]["id"] == "india/district/GUJARAT/KACHCHH" and r["how"] == "alias"

@@ -5,11 +5,14 @@ The model never calls Bharatlas directly.
 
 What it searches (exact name, any case; Bharatlas has no partial matching):
     PIN code (6 digits)  datagov_pincodes             e.g. 500032      -> a point
+    town or city         sbm_ulbs (national)          e.g. Rajahmundry -> a point
     city ward            sbm_wards (national)         e.g. Gachibowli  -> a point + district
                          wards_bengaluru_bbmp_2022    e.g. Whitefield  -> a point
     sub-district         lgd_subdistricts             e.g. Secunderabad
     block                lgd_blocks
     village / town       lgd_villages
+If nothing matches, sub-districts are tried again as "X (Urban)", "X Urban", "X Rural", "X (Rural)", the
+spellings LGD uses for many towns.
 
 Every hit comes back with coordinates (`_lat`, `_lng`), which find_place tests against our own
 district boundaries. Only the typed name is sent, with a generic User-Agent.
@@ -49,6 +52,7 @@ class BharatlasUnavailable(Exception):
 
 # (layer, column to match, kind, state column, district column, LGD code column, Census code column)
 _NAME_SEARCHES = [
+    ("sbm_ulbs", "ulbnm", "town or city", "stnm", "distnm", None, None),
     ("sbm_wards", "wardname", "city ward", "statename", "districtname", None, "districtcode"),
     ("wards_bengaluru_bbmp_2022", "KGISWardName", "city ward", None, None, None, None),
     ("lgd_subdistricts", "sdtname", "sub-district", "stname", "dtname", "dist_lgd", "dtcode11"),
@@ -68,14 +72,23 @@ async def search(client: httpx.AsyncClient, text: str) -> list[Hit]:
     if re.fullmatch(r"\d{6}", key):
         hits = await _pincode(client, key)
     else:
-        found = await asyncio.gather(*(_layer(client, s, text.strip()) for s in _NAME_SEARCHES), return_exceptions=True)
-        if all(isinstance(f, Exception) for f in found):
-            raise BharatlasUnavailable(str(found[0]))
-        hits = [h for f in found if not isinstance(f, Exception) for h in f]
+        hits = await _search_names(client, [text.strip()], _NAME_SEARCHES)
+        if not hits:  # LGD often lists towns as "Rajahmundry (Urban)" / "Rajahmundry Rural": try those spellings
+            t = text.strip()
+            hits = await _search_names(client, [f"{t} (Urban)", f"{t} Urban", f"{t} Rural", f"{t} (Rural)"],
+                                       [s for s in _NAME_SEARCHES if s[0] == "lgd_subdistricts"])
     if len(_cache) >= _CACHE_MAX:
         _cache.clear()
     _cache[key] = hits
     return hits
+
+
+async def _search_names(client: httpx.AsyncClient, names: list[str], specs: list[tuple]) -> list[Hit]:
+    """Every (name, layer) pair in parallel. Raises BharatlasUnavailable only if every call failed."""
+    found = await asyncio.gather(*(_layer(client, s, n) for n in names for s in specs), return_exceptions=True)
+    if found and all(isinstance(f, Exception) for f in found):
+        raise BharatlasUnavailable(str(found[0]))
+    return [h for f in found if not isinstance(f, Exception) for h in f]
 
 
 async def _query(client: httpx.AsyncClient, layer: str, column: str, value: str, select: list[str]) -> list[dict]:
